@@ -1,145 +1,143 @@
-# World models under the functional taxonomy: separating simulation from generation in embodied AI
+# 功能分类法视角下的世界模型：从生成到模拟的边界勘定
 
-**A review of the Dreamer lineage and its alternatives**
+**Dreamer 系列及其替代方案综述**
 
-*Fei-Fei Li and the World Labs team (2026) have proposed a functional taxonomy that classifies world models into Renderers, Simulators, and Planners. Applying this taxonomy as a critical lens reveals that the majority of systems currently marketed as "world models" cover only one of the three functions. The Dreamer series, by contrast, has maintained a dual commitment to Simulator and Planner since its inception, and its latest iteration, R2-Dreamer, demonstrates that a Simulator can operate effectively without a Renderer — a result that validates a core prediction of the taxonomy.*
-
----
-
-## The POMDP loop and its three projections
-
-The term "world model" has become one of the most consequential and most diluted concepts in contemporary artificial intelligence. Computer vision, robotics, reinforcement learning, and generative video each claim to build world models, and each means something substantially different. A diffusion model that generates visually stunning but physically impossible flames, a language model that improvises a playable game from a prompt, and a physics engine that faithfully simulates combustion all travel under the same banner.
-
-This ambiguity is not new. The Greek schools could never agree on what the world was made of — fire, water, or indivisible atoms — because "world" was never a single thing. It was always a placeholder for whatever totality a given thinker needed to reason about. The field of AI has inherited the same problem at exactly the moment when precision matters most.
-
-A clarifying framework arrived in June 2026, when World Labs published "A Functional Taxonomy of World Models." The taxonomy roots itself in a diagram that has existed for decades: the partially observable Markov decision process (POMDP), the canonical representation of how an agent interacts with an environment. In this loop, an agent takes actions, which affect the state of the world. The agent never sees the state directly. What reaches the agent are observations — photons on a retina, sensor readings, pixels in a video frame. New observations inform new actions, and the cycle continues.
-
-Within this loop, three distinct functional roles have been conflated under the single term "world model." A **Renderer** outputs observations — pixels meant for human eyes — and its contract is visual fidelity. A **Simulator** outputs state: a geometrically, physically, or dynamically faithful representation that both humans and computer programs can compute on and interact with. A **Planner** outputs actions: given an observation and a goal, it decides what the agent should do next. The three functions share the same underlying knowledge — geometry, physics, dynamics — but they project that knowledge differently.
-
-The same knowledge that allows a model to render a cup from any angle should, in principle, allow it to simulate what happens when the cup is pushed and to plan a hand that picks the cup up. The convergence of these three functions into a single architecture is the defining open problem in world model research today.
+*World Labs（Fei-Fei Li 团队, 2026）提出了世界模型的功能分类法，将自称世界模型的系统严格分为三类：渲染器（Renderer，输出像素）、模拟器（Simulator，输出几何/物理状态）和规划器（Planner，输出行动序列）。以此分类法为分析透镜可以发现，当前市面上大多数自称"世界模型"的系统实际上只覆盖三类功能中的一种。相比之下，Dreamer 系列从其诞生起就同时承担了模拟器和规划器的功能，其最新迭代 R2-Dreamer 进一步证明模拟器可以在不需要渲染器的条件下有效运行——这一结果验证了功能分类法的一个核心预测。*
 
 ---
 
-## What a world model is for
+## POMDP 循环及其三种投影
 
-The POMDP loop gives us a precise way to separate genuine world models from systems that merely borrow the name. Several of the most prominent systems that call themselves world models turn out, under this lens, to be Renderers — powerful and commercially significant, but operating on a fundamentally different contract.
+"世界模型"已成为当代人工智能中最重要但也被最严重稀释的概念之一。计算机视觉、机器人学、强化学习和生成式视频各自声称在构建世界模型，各执一词。一个扩散模型可以生成视觉惊艳但物理上不可能的火焰，一个大语言模型可以从提示中即兴编出可玩的游戏，一个物理引擎可以忠实模拟燃烧——它们都被冠以同一名称。
 
-OpenAI's Sora, released in February 2024, was introduced under the title "Video generation models as world simulators." Sora is a diffusion transformer that operates on spacetime patches of video, trained at massive scale on internet data. It can generate a minute of high-fidelity video from text prompts, and it exhibits emergent properties such as three-dimensional consistency and object permanence. These properties are real and important. But Sora has no explicit representation of state. Its contract is visual, not structural. OpenAI's own technical report acknowledges that Sora "does not accurately model the physics of many basic interactions, like glass shattering." A model that cannot predict the consequences of a collision is not simulating the world; it is rendering a plausible version of it.
+这种模糊性并非新鲜事。古希腊学派从未就世界由什么构成达成共识——火、水还是不可分的原子——因为"世界"从来不是一个单一事物。它始终是某个思想家所需推理的全体性的占位符。AI 领域在恰恰最需要精确性的时刻继承了同样的问题。
 
-Google DeepMind's Genie, also released in 2024, takes a step closer to interactivity. Genie is an 11-billion-parameter model trained from unlabelled internet video, and it generates action-controllable virtual worlds. Its three-component architecture — a spatiotemporal video tokenizer, an autoregressive dynamics model, and a learned latent action model — allows users to influence frame generation on a frame-by-frame basis. Genie's own authors described it as a "foundation world model." Under the functional taxonomy, Genie is best understood as an action-conditioned Renderer. Its "state" is encoded implicitly in video tokens, not surfaced as geometry that a physics engine or a robot controller could consume.
+2026 年 6 月，World Labs 发表了《世界模型的功能分类法》（A Functional Taxonomy of World Models），提供了一个澄清性的框架。该分类法扎根于一个已存在数十年的图示：部分可观测马尔可夫决策过程（POMDP），即智能体如何与环境交互的经典表示。在这个循环中，智能体采取行动，行动影响世界状态。智能体永远无法直接观测状态本身——到达智能体的是观测：视网膜上的光子、传感器读数、视频帧中的像素。新观测指导新行动，循环持续。
 
-At the other end of the spectrum, systems such as DeepMind's GATO (2022) represent the Planner function in isolation. GATO is a generalist agent trained via behavioural cloning across hundreds of tasks. It outputs actions. It contains no internal Simulator — no model of how the world will respond to those actions. GATO is a policy, not a world model.
+在这一循环中，三种不同的功能角色被混用在了"世界模型"这个单一术语之下。**渲染器**输出观测——供人眼观看的像素——其合约是视觉逼真。**模拟器**输出状态：一种在几何、物理或动力学上保持忠实的表征，可供人和计算机程序计算与交互。**规划器**输出行动：给定观测和目标，决定智能体下一步该做什么。三类功能共享相同的底层知识——几何、物理、动力学——但以不同方式投射。
 
-The Renderers and the standalone Planners are both genuine and valuable contributions. But they are not world models in the sense that the POMDP tradition — the tradition that gave the term its technical meaning — intended. The vision of a world model, from Kenneth Craik's 1943 proposal that minds run "small-scale models" of reality, through the recurrent neural network world models of the 1990s, to the modern Dreamer series, has always been about a model that can predict the consequences of actions and plan accordingly. That requires both Simulator and Planner.
-
----
-
-## The Dreamer series: a case study in Simulator–Planner alignment
-
-The Dreamer series, developed by Danijar Hafner and colleagues at Google DeepMind, is the only family of systems that has maintained a strict dual commitment to the Simulator and Planner functions across four generations of architectural evolution.
-
-### DreamerV1: learning behaviours by latent imagination
-
-DreamerV1 (Hafner et al., 2019, ICLR 2020) established the paradigm that has defined the series. The core architectural insight was the Recurrent State-Space Model (RSSM), a hybrid of deterministic and stochastic state representations. The deterministic path, implemented as a gated recurrent unit, carries long-term temporal structure. The stochastic path, sampled from a learned posterior, captures the environment's irreducible randomness and multimodality. Together, they produce a latent state that can be rolled forward in imagination without decoding to pixels.
-
-The Planner component operates entirely within this latent space. An actor network generates actions in the imagined trajectory; a critic network estimates state values; gradients propagate back along the imagined path to improve the policy. On twenty continuous control tasks, DreamerV1 exceeded prior model-based and model-free methods in data efficiency and final performance.
-
-### DreamerV2: the discrete transition
-
-DreamerV2 (Hafner et al., 2020, ICLR 2021) made a single architectural change that proved decisive: it replaced the continuous Gaussian latent variables of DreamerV1 with categorical discrete variables — 32 categorical variables with 32 categories each, yielding 1,024 discrete combinations. The motivation was that physical structure is often discrete: object types, event boundaries, game state transitions. Discrete representations proved substantially better at capturing these structures.
-
-The result was the first world-model-based agent to achieve human-level performance across the 55-game Atari benchmark, matching the best model-free methods with substantially less environment interaction. This result carried an important implication: the quality of the Simulator sets an upper bound on the performance of the Planner.
-
-### DreamerV3: general algorithm, single configuration
-
-DreamerV3 (Hafner et al., 2023) demonstrated that a single hyperparameter configuration could master more than 150 tasks spanning Atari games, continuous control benchmarks, dexterous manipulation, and Minecraft — tasks with reward scales ranging over five orders of magnitude and observation spaces from pixels to proprioception.
-
-Three techniques made this possible. A symlog transform compresses rewards and returns into a bounded logarithmic space, removing the need for task-specific reward normalization. Quantile regression replaces mean-squared error in the critic, making no assumption about the distribution of target values. A bidirectional variant of RMSNorm keeps activations stable across widely varying input statistics.
-
-The Minecraft diamond achievement captured the field's attention. Minecraft is an open-world game with sparse rewards and a deep skill tree: the agent must learn to chop trees, craft planks, build a crafting table, craft a wooden pickaxe, mine stone, craft a stone pickaxe, mine iron, smelt iron, craft an iron pickaxe, and finally mine diamond. No reinforcement learning algorithm had previously completed this chain from scratch. DreamerV3 succeeded by learning a rich world model in the early stages and then planning in latent imagination across the long skill horizon.
-
-Under the functional taxonomy, DreamerV3 scores strongly on both the Simulator axis (the RSSM predicts state transitions, rewards, and episode continuations in latent space) and the Planner axis (actor-critic learning operates entirely within imagined trajectories). The Renderer axis is present but subsidiary: the image decoder exists only to supervise the representation, not to produce outputs for human consumption.
-
-### R2-Dreamer: a Simulator without a Renderer
-
-The latest iteration, R2-Dreamer (Morihira et al., 2026, ICLR 2026), tests a hypothesis that the functional taxonomy makes explicit: the Simulator can stand alone.
-
-A weakness of the DreamerV3 design is that the decoder must reconstruct all pixels, including vast task-irrelevant regions such as sky and background texture, wasting parameters and computation. R2-Dreamer removes the decoder entirely. In its place, it introduces a self-supervised redundancy-reduction objective inspired by Barlow Twins: the cross-correlation matrix of the latent representation is driven toward the identity matrix, with off-diagonal elements forced toward zero (eliminating redundant dimensions) and diagonal elements forced toward one (preserving informative structure). Crucially, this regularizer is internal — it requires no data augmentation, which distinguishes R2-Dreamer from prior decoder-free approaches.
-
-The results validate the taxonomy's prediction. On DeepMind Control Suite and Meta-World, R2-Dreamer matches DreamerV3 and TD-MPC2 while training 1.59 times faster. On the DMC-Subtle benchmark, where task-relevant objects are tiny and easily lost in background reconstruction, R2-Dreamer substantially outperforms all baselines. The implicit structure learned in the latent space is sufficient to support planning without pixel-level supervision.
-
-This finding matters beyond the Dreamer series. It suggests that the Simulator is not merely a bridge between Renderer and Planner but a viable standalone module that can be optimized independently. It also lends weight to the World Labs claim that a unified world model is achievable: if the shared geometric and physical knowledge that underlies all three functions can be learned without rendering, then the path to a single model that can render, simulate, and plan is clearer.
+能使模型从任意角度渲染一个杯子的知识，原则上也应使其能模拟杯子被推后发生什么，并规划一只手去捡起杯子。将三类功能收敛至单一架构，是当今世界模型研究中定义性的开放问题。
 
 ---
 
-## The partial coverage of current alternatives
+## 世界模型的用途
 
-The Dreamer series stands nearly alone in its dual coverage of Simulator and Planner. Every other system we surveyed covers one function well and the others partially or not at all.
+POMDP 循环为我们提供了一种精确的方式，将真正的世界模型与仅借用其名的系统区分开来。几个最著名的自称世界模型的系统，在这个透镜下，实际上是渲染器——功能强大且具有商业意义，但运行在根本不同的合约之上。
 
-World Labs' own Marble (2025) is the only commercial system that bridges Renderer and Simulator. It takes multimodal prompts — text, image, video, or spatial sketch — and generates explorable three-dimensional environments, outputting Gaussian splats for visual exploration alongside collision meshes that a physics engine can operate on. This dual output covers two of the three functions, and Marble is commercially deployed. It does not, however, plan, and its authors are explicit about this boundary.
+OpenAI 的 Sora 于 2024 年 2 月发布，标题为"作为世界模拟器的视频生成模型"。Sora 是一个 Diffusion Transformer，在视频的时空 Patch 上操作，在海量互联网数据上训练。它可以从文本提示生成一分钟的高保真视频，展现出三维一致性和物体持久性等涌现属性。这些属性真实且重要。但 Sora 没有显式的状态表示。它的合约是视觉的，而非结构的。OpenAI 自己的技术报告承认 Sora"不能准确建模许多基本交互的物理过程，例如玻璃破碎"。一个无法预测碰撞后果的模型并不是在模拟世界——它只是在渲染一个合理的版本。
 
-PointWorld (Huang, Fei-Fei et al., 2026) occupies the Simulator function with unusual clarity. It takes one or a few RGB-D images and a sequence of robot action commands, and it forecasts per-pixel three-dimensional displacements in response to those actions. By representing actions as three-dimensional point flows rather than embodiment-specific joint positions, it generalizes across robotic morphologies — a single pretrained checkpoint enables a Franka arm to perform rigid-body pushing, deformable and articulated object manipulation, and tool use in real-world settings, all from a single image and without any demonstrations. PointWorld is a pure Simulator. It has no Renderer, and its Planner is an external model predictive control loop. Its success reinforces the independence of the Simulator function.
+Google DeepMind 的 Genie 同样在 2024 年发布，向交互性迈进了一步。Genie 是一个 110 亿参数的模型，从无标注互联网视频训练而来，生成可由行动控制的虚拟世界。其三组件架构——时空视频分词器、自回归动力学模型、学习的潜在动作模型——允许用户在逐帧基础上影响帧生成。Genie 的作者将其描述为"基础世界模型"。在功能分类法下，Genie 最好被理解为一个行动条件化的渲染器。它的"状态"隐式编码在视频 Token 中，没有以物理引擎或机器人控制器可消费的几何形式呈现。
 
-NVIDIA's Cosmos platform, positioned as a world foundation model, targets the Simulator role for physical AI, generating physics-aware video for autonomous vehicle and robotics training. It is the most ambitious commercial effort to build a general-purpose Simulator, but it faces the same challenge as all generative simulators: the sim-to-real gap. AI-generated geometry can appear correct while containing self-intersections or incorrect scale that produces nonsensical physics. Cosmos's outputs are improving rapidly but have not yet replaced traditional physics engines for high-stakes applications.
+在光谱的另一端，DeepMind 的 GATO（2022）等系统孤立地代表了规划器功能。GATO 是一个通过行为克隆在数百个任务上训练的通用智能体。它输出行动。它不包含内部模拟器——没有模型来预测世界如何响应这些行动。GATO 是一个策略，而不是世界模型。
 
-Systems that claim the world model label but function as Renderers alone — Sora, Genie, RTFM (World Labs, 2025), GameNGen — are commercially mature and technologically impressive, but the functional taxonomy gives the field a precise vocabulary for what they do and what they do not do. They produce observations, not state. They are not substitutes for Simulators in robotics, architecture, or scientific simulation.
-
----
-
-## The bottlenecks that remain
-
-Applying the functional taxonomy across the field reveals an asymmetric data landscape. Renderers are awash in internet video. Planners have access to large offline datasets from robot teleoperation and game playthroughs. Simulators face a fundamental scarcity: three-dimensional data with explicit geometry, material properties, and physical annotations is orders of magnitude rarer than the pixels that feed Renderers. This data gap is the single most important bottleneck in world model research.
-
-The sim-to-real gap compounds the problem. A Simulator trained on synthetic or AI-generated geometry must contend with the discrepancy between simulation and reality. R2-Dreamer's results are impressive in simulation, but the method has not yet been validated on real robots. PointWorld has demonstrated real-world transfer, but its task horizon remains short.
-
-A deeper architectural challenge is the tension between the three functions within a single model. A Renderer optimized for visual beauty may sacrifice the precision that a Simulator or Planner requires. A Planner optimized for task success may learn representations that are not visually interpretable. Reconciling these tensions inside a single architecture is the open problem that World Labs has identified, and it is the problem that Marble and R2-Dreamer approach from opposite directions — Marble from the Simulator–Renderer boundary, R2-Dreamer from the Simulator–Planner boundary.
+渲染器和独立的规划器都是真实且有价值的贡献。但它们不是 POMDP 传统——赋予"世界模型"一词技术含义的传统——所意图的世界模型。从 Kenneth Craik 1943 年提出心智运行现实的"小尺度模型"，到 1990 年代的循环神经网络世界模型，再到现代的 Dreamer 系列，世界模型的愿景始终是关于一个能够预测行动后果并相应规划的模型。这既需要模拟器，也需要规划器。
 
 ---
 
-## The convergence ahead
+## Dreamer 系列：模拟器-规划器对齐的案例研究
 
-The most important pattern in the field today is that the three categories are beginning to collapse into one another. Marble already outputs Gaussian splats and collision meshes from a single model, dissolving the Renderer–Simulator boundary. A small but growing body of work from robotics laboratories has demonstrated that a pretrained video Renderer can serve as the backbone for joint world-and-action prediction, suggesting a bridge between Renderer and Planner. R2-Dreamer has shown that the Simulator can be optimized independently of the Renderer.
+Dreamer 系列由 Danijar Hafner 及其 Google DeepMind 的同事开发，是唯一一个在四代架构演进中始终保持对模拟器和规划器双重承诺的系统家族。
 
-The logical endpoint is a unified world model: one foundation model that can render photorealistic views, produce physically accurate structure, and plan action sequences, switching between output modalities depending on what the downstream application needs. The shared insight across all of these converging threads is that the knowledge required to render a world, simulate its dynamics, and act within it is substantially the same knowledge.
+### DreamerV1：通过潜在想象学习行为
 
-That convergence has been the field's quiet assumption since the late 1980s, when recurrent neural network world models first appeared. It is now being tested at scale by multiple independent research programmes. The Dreamer series has shown what a Simulator–Planner system can do. R2-Dreamer has shown that the Simulator can operate without a Renderer. Marble has shown that the Renderer–Simulator boundary is fluid. The remaining step — a single system that spans all three functions with equal fidelity — will require breakthroughs in three-dimensional data acquisition, architectures that can balance visual and structural objectives, and evaluation benchmarks that measure all three capabilities jointly.
+DreamerV1（Hafner et al., 2019, ICLR 2020）建立了定义整个系列的核心范式。其架构核心是循环状态空间模型（RSSM），一种确定性和随机性状态表征的混合体。确定性路径以门控循环单元实现，承载长期时间结构。随机路径从学习的后验采样，捕捉环境不可约的随机性和多模态性。两者共同产生一个可以在想象中向前滚动、无需解码到像素的潜在状态。
 
-The term "world model" has been diluted by overuse. The functional taxonomy gives the field a tool to reclaim its precision. The convergence that is now underway gives the field a reason to want it back.
+规划器组件完全在这个潜在空间中运行。Actor 网络在想象轨迹中生成行动；Critic 网络估计状态价值；梯度沿想象路径反向传播以改进策略。在二十个连续控制任务上，DreamerV1 在数据效率和最终性能上超越了先前基于模型和无模型的方法。
+
+### DreamerV2：离散化跃迁
+
+DreamerV2（Hafner et al., 2020, ICLR 2021）做了一项被证明具有决定意义的架构更改：它将 DreamerV1 的连续高斯潜在变量替换为分类离散变量——32 个分类变量，每个 32 个类别，共 1024 种离散组合。动机在于物理结构通常是离散的：物体类型、事件边界、游戏状态转换。离散表征在捕捉这些结构方面被证明显著更优。
+
+其结果是第一个在 55 个 Atari 游戏基准上达到人类水平的基于世界模型的智能体，以远少于无模型方法的交互量匹配了最佳性能。这一结果蕴含着一个重要的推论：模拟器的质量为规划器的性能设定了上限。
+
+### DreamerV3：单一配置的通用算法
+
+DreamerV3（Hafner et al., 2023）证明，单一的固定超参数配置可以驾驭横跨 Atari 游戏、连续控制基准、灵巧操作和 Minecraft 的 150 多个任务——这些任务的奖励量级跨越五个数量级，观测空间从像素到本体感觉。
+
+三项技术使这成为可能。Symlog 变换将奖励和回报压缩到有界的对数空间中，消除了任务特定奖励归一化的需要。分位数回归替代了 Critic 中的均方误差，不对目标值分布做任何假设。RMSNorm 的双向变体使激活值在广泛变化的输入统计量下保持稳定。
+
+Minecraft 钻石成就吸引了整个领域的关注。Minecraft 是一个开放世界游戏，具有稀疏奖励和深层的技能树：智能体必须学习砍树、制作木板、建造工作台、制作木镐、开采石头、制作石镐、开采铁、冶炼铁、制作铁镐，最后开采钻石。此前没有强化学习算法能从零开始完成这一链条。DreamerV3 通过在早期学习丰富的世界模型，然后在潜在想象中跨长程技能视野进行规划，取得了成功。
+
+在功能分类法下，DreamerV3 在模拟器轴（RSSM 在潜在空间中预测状态转移、奖励和回合终止）和规划器轴（Actor-Critic 学习完全在想象轨迹中运行）上都获得了高分。渲染器轴存在但处于辅助地位：图像解码器仅用于监督表征，而非产生供人消费的输出。
+
+### R2-Dreamer：无渲染器的模拟器
+
+最新迭代 R2-Dreamer（Morihira et al., 2026, ICLR 2026）检验了功能分类法所明确表达的一个假设：模拟器可以独立存在。
+
+DreamerV3 设计的一个弱点是解码器必须重构所有像素，包括大量任务无关区域（天空、背景纹理），浪费参数和计算。R2-Dreamer 完全移除了解码器。取而代之的是，它引入了一个受 Barlow Twins 启发的自监督冗余消除目标：潜在表征的互相关矩阵被驱向单位矩阵，非对角元素被迫趋近于零（消除冗余维度），对角元素被迫趋近于一（保留有信息量的结构）。关键之处在于，这个正则化器是内部的——它不需要数据增强，这使 R2-Dreamer 区别于先前的无解码器方法。
+
+结果验证了分类法的预测。在 DeepMind Control Suite 和 Meta-World 上，R2-Dreamer 匹配了 DreamerV3 和 TD-MPC2 的性能，同时训练速度提升了 1.59 倍。在 DMC-Subtle 基准上——任务相关物体极小、容易在背景重构中丢失——R2-Dreamer 显著超越了所有基线。在潜在空间中学习的隐式结构足以支撑规划，无需像素级监督。
+
+这一发现的意义超出了 Dreamer 系列本身。它表明模拟器不仅是渲染器和规划器之间的桥梁，而且是可以独立优化的可行模块。它也为 World Labs 关于统一世界模型的主张提供了支持：如果支撑三类功能的共享几何和物理知识可以在没有渲染的情况下学习，那么通往一个能够同时渲染、模拟和规划的单一模型的道路就更加清晰。
 
 ---
 
-**Terminology Ledger (locked)**
+## 当前替代方案的局部覆盖
 
-| Canonical term | Definition | First-use form |
-|---|---|---|
-| World model | A learned model of an environment's dynamics within the POMDP loop | Partially Observable Markov Decision Process (POMDP) |
-| Functional taxonomy | Three-category classification: Renderer, Simulator, Planner | — |
-| RSSM | Recurrent State-Space Model | Recurrent State-Space Model (RSSM) |
-| Symlog | Sign-symmetric logarithmic transform | — |
-| R2-Dreamer | Redundancy-Reduced Dreamer | — |
+Dreamer 系列在同时覆盖模拟器和规划器方面几乎独树一帜。我们调查的其他所有系统都只能很好地覆盖一项功能，而对其他功能覆盖不完全或完全不覆盖。
 
-**Assumptions or missing inputs:**
+World Labs 自家的 Marble（2025）是唯一在商业层面连接渲染器和模拟器的系统。它接收多模态提示——文本、图像、视频或空间草图——生成可探索的三维环境，同时输出用于视觉探索的高斯泼溅（Gaussian splats）和供物理引擎操作的碰撞网格。这种双重输出覆盖了三类功能中的两类，Marble 已经商业部署。然而它不做规划，其作者对此边界有明确声明。
 
-1. The World Labs taxonomy (June 2026) is treated as the canonical framework. The full blog post is available at https://worldlabs.ai/blog/taxonomy-of-world-models.
-2. Technical details of DreamerV1/V2/V3 and R2-Dreamer are drawn from the published arXiv papers cited. No unreleased results are referenced.
-3. Claims about Sora's limitations cite OpenAI's own technical report.
+PointWorld（Huang, Fei-Fei et al., 2026）以异常清晰的定位占据了模拟器功能。它接收一个或少数几个 RGB-D 图像和一系列机器人行动指令，预测像素级的三维位移以响应这些行动。通过将行动表示为三维点流而非特定形态的关节位置，它实现了跨机器人形态的泛化——单个预训练检查点使 Franka 机械臂能够完成刚体推动、可变形和关节物体操作以及工具使用，所有这些都在真实场景中从单张图像和零示范开始。PointWorld 是一个纯粹的模拟器。它没有渲染器，其规划器是外部模型预测控制环。它的成功强化了模拟器功能的独立性。
 
-**Claim-evidence map**
+NVIDIA 的 Cosmos 平台定位为世界基础模型，瞄准物理 AI 的模拟器角色，为自动驾驶和机器人训练生成物理感知视频。它是构建通用模拟器方面最具雄心的商业努力，但仍面临所有生成式模拟器的共同挑战：sim-to-real 差距。AI 生成的几何可能看起来正确，但包含自相交或错误比例，从而产生无意义的物理。Cosmos 的输出正在快速改进，但尚未在高风险应用中取代传统物理引擎。
 
-| Claim | Evidence | Status |
-|---|---|---|
-| Most self-described world models cover only one function | Sora, Genie, GATO, GameNGen analysed against taxonomy | Supported by paper descriptions and author statements |
-| Dreamer series is the only family covering both Simulator and Planner | V1 (ICLR 2020), V2 (ICLR 2021), V3 (2023) | Supported by published architectures |
-| R2-Dreamer operates without decoder and matches V3 performance | ICLR 2026 paper (arXiv:2603.18202) | Supported by published results |
-| Simulator can be optimized independently of Renderer | R2-Dreamer results, PointWorld results | Supported |
-| Three functions are converging | Marble, robotics video-renderer works, R2-Dreamer | Trend-level evidence, partial |
+那些声称世界模型标签但仅充当渲染器的系统——Sora、Genie、RTFM（World Labs, 2025）、GameNGen——在商业上成熟且技术上令人印象深刻，但功能分类法为该领域提供了精确的词汇来描述它们能做什么和不能做什么。它们产生观测，而非状态。在机器人学、建筑学和科学模拟中，它们不是模拟器的替代品。
 
-**Why this structure**
+---
 
-1. **POMDP-first opening.** The Nature audience needs the conceptual framework before the taxonomy. The POMDP loop bridges reinforcement learning, robotics, and generative AI into one language.
-2. **Negative examples before the Dreamer series.** Placing Sora, Genie, and GATO first establishes what a world model is not, making the Dreamer series' contribution sharper.
-3. **Architecture-to-evidence ordering within the Dreamer section.** Each generation is presented as a motivated architectural decision followed by the evidence it produced, so the non-specialist reader understands why each change mattered.
-4. **R2-Dreamer as the pivot.** The most recent result is positioned not as an incremental improvement but as a test of the taxonomy's core prediction, linking back to the framework and forward to the convergence narrative.
-5. **Bounded conclusion.** The closing section states the convergence trend honestly, without promising that the unified model is imminent.
+## 遗留的瓶颈
 
-**To redirect me:** Name the paragraph or claim that is off and I will revise only that, keeping the rest.
+将功能分类法应用于整个领域揭示了不对称的数据格局。渲染器拥有海量的互联网视频。规划器可以访问来自机器人遥操作和游戏通关记录的大型离线数据集。模拟器面临着根本性的稀缺：带有显式几何、材质属性和物理标注的三维数据比供给渲染器的像素稀少数个数量级。这一数据缺口是世界模型研究中最重要的单一瓶颈。
+
+Sim-to-real 差距使问题更加复杂。在合成或 AI 生成几何上训练的模拟器必须应对仿真与现实之间的差异。R2-Dreamer 的结果在模拟中令人印象深刻，但该方法尚未在真实机器人上得到验证。PointWorld 已经展示了真实世界迁移，但其任务视野仍然较短。
+
+一个更深的架构挑战是三类功能在单一模型内部的张力。为视觉美感优化的渲染器可能牺牲模拟器或规划器所需的精度。为任务成功优化的规划器可能学习到视觉上不可解释的表征。在一个单一架构内协调这些张力是 World Labs 所识别的开放问题，也是 Marble 和 R2-Dreamer 从相反方向逼近的问题——Marble 从模拟器-渲染器边界，R2-Dreamer 从模拟器-规划器边界。
+
+---
+
+## 前方的收敛
+
+当今该领域最重要的格局是三种类别正在开始相互坍缩。Marble 已经从一个模型同时输出高斯泼溅和碰撞网格，消解了渲染器-模拟器的边界。来自机器人实验室的少量但不断增长的工作已经证明，预训练的视频渲染器可以作为联合世界与行动预测的骨干，暗示渲染器与规划器之间的桥梁。R2-Dreamer 展示了模拟器可以独立于渲染器进行优化。
+
+逻辑终点是一个统一的世界模型：一个基础模型能够渲染逼真的视图、产生物理精确的结构并规划行动序列，根据下游应用的需要切换输出模态。所有这些收敛线索背后的共享洞见是：渲染世界、模拟其动力学并在其中行动所需的知识本质上是相同的知识。
+
+这一收敛自 1980 年代末循环神经网络世界模型首次出现以来，一直是该领域默默的假设。现在，它正被多个独立的研究计划大规模检验。Dreamer 系列展示了模拟器-规划器系统能做什么。R2-Dreamer 展示了模拟器可以在没有渲染器的情况下运行。Marble 展示了渲染器-模拟器边界是可渗透的。剩下的步骤——一个以同等保真度跨越所有三类功能的单一系统——将需要三维数据获取的突破、能够平衡视觉和结构目标的架构，以及联合衡量所有三类能力的评估基准。
+
+"世界模型"一词已被滥用稀释。功能分类法为该领域提供了重新获得精确性的工具。正在进行的收敛为该领域提供了想要找回精确性的理由。
+
+---
+
+## 术语表（锁定）
+
+| 规范术语 | 定义 | 首次使用形式 |
+|---------|------|------------|
+| 世界模型 | 在 POMDP 循环内学习的环境动力学模型 | 部分可观测马尔可夫决策过程（POMDP） |
+| 功能分类法 | 三类划分：渲染器、模拟器、规划器 | — |
+| RSSM | 循环状态空间模型 | 循环状态空间模型（RSSM） |
+| Symlog | 符号对称对数变换 | — |
+| R2-Dreamer | 冗余消除的 Dreamer | — |
+
+## 假设与缺失信息
+
+1. World Labs 分类法（2026 年 6 月）被作为规范框架。全文见 https://worldlabs.ai/blog/taxonomy-of-world-models
+2. DreamerV1/V2/V3 和 R2-Dreamer 的技术细节来自已发表的 arXiv 论文，未引用未发表结果
+3. 关于 Sora 局限性的声明引用 OpenAI 自身技术报告
+
+## 声明-证据映射
+
+| 声明 | 证据 | 状态 |
+|------|------|------|
+| 大多数自称世界模型的系统仅覆盖一种功能 | Sora、Genie、GATO、GameNGen 的分类法分析 | 由论文描述和作者声明支持 |
+| Dreamer 系列是唯一同时覆盖模拟器和规划器的家族 | V1（ICLR 2020）、V2（ICLR 2021）、V3（2023） | 由已发表架构支持 |
+| R2-Dreamer 在无解码器下匹配 V3 性能 | ICLR 2026 论文（arXiv:2603.18202） | 由已发表结果支持 |
+| 模拟器可独立于渲染器优化 | R2-Dreamer 结果、PointWorld 结果 | 已支持 |
+| 三类功能正在收敛 | Marble、视频渲染器联合预测、R2-Dreamer | 趋势级证据，部分支持 |
+
+## 结构说明
+
+1. **POMDP 先行开场**。先建立概念框架再引入分类法，POMDP 循环将强化学习、机器人学和生成式 AI 统一为一种语言。
+2. **反例置于 Dreamer 系列之前**。先定义世界模型不是什么（Sora、Genie、GATO），使 Dreamer 系列的贡献更加鲜明。
+3. **Dreamer 章节内架构到证据的排序**。每一代呈现为受动机驱动的架构决策及其产出的证据，使非专业读者理解每次更改的意义。
+4. **R2-Dreamer 作为枢纽**。最新结果被定位为分类法核心预测的检验，而非增量改进，连接了框架与收敛叙事。
+5. **有界的结论**。结尾如实地陈述收敛趋势，不承诺统一模型即将到来。
