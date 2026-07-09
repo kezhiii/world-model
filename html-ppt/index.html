@@ -97,14 +97,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
       </div>
       <div style="background:rgba(255,107,53,.15);padding:2.4vh 1.5vw;border-left:3px solid #FF6B35">
         <div style="font-size:min(2vw,3.6vh);font-weight:200;color:#FF8A50;margin-bottom:1.2vh">Simulator</div>
-        <div class="body-sm" style="margin-bottom:.6vh">学习目标：T̂(s_{t+1} | s_t, a_t)</div>
+        <div class="body-sm" style="margin-bottom:.6vh">学习目标：$\hat{T}(s_{t+1} \mid s_t, a_t)$</div>
         <div class="body-sm">输出：状态（几何/物理）</div>
         <div class="body-sm">合约：结构精确</div>
         <div class="mono-accent" style="margin-top:1vh">代表：Dreamer, PINN</div>
       </div>
       <div style="background:rgba(255,255,255,.06);padding:2.4vh 1.5vw">
         <div style="font-size:min(2vw,3.6vh);font-weight:200;margin-bottom:1.2vh">Planner</div>
-        <div class="body-sm" style="margin-bottom:.6vh">学习目标：π(a_t | s_t, g)</div>
+        <div class="body-sm" style="margin-bottom:.6vh">学习目标：$\pi(a_t \mid s_t, g)$</div>
         <div class="body-sm">输出：行动序列</div>
         <div class="body-sm">合约：决策正确</div>
         <div class="mono" style="margin-top:1vh">代表：Dreamer, MuZero</div>
@@ -233,9 +233,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
       </div>
       <div class="col col-center">
         <div class="stat-card bt-accent"><div class="stat-label">RSSM 三条信息流</div>
-        <div class="body-sm mt-2"><span style="font-weight:500">确定性 GRU 路径</span><br>\ = f(h_{t-1}, s_{t-1}, a_{t-1})\$</div>
-        <div class="body-sm mt-2"><span style="font-weight:500">随机后验路径</span><br>s_t ~ q(s_t | h_t, o_t)</div>
-        <div class="body-sm mt-2"><span style="font-weight:500">先验预测路径</span><br>ŝ_t ~ p(ŝ_t | h_t)</div>
+        <div class="body-sm mt-2"><span style="font-weight:500">确定性 GRU 路径</span><br>$$h_t = f(h_{t-1}, s_{t-1}, a_{t-1})$$</div>
+        <div class="body-sm mt-2"><span style="font-weight:500">随机后验路径</span><br>$s_t \sim q(s_t \mid h_t, o_t)$</div>
+        <div class="body-sm mt-2"><span style="font-weight:500">先验预测路径</span><br>$\hat{s}_t \sim p(\hat{s}_t \mid h_t)$</div>
         <div class="body-sm mt-2" style="color:#666">KL 散度约束使先验学会匹配后验——规划时无需观测即可独立向前滚动</div></div>
         <div class="stat-card bt-thin mt-2"><div class="stat-label">训练</div><div class="stat-note">最大化 ELBO：像素重构 + 奖励预测 + KL 正则。然后在潜空间中做 imagined rollout 训练 Actor-Critic。</div></div>
       </div>
@@ -267,7 +267,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     <div class="grid-2 flex-1">
       <div class="col col-center">
         <div class="stat-card bt-accent"><div class="stat-label">Dreamer · 显式模拟器路线</div></div>
-        <div class="body-sm mt-1">RSSM 显式生成 ŝ_{t+1}, r̂_{t+1}</div>
+        <div class="body-sm mt-1">RSSM 显式生成 $\hat{s}_{t+1}, \hat{r}_{t+1}$</div>
         <div class="body-sm">表征监督：通过像素重构 + 奖励预测</div>
         <div class="body-sm">规划方式：Actor-Critic 在隐想象轨迹上</div>
         <div class="body-sm" style="color:#FF6B35">状态可独立消费、可解码、可解释</div>
@@ -275,7 +275,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
       </div>
       <div class="col col-center">
         <div class="stat-card"><div class="stat-label">MuZero · 隐式模拟器路线</div></div>
-        <div class="body-sm mt-1">学习 h_t，预测策略 p_t、价值 v_t、奖励 r_t</div>
+        <div class="body-sm mt-1">学习 $h_t$，预测策略 $p_t$、价值 $v_t$、奖励 $r_t$</div>
         <div class="body-sm">表征监督：通过策略/价值/奖励一致性</div>
         <div class="body-sm">规划方式：MCTS 在隐藏状态树上搜索</div>
         <div class="body-sm" style="color:#999">状态仅为搜索服务，不单独输出</div>
@@ -393,7 +393,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
         <div class="stat-card bt-accent"><div class="stat-label">思路一：Physics-guided RSSM</div></div>
         <div class="body-sm mt-1">状态演化拆分为两部分：已知物理模型（轨道传播、姿态动力学等解析模型）+ 神经网络学习残差动力学（环境扰动、执行器误差、感知偏差）。世界模型学习的不再是整个动力学，而是未知部分，显著减少训练数据需求。</div>
         <div class="stat-card bt-accent mt-2"><div class="stat-label">思路二：物理约束潜空间</div></div>
-        <div class="body-sm mt-1">RSSM 的潜在状态缺乏物理约束。将轨道动力学约束加入潜空间优化，不仅要求预测未来，还要求预测结果满足动力学一致性。</div>
+        <div class="body-sm mt-1">RSSM 的潜在状态缺乏物理约束。将轨道动力学约束（$\dot{\omega} = I^{-1}(\tau - \omega \times I\omega)$）加入潜空间优化，不仅要求预测未来，还要求预测结果满足动力学一致性。</div>
       </div>
       <div class="col col-center">
         <div class="stat-card bt-accent"><div class="stat-label">思路三：分层建模（针对接触动力学）</div></div>
