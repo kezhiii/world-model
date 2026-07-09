@@ -12,8 +12,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
 .h2{font-weight:300;font-size:min(2.2vw,4vh);line-height:1.25;letter-spacing:-.01em}
 .h2-accent{font-weight:300;font-size:min(2.2vw,4vh);line-height:1.25;color:#FF6B35}
 .h3{font-weight:400;font-size:min(1.6vw,3vh);line-height:1.3}
-.body{font-weight:400;font-size:max(15px,1vw);line-height:1.6}
-.body-sm{font-size:max(13px,.85vw);line-height:1.5;opacity:.7}
+.body{font-weight:400;font-size:max(15px,1vw);line-height:1.7}
+.body-sm{font-size:max(13px,.85vw);line-height:1.6;opacity:.78}
 .mono{font-family:JetBrains Mono,Consolas,monospace;font-size:max(12px,.75vw);letter-spacing:.15em;text-transform:uppercase;opacity:.6}
 .mono-accent{font-family:JetBrains Mono,Consolas,monospace;font-size:max(12px,.75vw);letter-spacing:.15em;color:#FF6B35}
 .mono-row{display:flex;gap:1.2em;font-family:JetBrains Mono,Consolas,monospace;font-size:max(12px,.78vw);letter-spacing:.15em;text-transform:uppercase;opacity:.65}
@@ -26,27 +26,23 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
 .grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1.2vw}
 .grid-5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:1vw}
 .col{display:flex;flex-direction:column}
-.col-center{justify-content:center}
 .stat-card{padding-top:1.6vh;border-top:2px solid currentColor}
 .stat-card.bt-accent{border-top:3px solid #FF6B35}
 .stat-card.bt-thin{border-top:1px solid rgba(127,127,127,.4)}
 .stat-label{font-family:JetBrains Mono,Consolas,monospace;font-size:max(12px,.75vw);letter-spacing:.2em;text-transform:uppercase;opacity:.6}
 .stat-nb{font-weight:200;font-size:min(3.6vw,6.5vh);line-height:.9;letter-spacing:-.03em;margin-top:.4vh}
-.stat-note{font-size:max(13px,.85vw);line-height:1.5;opacity:.75;margin-top:.6vh}
+.stat-note{font-size:max(13px,.85vw);line-height:1.6;opacity:.8;margin-top:.6vh}
 .box{background:rgba(255,255,255,.06);padding:2.4vh 1.2vw}
 .box-grey{background:#f0f0ee;padding:2.4vh 2vw}
 .mt-1{margin-top:1vh}.mt-2{margin-top:2vh}.mt-3{margin-top:3vh}.mt-4{margin-top:4vh}.mb-3{margin-bottom:3vh}.mb-4{margin-bottom:4vh}
-.border-top{border-top:1px solid #d4d4d2;padding-top:2vh;margin-top:2vh}.flex-1{flex:1}.gap-1{gap:1vh}
-.q-mark{display:inline-flex;align-items:center;justify-content:center;width:min(5vw,7vh);height:min(5vw,7vh);border-radius:0;background:#FF6B35;color:#fff;font-size:min(2.4vw,4.2vh);font-weight:700;margin-right:1.2vw;flex-shrink:0}
+.border-top{border-top:1px solid #d4d4d2;padding-top:2vh;margin-top:2vh}
 .mid-dot{display:inline-block;width:4px;height:4px;border-radius:50%;background:currentColor;vertical-align:middle}
-/* nav dots */
 #nav{position:fixed;bottom:2.5vh;left:50%;transform:translateX(-50%);z-index:100;display:flex;gap:7px;max-width:90vw;flex-wrap:wrap;justify-content:center}
 #nav a{display:block;width:7px;height:7px;background:rgba(0,0,0,.25);transition:all .3s;border:0;outline:0;flex-shrink:0}
 #nav a.active{background:#FF6B35;width:16px}
 .dark-bg #nav a{background:rgba(255,255,255,.3)}
 .dark-bg #nav a.active{background:#FF6B35}
 #hint{position:fixed;bottom:5vh;right:2vw;z-index:100;font-family:JetBrains Mono,Consolas,monospace;font-size:11px;opacity:.4;pointer-events:none;letter-spacing:.08em}
-@media(max-width:768px){.grid-2,.grid-3,.grid-4,.grid-5{grid-template-columns:1fr}.slide{padding:4vh 5vw}}
 </style></head><body><div id="deck">
 
 <!-- 1: Cover -->
@@ -58,73 +54,88 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
   <div class="mono-row" style="margin-top:5vh"><span>2026.07</span><span class="mid-dot"></span><span>Group Meeting</span></div>
 </section>
 
-<!-- 2: Opening Question -->
+<!-- 2: Opening -->
 <section class="slide hero light">
-  <div style="max-width:80%">
+  <div style="max-width:85%">
     <div class="mono-accent" style="margin-bottom:2vh">Opening · 5 min</div>
     <div class="h1" style="font-size:min(4.8vw,8.5vh);margin-bottom:4vh">到底什么才是<br>真正的世界模型？</div>
-    <div class="h2" style="font-weight:200;max-width:70%;line-height:1.5">几乎所有生成视频、机器人和强化学习模型都自称"World Model"——如果没有统一标准，它已逐渐变成一个营销术语。</div>
+    <div class="h2" style="font-weight:200;line-height:1.6">近年来，从强化学习、机器人到视频生成、多模态智能体，越来越多的工作开始使用"World Model"或"World Simulator"来描述自己的系统。但这些工作解决的问题完全不同——有的生成逼真视频，有的学习环境动力学，有的负责规划决策。如果没有统一标准，"世界模型"已逐渐变成一个过于宽泛的概念。</div>
   </div>
 </section>
 
-<!-- 3: Examples -->
+<!-- 3: Four Systems -->
 <section class="slide light">
   <div class="slide-inner">
-    <div class="disc-tag">Opening</div>
-    <div class="h1 h1-sm mb-4">自称世界模型的系统</div>
+    <div class="disc-tag">Opening · 四个自称世界模型的系统</div>
+    <div class="h1 h1-sm mb-4">它们都叫"世界模型"，但能力完全不同</div>
     <div class="grid-2 flex-1">
       <div class="col col-center">
-        <div class="stat-card bt-accent"><div class="stat-label">OpenAI</div><div class="stat-nb" style="font-size:min(3vw,5.5vh)">Sora</div><div class="stat-note">Video Generation<br>自称 "World Simulator"</div></div>
+        <div class="stat-card bt-accent"><div class="stat-label">OpenAI · 2024</div><div class="stat-nb" style="font-size:min(2.6vw,4.8vh)">Sora</div><div class="body-sm mt-1">文本生成视频模型，DiT 架构，30 亿参数。能够生成一分钟高保真视频，展现三维一致性和物体持久性。自称 "World Simulator"。</div><div class="body-sm" style="margin-top:.6vh;color:#FF6B35">→ Reality：输出是像素而非世界状态</div></div>
+        <div class="stat-card mt-2"><div class="stat-label">DeepMind · 2024</div><div class="stat-nb" style="font-size:min(2.6vw,4.8vh)">Genie</div><div class="body-sm mt-1">110 亿参数交互式世界模型，从无标注互联网视频学习。允许用户在生成环境中逐帧交互。自称 "Foundation World Model"。</div><div class="body-sm" style="margin-top:.6vh;color:#FF6B35">→ Reality：状态隐式编码在 Token 中</div></div>
       </div>
       <div class="col col-center">
-        <div class="stat-card"><div class="stat-label">DeepMind</div><div class="stat-nb" style="font-size:min(3vw,5.5vh)">Dreamer</div><div class="stat-note">Model-Based RL<br>自称 "World Model"</div></div>
-      </div>
-    </div>
-    <div class="grid-2 mt-3">
-      <div class="col col-center">
-        <div class="stat-card"><div class="stat-label">DeepMind</div><div class="stat-nb" style="font-size:min(3vw,5.5vh)">MuZero</div><div class="stat-note">Model-Based RL<br>自称 "Model-based RL"</div></div>
-      </div>
-      <div class="col col-center">
-        <div class="stat-card"><div class="stat-label">DeepMind</div><div class="stat-nb" style="font-size:min(3vw,5.5vh)">Genie</div><div class="stat-note">Interactive Gen<br>自称 "Foundation World Model"</div></div>
+        <div class="stat-card"><div class="stat-label">DeepMind · 2020</div><div class="stat-nb" style="font-size:min(2.6vw,4.8vh)">MuZero</div><div class="body-sm mt-1">模型驱动强化学习，无需已知环境动力学。学习隐藏状态 h_t，同时预测策略 p_t、价值 v_t、奖励 r_t，利用 MCTS 完成搜索和规划。Nature 论文，Atari 超人类。</div><div class="body-sm" style="margin-top:.6vh;color:#FF6B35">→ Reality：隐藏状态为搜索服务，不独立输出</div></div>
+        <div class="stat-card mt-2"><div class="stat-label">DeepMind · 2019</div><div class="stat-nb" style="font-size:min(2.6vw,4.8vh)">Dreamer</div><div class="body-sm mt-1">基于 RSSM 的模型驱动 RL 框架。在潜空间中学习环境状态如何随时间演化，利用预测的未来状态直接训练策略。Simulator 和 Planner 在同一潜空间中协同完成。</div><div class="body-sm" style="margin-top:.6vh;color:#FF6B35">→ Reality：唯一同时覆盖 Simulator+Planner</div></div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- 4: Taxonomy -->
-<section class="slide dark hero">
-  <div class="mono-accent" style="margin-bottom:2vh">World Labs · 2026</div>
-  <div class="h1 h1-sm mb-4">功能分类法</div>
-  <div class="h2" style="font-weight:200;margin-bottom:4vh">不是按网络结构分类，而是按系统真正完成的功能分类</div>
-  <div style="display:flex;gap:2vw;width:80%;justify-content:center">
-    <div style="flex:1;background:rgba(255,255,255,.06);padding:2.4vh 1.2vw"><div style="font-size:min(2vw,3.6vh);font-weight:200">Renderer</div><div class="body-sm" style="margin-top:1vh">输出观测/像素</div><div class="mono" style="margin-top:.6vh">视觉逼真</div></div>
-    <div style="flex:1;background:rgba(255,107,53,.2);padding:2.4vh 1.2vw"><div style="font-size:min(2vw,3.6vh);font-weight:200">Simulator</div><div class="body-sm" style="margin-top:1vh">输出状态</div><div class="mono-accent" style="margin-top:.6vh">结构精确</div></div>
-    <div style="flex:1;background:rgba(255,255,255,.06);padding:2.4vh 1.2vw"><div style="font-size:min(2vw,3.6vh);font-weight:200">Planner</div><div class="body-sm" style="margin-top:1vh">输出行动</div><div class="mono" style="margin-top:.6vh">决策正确</div></div>
+<section class="slide dark">
+  <div class="slide-inner">
+    <div class="mono-accent" style="margin-bottom:1.5vh">World Labs · 2026</div>
+    <div class="h1 h1-sm mb-4">功能分类法：不是按结构，而是按功能</div>
+    <div class="body mb-3">我们按照系统真正完成的功能，而不是网络结构，将世界模型分为三类。这三类功能共享底层知识（几何、物理、动力学），仅是投影方式不同。</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5vw;margin-bottom:3vh">
+      <div style="background:rgba(255,255,255,.06);padding:2.4vh 1.5vw">
+        <div style="font-size:min(2vw,3.6vh);font-weight:200;margin-bottom:1.2vh">Renderer</div>
+        <div class="body-sm" style="margin-bottom:.6vh">学习目标：p(o_t | s_t)</div>
+        <div class="body-sm">输出：观测/像素</div>
+        <div class="body-sm">合约：视觉逼真</div>
+        <div class="mono" style="margin-top:1vh">代表：Sora, Genie</div>
+      </div>
+      <div style="background:rgba(255,107,53,.15);padding:2.4vh 1.5vw;border-left:3px solid #FF6B35">
+        <div style="font-size:min(2vw,3.6vh);font-weight:200;color:#FF8A50;margin-bottom:1.2vh">Simulator</div>
+        <div class="body-sm" style="margin-bottom:.6vh">学习目标：T̂(s_{t+1} | s_t, a_t)</div>
+        <div class="body-sm">输出：状态（几何/物理）</div>
+        <div class="body-sm">合约：结构精确</div>
+        <div class="mono-accent" style="margin-top:1vh">代表：Dreamer, PINN</div>
+      </div>
+      <div style="background:rgba(255,255,255,.06);padding:2.4vh 1.5vw">
+        <div style="font-size:min(2vw,3.6vh);font-weight:200;margin-bottom:1.2vh">Planner</div>
+        <div class="body-sm" style="margin-bottom:.6vh">学习目标：π(a_t | s_t, g)</div>
+        <div class="body-sm">输出：行动序列</div>
+        <div class="body-sm">合约：决策正确</div>
+        <div class="mono" style="margin-top:1vh">代表：Dreamer, MuZero</div>
+      </div>
+    </div>
+    <div class="accent-bg"><div class="body" style="font-weight:300">核心命题：模拟器是三类中的支点——掌握了模拟能力才能向上支持渲染、向下支撑规划。评价一个系统是不是世界模型，关键不在于它采用了什么网络结构，而在于它真正完成了哪些功能。</div></div>
   </div>
-  <div class="body-sm" style="margin-top:4vh;max-width:70%">三类功能共享底层知识（几何、物理、动力学），仅是投影方式不同</div>
 </section>
 
-<!-- 5: Discussion 1 Title -->
+<!-- 5: Discussion 1 -->
 <section class="slide hero light">
   <div class="mono-accent" style="margin-bottom:2vh">Discussion 1 · 10 min</div>
   <div class="h1" style="font-size:min(4.4vw,8vh)">什么才算世界模型？</div>
-  <div class="h2" style="font-weight:200;margin-top:3vh;max-width:70%">按照网络结构分类，还是按照系统真正完成的功能分类？</div>
+  <div class="h2" style="font-weight:200;margin-top:3vh;max-width:70%;line-height:1.6">如果按照功能分类法重新审视当前主流模型，我们会得到怎样的结论？这些模型虽然都被称为世界模型，但分别代表了不同的发展重点。</div>
 </section>
 
 <!-- 6: Sora -->
 <section class="slide light">
   <div class="slide-inner">
-    <div class="disc-tag">Discussion 1 · Sora</div>
-    <div class="h1 h1-sm mb-3">Sora：World Simulator？</div>
+    <div class="disc-tag">Discussion 1 · Sora 审计</div>
+    <div class="h1 h1-sm mb-3">Sora：World Simulator 还是 Video Generator？</div>
     <div class="grid-2 flex-1">
       <div class="col col-center">
-        <div class="body mb-3">OpenAI 文本生成视频模型，30 亿参数，DiT 架构，时空 Patch。能够生成一分钟高保真视频，展现三维一致性和物体持久性。</div>
-        <div class="body-sm" style="color:#666">“Video generation models as world simulators” — OpenAI, 2024</div>
+        <div class="body mb-2">OpenAI 的 Sora 是文本生成视频的代表性工作。它利用 Diffusion Transformer 在时空 Patch 上操作，以 30 亿参数规模展现出涌现的三维一致性和物体持久性。从视觉效果来看，它似乎能够"预测"未来，因此很多人自然地将它理解为一种世界模拟器。但 Sora 最终输出的是视频，不是世界状态——它关注的是如何生成符合真实世界规律的观测，而不是如何建立一个能够持续演化的世界状态表示。</div>
+        <div class="body-sm">"Video generation models as world simulators" — OpenAI, 2024</div>
+        <div class="body-sm" style="margin-top:.6vh">但 OpenAI 自己承认：Sora "does not accurately model the physics of many basic interactions, like glass shattering."</div>
       </div>
       <div class="col col-center">
-        <div class="stat-card bt-accent"><div class="stat-label">功能分类法审计</div>
-        <div style="margin-top:1.5vh"><span class="mono-accent">Renderer ★★★</span><br><span class="mono" style="color:#999">Simulator ☆</span><br><span class="mono" style="color:#999">Planner ☆</span></div></div>
-        <div class="stat-card bt-thin mt-2"><div class="stat-label">关键缺口</div><div class="stat-note">自承"不能准确建模玻璃破碎等物理交互"。输出是像素而非世界状态，合约是视觉逼真而非结构精确。</div></div>
+        <div class="stat-card bt-accent"><div class="stat-label">功能分类法审计结果</div>
+        <div style="margin-top:1.2vh"><span class="mono-accent">Renderer ★★★</span><br><span class="mono" style="color:#999">Simulator ☆</span><br><span class="mono" style="color:#999">Planner ☆</span></div></div>
+        <div class="stat-card bt-thin mt-2"><div class="stat-label">审计结论</div><div class="stat-note">Sora 的核心能力属于 Renderer。视觉真实性与结构真实性对应的是两种不同能力。一个模型能够生成逼真的视频，并不意味着它已经建立了可供规划和推理使用的世界模型。这不是否定 Sora 的价值，而是强调能力边界。</div></div>
       </div>
     </div>
   </div>
@@ -133,17 +144,17 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
 <!-- 7: Genie -->
 <section class="slide light">
   <div class="slide-inner">
-    <div class="disc-tag">Discussion 1 · Genie</div>
-    <div class="h1 h1-sm mb-3">Genie：交互式生成器</div>
+    <div class="disc-tag">Discussion 1 · Genie 审计</div>
+    <div class="h1 h1-sm mb-3">Genie：Renderer 向 Simulator 演进的中间态</div>
     <div class="grid-2 flex-1">
       <div class="col col-center">
-        <div class="body mb-3">DeepMind 110 亿参数交互式世界模型。从无标注互联网视频学习，生成 action-controllable 虚拟世界。逐步控制帧生成。</div>
+        <div class="body mb-2">Google DeepMind 的 Genie 是一个 110 亿参数的交互式世界模型。它从无标注互联网视频中训练，生成 action-controllable 虚拟世界。其三组件架构——时空视频分词器、自回归动力学模型、潜在动作模型——允许用户逐帧控制生成内容。相比 Sora，Genie 更进一步：它不仅生成环境，还允许用户在其中交互，因此开始具备一定的世界模型特征。</div>
         <div class="body-sm">被原作者称为 "Foundation World Model"</div>
       </div>
       <div class="col col-center">
-        <div class="stat-card bt-accent"><div class="stat-label">功能分类法审计</div>
-        <div style="margin-top:1.5vh"><span class="mono-accent">Renderer ★★★</span><br><span class="mono" style="color:#999">Simulator ★(隐式)</span><br><span class="mono" style="color:#999">Planner ☆</span></div></div>
-        <div class="stat-card bt-thin mt-2"><div class="stat-label">边界</div><div class="stat-note">状态隐式编码在 Token 中，未输出可被物理引擎消费的结构化几何。属于 action-conditioned Renderer。</div></div>
+        <div class="stat-card bt-accent"><div class="stat-label">功能分类法审计结果</div>
+        <div style="margin-top:1.2vh"><span class="mono-accent">Renderer ★★★</span><br><span class="mono" style="color:#999">Simulator ★（隐式编码）</span><br><span class="mono" style="color:#999">Planner ☆</span></div></div>
+        <div class="stat-card bt-thin mt-2"><div class="stat-label">审计结论</div><div class="stat-note">Genie 对环境的表示主要服务于交互式内容生成，没有形成一个可以独立消费、持续演化的状态表示。它的"状态"隐式编码在视频 Token 中，未输出可供物理引擎消费的结构化几何。因此，Genie 仍属于 action-conditioned Renderer，正在向 Simulator 演进。</div></div>
       </div>
     </div>
   </div>
@@ -152,17 +163,17 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
 <!-- 8: MuZero -->
 <section class="slide light">
   <div class="slide-inner">
-    <div class="disc-tag">Discussion 1 · MuZero</div>
-    <div class="h1 h1-sm mb-3">MuZero：隐式世界模型</div>
+    <div class="disc-tag">Discussion 1 · MuZero 审计</div>
+    <div class="h1 h1-sm mb-3">MuZero：隐式世界模型的代表</div>
     <div class="grid-2 flex-1">
       <div class="col col-center">
-        <div class="body mb-3">DeepMind 2020，Nature 论文。无需已知环境动力学，学习隐藏状态 h_t，同时预测策略 p_t、价值 v_t、奖励 r_t。MCTS 规划。</div>
-        <div class="body-sm">Atari 超人类 · 围棋/象棋/将棋 AlphaZero 级</div>
+        <div class="body mb-2">MuZero 发布于 Nature 2020，是 DeepMind 在 AlphaZero 基础上发展出的模型驱动强化学习方法。它无需已知环境动力学，在学习过程中建立隐藏状态 h_t，同时预测策略 p_t、价值 v_t、奖励 r_t，利用 MCTS 完成搜索和规划。在 Atari 上超越人类，在围棋、国际象棋和将棋中达到 AlphaZero 水平。</div>
+        <div class="body mb-2">它的核心洞察是：不需要显式建模环境的所有细节，只需建模对决策有用的信息——策略、价值和奖励。隐藏状态主要服务于搜索过程，不会作为一个独立的世界状态供其他模块使用。</div>
       </div>
       <div class="col col-center">
-        <div class="stat-card bt-accent"><div class="stat-label">功能分类法审计</div>
-        <div style="margin-top:1.5vh"><span class="mono" style="color:#999">Renderer ☆</span><br><span class="mono-accent">Simulator ★★(隐式)</span><br><span class="mono-accent">Planner ★★★</span></div></div>
-        <div class="stat-card bt-thin mt-2"><div class="stat-label">核心洞察</div><div class="stat-note">不需要显式建模环境的所有细节，只需建模对决策有用的信息。状态仅为搜索服务，不单独输出。</div></div>
+        <div class="stat-card bt-accent"><div class="stat-label">功能分类法审计结果</div>
+        <div style="margin-top:1.2vh"><span class="mono" style="color:#999">Renderer ☆</span><br><span class="mono-accent">Simulator ★★（隐式）</span><br><span class="mono-accent">Planner ★★★</span></div></div>
+        <div class="stat-card bt-thin mt-2"><div class="stat-label">审计结论</div><div class="stat-note">MuZero 确实建立了环境表示，但这种表示是围绕规划任务构建的、具有强任务导向性的，而不是面向通用世界建模。因此，我们倾向于将 MuZero 理解为隐式世界模型：它同时覆盖了隐式 Simulator 和 Planner，但状态不可独立消费。</div></div>
       </div>
     </div>
   </div>
@@ -171,231 +182,278 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
 <!-- 9: Dreamer -->
 <section class="slide light">
   <div class="slide-inner">
-    <div class="disc-tag">Discussion 1 · Dreamer</div>
-    <div class="h1 h1-sm mb-3">Dreamer：唯一双功能对齐</div>
+    <div class="disc-tag">Discussion 1 · Dreamer 审计</div>
+    <div class="h1 h1-sm mb-3">Dreamer：唯一显式 Simulator+Planner 对齐</div>
     <div class="grid-2 flex-1">
       <div class="col col-center">
-        <div class="body mb-3">基于 RSSM 的模型驱动 RL 框架。在潜空间学习环境状态演化，利用预测的未来状态直接优化策略。Simulator 和 Planner 在同一潜空间中协同完成。</div>
-        <div class="body-sm">V1 (ICLR 2020) · V2 (ICLR 2021) · V3 (2023) · R2 (ICLR 2026)</div>
+        <div class="body mb-2">Dreamer 属于模型驱动强化学习方法。与传统 RL 直接从真实环境学习策略不同，Dreamer 先学习一个能够描述环境演化的世界模型（RSSM），再在这个世界中完成策略优化。它不是简单地学习"下一步应该做什么"，而是首先回答"如果我采取某个动作，未来的世界会发生什么变化"——只有能够回答这个问题，智能体才能真正利用"想象"完成规划。</div>
+        <div class="body mb-2">Dreamer 学习得到的潜在状态不仅能够支持规划，还能够持续预测未来状态，形成了一个相对完整的世界模型闭环。从功能分类法来看，它同时覆盖了 Simulator 和 Planner 两项核心功能，是目前最符合这一功能定义的代表性工作。</div>
       </div>
       <div class="col col-center">
-        <div class="stat-card bt-accent"><div class="stat-label">功能分类法审计</div>
-        <div style="margin-top:1.5vh"><span class="mono" style="color:#999">Renderer ★★</span><br><span class="mono-accent">Simulator ★★★</span><br><span class="mono-accent">Planner ★★★</span></div></div>
-        <div class="stat-card bt-thin mt-2"><div class="stat-label">意义</div><div class="stat-note">同时覆盖 Simulator 和 Planner，是目前最符合功能定义的代表性工作。</div></div>
+        <div class="stat-card bt-accent"><div class="stat-label">功能分类法审计结果</div>
+        <div style="margin-top:1.2vh"><span class="mono" style="color:#999">Renderer ★★</span><br><span class="mono-accent">Simulator ★★★</span><br><span class="mono-accent">Planner ★★★</span></div></div>
+        <div class="stat-card bt-thin mt-2"><div class="stat-label">意义</div><div class="stat-note">Dreamer 不是先建模再交给其他算法规划，而是在同一个框架内完成了世界建模和决策规划，真正实现了 Simulator 与 Planner 的统一。</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 10: Comparison Summary -->
+<!-- 10: Comparison -->
 <section class="slide dark">
   <div class="slide-inner">
-    <div class="mono-accent" style="margin-bottom:2vh">Summary · Discussion 1</div>
-    <div class="h1 h1-sm mb-4">四类模型 × 三项功能</div>
+    <div class="mono-accent" style="margin-bottom:1.5vh">Discussion 1 · 总结</div>
+    <div class="h1 h1-sm mb-4">四类模型 × 三项功能：能力对比</div>
+    <div class="body mb-3">它们分别代表了不同的发展重点——Sora 强调观测生成，Genie 开始向 Simulator 延伸，MuZero 代表隐式 Simulator+Planner 路线，Dreamer 实现了显式 Simulator+Planner 的统一。功能分类法的价值，在于帮助我们更清晰地理解这些模型之间的能力边界，而不仅仅关注网络结构。</div>
     <div class="grid-4 mb-3">
-      <div class="box"><div style="font-weight:300;font-size:min(1.4vw,2.6vh)">Sora</div><div class="mono" style="margin-top:.6vh">Renderer ★★★</div><div class="mono" style="color:#999">Sim ☆ Pln ☆</div></div>
-      <div class="box"><div style="font-weight:300;font-size:min(1.4vw,2.6vh)">Genie</div><div class="mono" style="margin-top:.6vh">Renderer ★★★</div><div class="mono" style="color:#999">Sim ★(隐) Pln ☆</div></div>
-      <div class="box"><div style="font-weight:300;font-size:min(1.4vw,2.6vh)">MuZero</div><div class="mono" style="margin-top:.6vh">Sim ★★(隐) Pln ★★★</div><div class="mono" style="color:#999">Ren ☆</div></div>
-      <div class="box" style="background:rgba(255,107,53,.15)"><div style="font-weight:300;font-size:min(1.4vw,2.6vh);color:#FF8A50">Dreamer</div><div class="mono-accent" style="margin-top:.6vh">Sim ★★★ Pln ★★★</div><div class="mono" style="color:#999">Ren ★★</div></div>
+      <div class="box"><div style="font-weight:300;font-size:min(1.4vw,2.6vh);margin-bottom:.6vh">Sora</div><div class="mono-accent">Renderer ★★★</div><div class="mono" style="color:#999">Sim ☆ Pln ☆</div><div class="body-sm" style="margin-top:.6vh">输出观测/像素，非世界状态</div></div>
+      <div class="box"><div style="font-weight:300;font-size:min(1.4vw,2.6vh);margin-bottom:.6vh">Genie</div><div class="mono-accent">Renderer ★★★</div><div class="mono" style="color:#999">Sim ★(隐) Pln ☆</div><div class="body-sm" style="margin-top:.6vh">状态编码在 Token 中</div></div>
+      <div class="box"><div style="font-weight:300;font-size:min(1.4vw,2.6vh);margin-bottom:.6vh">MuZero</div><div class="mono-accent">Sim ★★(隐)</div><div class="mono-accent">Pln ★★★</div><div class="body-sm" style="margin-top:.6vh">隐藏状态为搜索服务</div></div>
+      <div class="box" style="background:rgba(255,107,53,.15)"><div style="font-weight:300;font-size:min(1.4vw,2.6vh);margin-bottom:.6vh;color:#FF8A50">Dreamer</div><div class="mono-accent">Sim ★★★</div><div class="mono-accent">Pln ★★★</div><div class="body-sm" style="margin-top:.6vh;color:#FF8A50">唯一双功能对齐</div></div>
     </div>
-    <div class="accent-bg"><div class="body" style="font-weight:300">核心结论：Function > Architecture — 评价系统是不是世界模型，关键不在网络结构，而在它真正完成了哪些功能。</div></div>
+    <div class="accent-bg"><div class="body" style="font-weight:300">核心结论：Function > Architecture。评价系统是不是世界模型，关键不在网络结构，而在它真正完成了哪些功能。当前世界模型的发展不是比较"哪个更先进"，而是不同模型围绕三类功能进行了不同的能力组合。</div></div>
   </div>
 </section>
 
-<!-- 11: Discussion 2 Title -->
+<!-- 11: Discussion 2 -->
 <section class="slide hero light">
   <div class="mono-accent" style="margin-bottom:2vh">Discussion 2 · 10 min</div>
   <div class="h1" style="font-size:min(4.4vw,8vh)">为什么 Dreamer 如此独特？</div>
-  <div class="h2" style="font-weight:200;margin-top:3vh;max-width:65%">显式世界模型 vs 隐式世界模型</div>
+  <div class="h2" style="font-weight:200;margin-top:3vh;max-width:70%;line-height:1.6">真正同时完成 Simulator 和 Planner 两项核心功能的工作并不多。Dreamer 凭什么做到这一点？它与 MuZero 又有哪些本质区别？</div>
 </section>
 
 <!-- 12: RSSM -->
 <section class="slide light">
   <div class="slide-inner">
-    <div class="disc-tag">Discussion 2 · RSSM</div>
-    <div class="h1 h1-sm mb-3">RSSM：循环状态空间模型</div>
+    <div class="disc-tag">Discussion 2 · RSSM 原理</div>
+    <div class="h1 h1-sm mb-3">Dreamer 的核心：循环状态空间模型</div>
     <div class="grid-2 flex-1">
       <div class="col col-center">
-        <div class="body mb-3">不是直接预测未来图像，而是学习隐变量状态，在潜空间中描述世界如何随时间演化。</div>
-        <div class="stat-card bt-thin"><div class="stat-label">三步过程</div><div class="stat-note">① 编码当前观测→潜在状态<br>② 根据状态+动作预测下一状态<br>③ 利用预测状态完成价值评估和策略学习</div></div>
+        <div class="body mb-2">Dreamer 的核心在于 RSSM（Recurrent State-Space Model），它是一个潜空间中的世界模型。RSSM 不是直接预测未来图像，而是学习一个隐变量状态，并在这个潜空间中描述世界如何随时间演化。整个过程可以理解为三步：首先根据当前观测和历史信息编码得到当前潜在状态；然后 RSSM 根据当前状态和动作预测下一时刻的潜在状态；最后利用预测得到的未来状态完成价值评估和策略学习。Dreamer 真正学习的是"状态如何变化"，而不是"像素如何变化"。</div>
+        <div class="accent-bg"><div class="body-sm" style="font-weight:300">同一个潜空间同时承担了环境模拟和策略优化两项任务——这是 Dreamer 与很多世界模型最大的区别。</div></div>
       </div>
       <div class="col col-center">
-        <div class="stat-card bt-accent"><div class="stat-label">三条信息流</div>
-        <div class="body-sm mt-2">确定性 GRU：h_t = f(h_{t-1}, s_{t-1}, a_{t-1})</div>
-        <div class="body-sm mt-1">后验路径：s_t ~ q(s_t | h_t, o_t)</div>
-        <div class="body-sm mt-1">先验路径：ŝ_t ~ p(ŝ_t | h_t)</div>
-        <div class="body-sm mt-2" style="color:#666">先验学会匹配后验→规划时无需观测即可向前滚动</div></div>
+        <div class="stat-card bt-accent"><div class="stat-label">RSSM 三条信息流</div>
+        <div class="body-sm mt-2"><span style="font-weight:500">确定性 GRU 路径</span><br>h_t = f(h_{t-1}, s_{t-1}, a_{t-1})</div>
+        <div class="body-sm mt-2"><span style="font-weight:500">随机后验路径</span><br>s_t ~ q(s_t | h_t, o_t)</div>
+        <div class="body-sm mt-2"><span style="font-weight:500">先验预测路径</span><br>ŝ_t ~ p(ŝ_t | h_t)</div>
+        <div class="body-sm mt-2" style="color:#666">KL 散度约束使先验学会匹配后验——规划时无需观测即可独立向前滚动</div></div>
+        <div class="stat-card bt-thin mt-2"><div class="stat-label">训练</div><div class="stat-note">最大化 ELBO：像素重构 + 奖励预测 + KL 正则。然后在潜空间中做 imagined rollout 训练 Actor-Critic。</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 13: Dreamer Evolution -->
+<!-- 13: Evolution -->
 <section class="slide light">
   <div class="slide-inner">
-    <div class="disc-tag">Discussion 2 · Evolution</div>
-    <div class="h1 h1-sm mb-4">Dreamer 系列演进</div>
+    <div class="disc-tag">Discussion 2 · 四代演进</div>
+    <div class="h1 h1-sm mb-4">Dreamer V1 → V2 → V3 → R2</div>
     <div class="grid-4 mb-3">
-      <div class="stat-card"><div class="stat-label">2019 ICLR</div><div class="stat-nb" style="font-size:min(3vw,5.5vh)">V1</div><div class="stat-note">高斯连续隐变量<br>范式确立</div></div>
-      <div class="stat-card"><div class="stat-label">2021 ICLR</div><div class="stat-nb" style="font-size:min(3vw,5.5vh)">V2</div><div class="stat-note">分类离散隐变量<br>Atari 人类级</div></div>
-      <div class="stat-card"><div class="stat-label">2023</div><div class="stat-nb" style="font-size:min(3vw,5.5vh)">V3</div><div class="stat-note">Symlog + 分位数<br>Minecraft 钻石</div></div>
-      <div class="stat-card bt-accent"><div class="stat-label">2026 ICLR</div><div class="stat-nb" style="font-size:min(3vw,5.5vh)">R2</div><div class="stat-note">去解码器<br>1.59× 加速</div></div>
+      <div class="stat-card"><div class="stat-label">2019 · ICLR 2020</div><div class="stat-nb" style="font-size:min(2.4vw,4.5vh)">DreamerV1</div><div class="body-sm mt-1">高斯连续隐变量。首次提出 RSSM，将世界模型学习和策略优化结合，证明潜空间模拟可替代大量真实环境交互。20 个连续控制任务上超越无模型方法。</div></div>
+      <div class="stat-card"><div class="stat-label">2020 · ICLR 2021</div><div class="stat-nb" style="font-size:min(2.4vw,4.5vh)">DreamerV2</div><div class="body-sm mt-1">从高斯连续跃迁到分类离散隐变量（32×32=1024 种组合）。物理世界本质结构是离散的（物体类型、事件边界），离散表示更匹配。首个在 55 个 Atari 游戏中达到人类水平的基于世界模型的智能体。</div></div>
+      <div class="stat-card"><div class="stat-label">2023</div><div class="stat-nb" style="font-size:min(2.4vw,4.5vh)">DreamerV3</div><div class="body-sm mt-1">Symlog 变换 + 分位数回归 + 双向归一化三项鲁棒技术，使一套超参数可驾驭 150+ 任务。首次在 Minecraft 中从零收集钻石——稀疏奖励 + 长程技能链的开放世界挑战。</div></div>
+      <div class="stat-card bt-accent"><div class="stat-label">2026 · ICLR 2026</div><div class="stat-nb" style="font-size:min(2.4vw,4.5vh)">R2-Dreamer</div><div class="body-sm mt-1">去解码器：移除图像重建，仅保留潜空间状态学习和策略优化。1.59 倍训练加速，在微小物体场景 DMC-Subtle 中性能反升。验证了功能分类法的核心假设。</div></div>
     </div>
-    <div class="grey-bg"><div class="body" style="font-weight:300">R2-Dreamer 验证了一个核心假设：<span style="font-weight:600;color:#FF6B35">Simulator 可以独立于 Renderer 而存在</span>。世界模型并不一定需要生成图像。</div></div>
+    <div class="grey-bg"><div class="body" style="font-weight:300">R2-Dreamer 说明了一件非常重要的事情：<span style="font-weight:600;color:#FF6B35">Simulator 可以独立于 Renderer 而存在</span>。一个世界模型并不一定需要生成图像，只要能够准确预测状态演化并支撑决策规划，它依然是一个完整的世界模型。</div></div>
   </div>
 </section>
 
 <!-- 14: Dreamer vs MuZero -->
 <section class="slide light">
   <div class="slide-inner">
-    <div class="disc-tag">Discussion 2 · Paraigm</div>
-    <div class="h1 h1-sm mb-3">两种 Simulator-Planner 对齐范式</div>
+    <div class="disc-tag">Discussion 2 · 范式对比</div>
+    <div class="h1 h1-sm mb-3">Dreamer vs MuZero：两种 Simulator-Planner 对齐范式</div>
+    <div class="body mb-3">两者都进行世界建模，但建模目标并不相同。Dreamer 关注建立一个可以持续演化的世界，MuZero 关注建立一个足够支持规划的内部表示。</div>
     <div class="grid-2 flex-1">
       <div class="col col-center">
-        <div class="accent-bg" style="margin-bottom:1.5vh"><div style="font-weight:300;font-size:min(1.6vw,3vh)">Dreamer · 显式模拟器</div></div>
-        <div class="body-sm">学习一个能够描述世界演化规律的潜在状态。状态本身就是世界模型，可不断展开未来状态，可作为其他模块继续使用。建立真正的环境模拟器。</div>
+        <div class="stat-card bt-accent"><div class="stat-label">Dreamer · 显式模拟器路线</div></div>
+        <div class="body-sm mt-1">RSSM 显式生成 ŝ_{t+1}, r̂_{t+1}</div>
+        <div class="body-sm">表征监督：通过像素重构 + 奖励预测</div>
+        <div class="body-sm">规划方式：Actor-Critic 在隐想象轨迹上</div>
+        <div class="body-sm" style="color:#FF6B35">状态可独立消费、可解码、可解释</div>
+        <div class="body-sm mt-1">适用于机器人控制、具身智能、长期环境建模——显式世界模型能提供更丰富的状态表示。</div>
       </div>
       <div class="col col-center">
-        <div class="ink-bg" style="margin-bottom:1.5vh"><div style="font-weight:300;font-size:min(1.6vw,3vh);color:#FF6B35">MuZero · 隐式模拟器</div></div>
-        <div class="body-sm">隐藏状态为搜索服务，关注哪些信息能帮助当前决策，而非完整恢复环境。任务导向性更强，效率更高。</div>
+        <div class="stat-card"><div class="stat-label">MuZero · 隐式模拟器路线</div></div>
+        <div class="body-sm mt-1">学习 h_t，预测策略 p_t、价值 v_t、奖励 r_t</div>
+        <div class="body-sm">表征监督：通过策略/价值/奖励一致性</div>
+        <div class="body-sm">规划方式：MCTS 在隐藏状态树上搜索</div>
+        <div class="body-sm" style="color:#999">状态仅为搜索服务，不单独输出</div>
+        <div class="body-sm mt-1">适用于博弈搜索、决策优化——效率更高，但状态不可消费。</div>
       </div>
     </div>
-    <div class="border-top"><div class="h2-accent" style="font-size:min(1.6vw,3vh)">核心问题：Hidden State 到底是不是 Simulator？</div></div>
+    <div class="border-top"><div class="h2-accent" style="font-size:min(1.6vw,3vh)">核心问题：Hidden State 到底是不是 Simulator？——这对功能分类法的后续演进有理论意义：是否应承认"隐式模拟器"为第三类模拟器的独立存在？</div></div>
   </div>
 </section>
 
-<!-- 15: Discussion 3 Title -->
+<!-- 15: Discussion 3 -->
 <section class="slide hero light">
   <div class="mono-accent" style="margin-bottom:2vh">Discussion 3 · 10 min</div>
   <div class="h1" style="font-size:min(4.4vw,8vh)">世界模型会走向哪条技术路线？</div>
-  <div class="h2" style="font-weight:200;margin-top:3vh;max-width:65%">不同目标驱动下的方法论分化与融合</div>
+  <div class="h2" style="font-weight:200;margin-top:3vh;max-width:70%;line-height:1.6">除了 Dreamer 和 MuZero，还有 Transformer、扩散模型、物理先验以及语言增强等多条路线。这些路线为什么形成？它们分别适合完成哪些功能？</div>
 </section>
 
-<!-- 16: Five Routes -->
+<!-- 16: 5 Routes -->
 <section class="slide dark">
   <div class="slide-inner">
-    <div class="mono-accent" style="margin-bottom:2vh">Discussion 3</div>
-    <div class="h1 h1-sm mb-4">五条技术路线</div>
+    <div class="mono-accent" style="margin-bottom:1.5vh">Discussion 3 · 五条技术路线</div>
+    <div class="h1 h1-sm mb-4">不同目标驱动下的方法论分化</div>
+    <div class="body mb-3">没有任何一条路线能同时覆盖 Renderer、Simulator 和 Planner 三种能力。它们是不同能力维度上的探索，不是彼此竞争。</div>
     <div class="grid-5 mb-3">
-      <div class="box"><div style="font-weight:300;font-size:min(1.2vw,2.4vh);color:#FF8A50">SSM/循环</div><div class="body-sm mt-1">Sim ★★★<br>Pln ★★★</div><div class="body-sm" style="color:#FF8A50">Dreamer</div></div>
-      <div class="box"><div style="font-weight:300;font-size:min(1.2vw,2.4vh);color:#FF8A50">Transformer</div><div class="body-sm mt-1">Sim ★★<br>Pln ★★</div><div class="body-sm" style="color:#999">IRIS/TWM</div></div>
-      <div class="box"><div style="font-weight:300;font-size:min(1.2vw,2.4vh);color:#FF8A50">扩散模型</div><div class="body-sm mt-1">Ren ★★★<br>Sim ★</div><div class="body-sm" style="color:#999">Sora/Genie</div></div>
-      <div class="box"><div style="font-weight:300;font-size:min(1.2vw,2.4vh);color:#FF8A50">物理先验</div><div class="body-sm mt-1">Sim ★★★<br>Pln ★</div><div class="body-sm" style="color:#999">PINN/GNS</div></div>
-      <div class="box"><div style="font-weight:300;font-size:min(1.2vw,2.4vh);color:#FF8A50">语言增强</div><div class="body-sm mt-1">Plan ★★<br>Know ★★</div><div class="body-sm" style="color:#999">VLA/VISTA</div></div>
+      <div class="box">
+        <div style="font-weight:300;font-size:min(1.1vw,2.2vh);color:#FF8A50">SSM/循环</div>
+        <div class="mono-accent" style="font-size:max(11px,.65vw);margin-top:.6vh">Sim ★★★ Pln ★★★</div>
+        <div class="body-sm" style="margin-top:.6vh">潜空间状态演化建模。不关注图像逼真，关注状态能否准确预测未来。适合 RL、机器人控制、具身智能。RSSM 是核心。</div>
+      </div>
+      <div class="box">
+        <div style="font-weight:300;font-size:min(1.1vw,2.2vh);color:#FF8A50">Transformer</div>
+        <div class="mono" style="color:#999;font-size:max(11px,.65vw);margin-top:.6vh">Sim ★★ Pln ★★</div>
+        <div class="body-sm" style="margin-top:.6vh">VQ-VAE 离散化 + 自回归。长序列建模能力强。但计算量二次增长，自回归逐帧推进效率低，低数据场景易过拟合。</div>
+      </div>
+      <div class="box">
+        <div style="font-weight:300;font-size:min(1.1vw,2.2vh);color:#FF8A50">扩散模型</div>
+        <div class="mono" style="color:#999;font-size:max(11px,.65vw);margin-top:.6vh">Ren ★★★ Sim ★</div>
+        <div class="body-sm" style="margin-top:.6vh">DiT 去噪生成。观测空间生成质量极高。但关注的是"未来应该看到什么"，而非"未来内部如何变化"。本质是 Renderer。</div>
+      </div>
+      <div class="box">
+        <div style="font-weight:300;font-size:min(1.1vw,2.2vh);color:#FF8A50">物理先验</div>
+        <div class="mono" style="color:#999;font-size:max(11px,.65vw);margin-top:.6vh">Sim ★★★ Pln ★</div>
+        <div class="body-sm" style="margin-top:.6vh">PINN/GNS/可微分引擎。在架构中注入物理归纳偏置。特定域保真度高，但跨域泛化弱。需与 Dreamer 配合构成完整系统。</div>
+      </div>
+      <div class="box">
+        <div style="font-weight:300;font-size:min(1.1vw,2.2vh);color:#FF8A50">语言增强</div>
+        <div class="mono" style="color:#999;font-size:max(11px,.65vw);margin-top:.6vh">Plan ★★</div>
+        <div class="body-sm" style="margin-top:.6vh">LLM 作为世界知识载体。提供常识、规则、推理。承担高层任务规划，与底层物理模拟之间存在差距。</div>
+      </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:2vw">
-      <div class="accent-bg"><div class="body-sm" style="font-weight:300">关键观察</div><div class="body-sm" style="font-weight:300;margin-top:.6vh">没有任何一条路线能同时覆盖 Renderer、Simulator 和 Planner 三种能力。</div></div>
-      <div class="box"><div class="body-sm" style="color:#FF8A50">未来方向</div><div class="body-sm" style="margin-top:.6vh">不是五条路线继续分化，而是逐渐融合。统一世界模型是逻辑终点。</div></div>
+      <div class="accent-bg"><div class="body-sm" style="font-weight:300">关键观察</div><div class="body-sm" style="font-weight:300;margin-top:.6vh">每一条路线都有自己的优势：SSM 擅长模拟与规划，Transformer 擅长长时序建模，扩散擅长观测生成，物理先验强调动力学一致性，语言模型负责高层理解。它们不是谁取代谁的关系。</div></div>
+      <div class="box"><div class="body-sm" style="color:#FF8A50">未来方向</div><div class="body-sm" style="margin-top:.6vh">不是五条路线继续分化，而是逐渐融合。高质量 Renderer 与结构化 Simulator 结合、物理先验引入潜空间、语言模型承担规划功能——正在现实中发生。</div></div>
     </div>
   </div>
 </section>
 
-<!-- 17: Unified World Model -->
+<!-- 17: Unified -->
 <section class="slide light hero">
-  <div class="h1 h1-sm mb-4">统一世界模型</div>
-  <div class="h2" style="font-weight:200;max-width:75%;line-height:1.5">未来真正值得关注的问题已不是"哪一种模型能取代其他模型"，而是"如何构建一个能同时具备 Renderer、Simulator 和 Planner 能力的统一世界模型"。</div>
-  <div style="display:flex;gap:2vw;margin-top:4vh;justify-content:center">
-    <div class="stat-card bt-accent"><div class="stat-label">Renderer</div><div class="stat-note">Marble: splats + meshes</div></div>
-    <div class="stat-card"><div class="stat-label">Simulator</div><div class="stat-note">Dreamer: RSSM</div></div>
-    <div class="stat-card"><div class="stat-label">Planner</div><div class="stat-note">MuZero: MCTS</div></div>
+  <div class="h1 h1-sm mb-3">统一世界模型</div>
+  <div class="h2" style="font-weight:200;max-width:80%;line-height:1.6">未来真正值得关注的问题已经不是"哪一种模型能取代其他模型"，而是"如何构建一个能够同时具备 Renderer、Simulator 和 Planner 能力的统一世界模型"。当前三类功能正在从三个方向加速收敛：Marble 从 Renderer+Simulator 方向逼近，Dreamer 系列从 Simulator+Planner 方向逼近，MuZero 从 Planner+隐式 Simulator 方向逼近。三者合一仍面临数据、目标和评估三大鸿沟。</div>
+  <div style="display:flex;gap:2vw;margin-top:4vh;justify-content:center;width:80%">
+    <div class="stat-card bt-accent" style="flex:1"><div class="stat-label">Renderer→Simulator</div><div class="stat-note">Marble: Gaussian splats + collision meshes</div></div>
+    <div class="stat-card" style="flex:1"><div class="stat-label">Simulator→Planner</div><div class="stat-note">RSSM → Actor-Critic 隐空间动力学支撑决策</div></div>
+    <div class="stat-card" style="flex:1"><div class="stat-label">Planner→Simulator</div><div class="stat-note">MPC + 预测模型：规划依赖模拟器输出</div></div>
   </div>
 </section>
 
-<!-- 18: Discussion 4 Title -->
+<!-- 18: Discussion 4 -->
 <section class="slide hero light">
   <div class="mono-accent" style="margin-bottom:2vh">Discussion 4 · 10 min</div>
   <div class="h1" style="font-size:min(4.4vw,8vh)">为什么太空具身智能？</div>
-  <div class="h2" style="font-weight:200;margin-top:3vh;max-width:65%">最需要世界模型的地方，也是最难验证世界模型的地方</div>
+  <div class="h2" style="font-weight:200;margin-top:3vh;max-width:70%;line-height:1.6">经过前面讨论，我们已经分析了世界模型的能力边界和技术路线。最后，最需要世界模型的地方在哪？为什么低轨星载机器人可能是最具挑战性、也最能体现其价值的场景？</div>
 </section>
 
-<!-- 19: Six Challenges -->
+<!-- 19: Why Space -->
 <section class="slide light">
   <div class="slide-inner">
-    <div class="disc-tag">Discussion 4 · LEO</div>
-    <div class="h1 h1-sm mb-3">低轨环境的六大挑战</div>
+    <div class="disc-tag">Discussion 4 · 为什么太空</div>
+    <div class="h1 h1-sm mb-3">为什么是低轨星载机器人？</div>
+    <div class="body mb-3">对于地面机器人，环境变化时可以重新采集数据、重新训练模型，甚至人工远程干预。但太空机器人一旦进入轨道，面对的是高动态、高风险、高代价的环境：任何轨道机动都消耗推进剂，每次操作都可能不可逆，通信窗口有限（LEO 过境仅 5-10 分钟/轨）。它不能持续依赖地面控制，必须具备更强的自主决策能力。这意味着它不仅要能"看见"世界，更重要的是要能预测世界、理解世界，并利用世界完成规划——这正是世界模型希望解决的问题。</div>
+    <div class="grid-3">
+      <div class="stat-card bt-accent"><div class="stat-label">高动态</div><div class="stat-note">微重力 10⁻⁶g，控制输入持续影响轨道和姿态</div></div>
+      <div class="stat-card bt-accent"><div class="stat-label">高风险</div><div class="stat-note">轨道机动消耗推进剂，操作不可逆</div></div>
+      <div class="stat-card bt-accent"><div class="stat-label">高代价</div><div class="stat-note">通信窗口 5-10 min/轨，无法实时遥操作</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 20: 6 Challenges -->
+<section class="slide light">
+  <div class="slide-inner">
+    <div class="disc-tag">Discussion 4 · 六大挑战</div>
+    <div class="h1 h1-sm mb-3">低轨环境的六大独特挑战</div>
+    <div class="body mb-3">这六个挑战几乎全部对应世界模型最核心的能力：状态预测（Simulator）、自主规划（Planner）以及长期推理。</div>
     <div class="grid-3 flex-1">
-      <div class="stat-card bt-accent"><div class="stat-label">微重力</div><div class="stat-note">10⁻⁶g，动力学耦合强</div></div>
-      <div class="stat-card bt-accent"><div class="stat-label">热真空</div><div class="stat-note">±150°C，模型漂移</div></div>
-      <div class="stat-card bt-accent"><div class="stat-label">通信受限</div><div class="stat-note">5-10 min/轨，遥操作不可行</div></div>
-      <div class="stat-card bt-accent"><div class="stat-label">计算受限</div><div class="stat-note">~1W，扩散模型不可行</div></div>
-      <div class="stat-card bt-accent"><div class="stat-label">非合作目标</div><div class="stat-note">失效卫星/碎片，无主动信息</div></div>
-      <div class="stat-card bt-accent"><div class="stat-label">感知退化</div><div class="stat-note">光照变化、遮挡、高速运动</div></div>
+      <div class="stat-card bt-accent"><div class="stat-label">① 微重力</div><div class="body-sm mt-1">10⁻⁶g 稳定残差重力。机器人与目标的相对运动高度耦合，一个小控制输入都可能持续影响轨道和姿态。地面动力学模型完全失效，但物理规则可精确建模。</div></div>
+      <div class="stat-card bt-accent"><div class="stat-label">② 热真空循环</div><div class="body-sm mt-1">±150°C，周期 90 分钟。空间环境影响传感器性能和执行机构状态，使模型长期运行中不断产生分布漂移。材料热形变、润滑剂挥发影响精度。</div></div>
+      <div class="stat-card bt-accent"><div class="stat-label">③ 通信窗口</div><div class="body-sm mt-1">LEO 过境窗口仅 5-10 分钟/轨。无法持续遥控，Planner 必须在过境窗口外完全自主闭环。</div></div>
+      <div class="stat-card bt-accent"><div class="stat-label">④ 星载计算约束</div><div class="body-sm mt-1">星载单板计算机（Rad-Hard，~1W）。扩散模型不可行，SSM/RSSM 是唯一选项——轻量架构天然契合。</div></div>
+      <div class="stat-card bt-accent"><div class="stat-label">⑤ 非合作目标</div><div class="body-sm mt-1">失效卫星、空间碎片无法提供任何主动信息。质量、惯量、质心不确定性高，Simulator 需在线参数辨识能力。</div></div>
+      <div class="stat-card bt-accent"><div class="stat-label">⑥ 感知退化</div><div class="body-sm mt-1">星载相机受太阳光干扰、无 GPS。视觉观测存在间歇中断和尺度模糊。不能完全依赖当前图像，需结合历史状态推断未来演化。</div></div>
     </div>
-    <div class="grey-bg mt-2"><div class="body-sm">六大挑战几乎全部对应世界模型最核心的能力：状态预测、自主规划、长期推理</div></div>
   </div>
 </section>
 
-<!-- 20: Physics + WM -->
+<!-- 21: Physics+WM -->
 <section class="slide light">
   <div class="slide-inner">
-    <div class="disc-tag">Discussion 4 · Approach</div>
-    <div class="h1 h1-sm mb-3">Physics + World Model 混合范式</div>
+    <div class="disc-tag">Discussion 4 · 混合范式</div>
+    <div class="h1 h1-sm mb-3">Physics + World Model：混合范式</div>
+    <div class="body mb-3">现有世界模型不能简单迁移到太空——不是重新学习整个动力学，而是采用 Physics + World Model 的混合范式。已知规律交给物理模型，未知扰动交给世界模型。</div>
     <div class="grid-2 flex-1">
       <div class="col col-center">
-        <div class="stat-card bt-accent"><div class="stat-label">思路一</div><div class="stat-nb" style="font-size:min(2.4vw,4.5vh)">Physics-guided RSSM</div><div class="stat-note">已知物理模型负责轨道传播，神经网络学习残差动力学（扰动、误差、偏差）</div></div>
-        <div class="stat-card bt-accent mt-2"><div class="stat-label">思路二</div><div class="stat-nb" style="font-size:min(2.4vw,4.5vh)">物理约束潜空间</div><div class="stat-note">将轨道动力学约束加入潜空间优化，提高物理一致性</div></div>
+        <div class="stat-card bt-accent"><div class="stat-label">思路一：Physics-guided RSSM</div></div>
+        <div class="body-sm mt-1">状态演化拆分为两部分：已知物理模型（轨道传播、姿态动力学等解析模型）+ 神经网络学习残差动力学（环境扰动、执行器误差、感知偏差）。世界模型学习的不再是整个动力学，而是未知部分，显著减少训练数据需求。</div>
+        <div class="stat-card bt-accent mt-2"><div class="stat-label">思路二：物理约束潜空间</div></div>
+        <div class="body-sm mt-1">RSSM 的潜在状态缺乏物理约束。将轨道动力学约束加入潜空间优化，不仅要求预测未来，还要求预测结果满足动力学一致性。</div>
       </div>
       <div class="col col-center">
-        <div class="stat-card bt-accent"><div class="stat-label">思路三</div><div class="stat-nb" style="font-size:min(2.4vw,4.5vh)">分层建模</div><div class="stat-note">轨道运动→物理模型，接触过程→GNS，统一状态→RSSM</div></div>
-        <div class="accent-bg mt-2"><div class="body-sm" style="font-weight:300">已知规律→物理模型<br>未知扰动→世界模型</div></div>
+        <div class="stat-card bt-accent"><div class="stat-label">思路三：分层建模（针对接触动力学）</div></div>
+        <div class="body-sm mt-1">轨道运动可用成熟动力学模型，而真正复杂的是机械臂与目标之间的接触过程。分层建模：物理模型负责自由飞行，GNS（图网络模拟器）负责接触交互，RSSM 负责统一整个任务过程中的状态演化。不同模型各自发挥优势。</div>
+        <div class="accent-bg mt-2"><div class="body-sm" style="font-weight:300">未来方向：已知规律→物理模型，未知扰动→世界模型。物理模型负责描述已知世界，世界模型负责学习未知世界。</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 21: Four Tasks -->
+<!-- 22: Tasks -->
 <section class="slide light">
   <div class="slide-inner">
-    <div class="disc-tag">Discussion 4 · Tasks</div>
-    <div class="h1 h1-sm mb-4">四类典型在轨任务</div>
+    <div class="disc-tag">Discussion 4 · 四类任务</div>
+    <div class="h1 h1-sm mb-4">支撑四类典型在轨任务</div>
+    <div class="body mb-3">基于这样的世界模型，它至少能够支撑四类典型在轨任务，每一类都依赖 Simulator 和 Planner 的协同工作。</div>
     <div class="grid-2 flex-1">
-      <div class="stat-card bt-accent"><div class="stat-label">任务一</div><div class="stat-nb" style="font-size:min(2.4vw,4.5vh)">交会与接近</div><div class="stat-note">预测目标未来轨迹，规划安全接近路径</div></div>
-      <div class="stat-card bt-accent"><div class="stat-label">任务二</div><div class="stat-nb" style="font-size:min(2.4vw,4.5vh)">碎片捕获</div><div class="stat-note">模拟接触过程，提高抓捕成功率</div></div>
-      <div class="stat-card bt-accent"><div class="stat-label">任务三</div><div class="stat-nb" style="font-size:min(2.4vw,4.5vh)">在轨装配维修</div><div class="stat-note">长程状态预测和任务规划</div></div>
-      <div class="stat-card bt-accent"><div class="stat-label">任务四</div><div class="stat-nb" style="font-size:min(2.4vw,4.5vh)">在轨模型自适应</div><div class="stat-note">持续更新世界模型，适应真实环境</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- 22: Summary - 4 Takeaways -->
-<section class="slide light">
-  <div class="slide-inner">
-    <div class="mono-accent" style="margin-bottom:2vh">Summary · 5 min</div>
-    <div class="h1 h1-sm mb-3">我们今天讨论的四件事</div>
-    <div class="flex-1 col">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2vw;flex:1">
-        <div class="col col-center">
-          <div class="stat-card bt-accent"><div class="stat-label">观点一</div><div class="stat-note" style="font-weight:500">世界模型需要功能定义</div><div class="body-sm">而不是概念定义。Function > Architecture。</div></div>
-          <div class="stat-card bt-accent mt-2"><div class="stat-label">观点二</div><div class="stat-note" style="font-weight:500">Dreamer 代表 Simulator+Planner 统一范式</div><div class="body-sm">R2-Dreamer 证明 Simulator 可独立于 Renderer。</div></div>
-        </div>
-        <div class="col col-center">
-          <div class="stat-card bt-accent"><div class="stat-label">观点三</div><div class="stat-note" style="font-weight:500">统一世界模型不是模型越来越大</div><div class="body-sm">而是 Renderer、Simulator、Planner 逐渐融合。</div></div>
-          <div class="stat-card bt-accent mt-2"><div class="stat-label">观点四</div><div class="stat-note" style="font-weight:500">太空是验证统一世界模型的最佳实验场</div><div class="body-sm">已知规律+数据驱动，混合范式。</div></div>
-        </div>
+      <div class="col col-center">
+        <div class="stat-card bt-accent"><div class="stat-label">任务一 · 在轨交会与接近</div></div>
+        <div class="body-sm mt-1">用物理信息增强的 RSSM 预测目标卫星的旋转状态和轨道运动，在潜空间中规划安全接近路径。关键挑战：目标为非合作（无姿态控制），需在线辨识惯量参数。</div>
+        <div class="stat-card bt-accent mt-2"><div class="stat-label">任务二 · 空间碎片捕获</div></div>
+        <div class="body-sm mt-1">用 GNS（图网络模拟器）建模碎片与机械臂抓手之间的接触动力学，在潜空间中预演捕获策略的可行性，与 Dreamer 类 Planner 结合实现自主决策。</div>
+      </div>
+      <div class="col col-center">
+        <div class="stat-card bt-accent"><div class="stat-label">任务三 · 在轨装配与维修</div></div>
+        <div class="body-sm mt-1">用可微分物理引擎模拟大型桁架结构在微重力下的柔性振动，以 MPC+世界模型实现减振控制。利用长期状态预测和任务规划能力提高复杂操作的自主性。</div>
+        <div class="stat-card bt-accent mt-2"><div class="stat-label">任务四 · 在轨模型自适应</div></div>
+        <div class="body-sm mt-1">利用在轨遥测数据（IMU、相机、关节力矩）增量微调 RSSM，逐步弥合地面仿真与在轨动力学之间的差距。机器人利用新观测持续更新世界模型，而非完全依赖地面训练的固定模型。</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 23: Open Discussion -->
-<section class="slide hero dark">
-  <div class="mono-accent" style="margin-bottom:2vh">Open Discussion</div>
-  <div class="h1" style="font-size:min(4vw,7.5vh)">如果未来 GPT-8 可以同时</div>
-  <div class="h2" style="font-weight:200;margin-top:2vh">生成视频 → 预测物理 → 输出机器人动作</div>
-  <div class="h2" style="font-weight:200;margin-top:3vh">它应该属于</div>
-  <div style="display:flex;gap:2vw;margin-top:2vh;justify-content:center">
-    <div class="h2-accent">Renderer</div>
-    <div class="h2" style="font-weight:200;color:#fff">·</div>
-    <div class="h2-accent">Simulator</div>
-    <div class="h2" style="font-weight:200;color:#fff">·</div>
-    <div class="h2-accent">Planner</div>
+<!-- 23: Summary -->
+<section class="slide light">
+  <div class="slide-inner">
+    <div class="mono-accent" style="margin-bottom:1.5vh">Summary · 5 min</div>
+    <div class="h1 h1-sm mb-4">我们今天讨论的四件事</div>
+    <div class="body mb-3">我们的讨论围绕四个核心观点展开，它们构成了一个递进的逻辑链条：从"如何定义"，到"什么最好"，再到"如何融合"，最后到"哪里最需要"。</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2vw;flex:1">
+      <div class="col col-center">
+        <div class="stat-card bt-accent"><div class="h2-accent" style="font-size:min(1.6vw,3vh)">① 世界模型需要功能定义</div></div>
+        <div class="body-sm mt-1">而不是概念定义。在没有统一标准之前，"世界模型"正逐渐变成一个过于宽泛的营销术语。功能分类法（Renderer / Simulator / Planner）提供了一个更有判别力的分析框架。核心原则：Function > Architecture。</div>
+        <div class="stat-card bt-accent mt-2"><div class="h2-accent" style="font-size:min(1.6vw,3vh)">② Dreamer 代表 Simulator+Planner 统一范式</div></div>
+        <div class="body-sm mt-1">R2-Dreamer 证明 Simulator 可独立于 Renderer 存在。Dreamer 与 MuZero 分别代表显式模拟器和隐式模拟器两种路线，各有优势。</div>
+      </div>
+      <div class="col col-center">
+        <div class="stat-card bt-accent"><div class="h2-accent" style="font-size:min(1.6vw,3vh)">③ 统一世界模型不是模型越来越大</div></div>
+        <div class="body-sm mt-1">而是 Renderer、Simulator、Planner 三类功能逐渐融合。五条技术路线应走向融合而非继续分化。Marble、Dreamer、MuZero 分别从三个方向逼近。</div>
+        <div class="stat-card bt-accent mt-2"><div class="h2-accent" style="font-size:min(1.6vw,3vh)">④ 太空是验证统一世界模型价值的最佳实验场</div></div>
+        <div class="body-sm mt-1">六大挑战全部对应世界模型核心能力。Physics + World Model 混合范式是最有潜力的方向——已知规律→物理模型，未知扰动→世界模型。</div>
+      </div>
+    </div>
   </div>
-  <div class="h2" style="font-weight:200;margin-top:3vh;color:#FF8A50">还是 Unified World Model？</div>
 </section>
 
 <!-- 24: Thank You -->
 <section class="slide hero dark">
   <div class="h1" style="font-size:min(4vw,7.5vh)">感谢聆听</div>
+  <div class="body" style="margin-top:3vh;max-width:60%;line-height:1.6">世界模型的发展不是比较"哪个更先进"，而是不同模型围绕 Renderer、Simulator 和 Planner 三类核心功能进行了不同的能力组合。功能分类法的价值，在于帮助我们更清晰地理解这些能力边界。</div>
   <div class="mono-row" style="margin-top:4vh"><span>github.com/kezhiii/world-model</span></div>
 </section>
 
@@ -403,5 +461,5 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
 <script>
 (function(){const deck=document.getElementById('deck');const slides=deck.querySelectorAll('.slide');const nav=document.createElement('div');nav.id='nav';slides.forEach((s,i)=>{const a=document.createElement('a');a.href='javascript:void(0)';a.onclick=function(){deck.scrollLeft=i*window.innerWidth};if(i===0)a.className='active';nav.appendChild(a)});document.body.appendChild(nav);deck.addEventListener('scroll',function(){const idx=Math.round(this.scrollLeft/window.innerWidth);nav.querySelectorAll('a').forEach((a,i)=>a.className=i===idx?'active':'');document.body.classList.toggle('dark-bg',slides[idx]&&(slides[idx].classList.contains('dark')||slides[idx].classList.contains('hero')))});document.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key==='PageDown'){e.preventDefault();deck.scrollLeft+=window.innerWidth}if(e.key==='ArrowLeft'||e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();deck.scrollLeft-=window.innerWidth}if(e.key==='Home'){e.preventDefault();deck.scrollLeft=0}if(e.key==='End'){e.preventDefault();deck.scrollLeft=(slides.length-1)*window.innerWidth}});deck.addEventListener('wheel',function(e){if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.preventDefault();deck.scrollLeft+=e.deltaY}},{passive:false})})();
 </script>
-<div id="hint">← → 翻页 · ESC 索引</div>
+<div id="hint">← → 翻页</div>
 </body></html>
