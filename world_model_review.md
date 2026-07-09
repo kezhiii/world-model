@@ -1,371 +1,337 @@
-# 功能分类法视角下的世界模型：从生成到模拟的边界勘定
+# 功能分类法视角下的世界模型：方法论谱系、批判性审计与前沿展望
 
-**Dreamer 系列及其替代方案综述**
+**综合综述：Dreamer 系列深度分析、五大方法论路线、九大应用域与太空具身智能前景**
 
 ---
 
 ## 摘要
 
-World Labs（Fei-Fei Li 团队, 2026）提出了世界模型的功能分类法，将自称世界模型的系统严格分为三类：渲染器（Renderer，输出像素）、模拟器（Simulator，输出几何/物理状态）和规划器（Planner，输出行动序列）。以此分类法为分析透镜可以发现，当前市面上大多数自称"世界模型"的系统实际上只覆盖三类功能中的一种。相比之下，Dreamer 系列从其诞生起就同时承担了模拟器和规划器的功能，其最新迭代 R2-Dreamer 进一步证明模拟器可以在不需要渲染器的条件下有效运行——这一结果验证了功能分类法的一个核心预测。本文从 POMDP 第一性原理出发，深入分析 Dreamer 系列四代架构（V1→V2→V3→R2-Dreamer）的数学原理、技术跃迁与设计哲学，系统对比 Sora、Genie、Marble、PointWorld、GATO 等其他典型项目的功能边界，并揭示领域内 Renderer→Simulator→Planner 三类功能正在加速收敛的根本趋势。
+World Labs（Fei-Fei Li 团队, 2026）提出的功能分类法将自称世界模型的系统严格分为三类——渲染器（Renderer，输出像素）、模拟器（Simulator，输出几何/物理状态）和规划器（Planner，输出行动序列）。本文以该分类法为批判性审计透镜，在 arXiv:2606.00133 描述性全景分类的基础上，进行三重延伸：（一）对五大方法论谱系（循环SSM、Transformer、扩散、物理先验网络、语言增强多模态）逐一进行功能分类法过滤，揭示各路线在 Renderer/Simulator/Planner 轴上的真实覆盖范围；（二）对 Dreamer 系列（V1→V3→R2-Dreamer）和 MuZero 进行深度技术对比，展示 Simulator-Planner 双功能对齐的两种不同实现路径；（三）以太空具身智能为切入点，前瞻世界模型在非结构化极端环境中的迁移挑战。核心发现：当前自称世界模型的系统中，仅 Dreamer 系列在 Simulator+Planner 双功能上严格对齐分类法定义；R2-Dreamer（ICLR 2026）证明模拟器可不依赖渲染器独立运行；MuZero 则以隐式模拟器+MCTS 搜索提供了另一种双功能对齐方案；而科学模拟、医学影像、教育测评、金融市场等新兴应用域正处于从"描述性称名"到"功能性对齐"的转型前夜。
 
 ---
 
-## 1. POMDP 循环及其三种投影
+## 1. POMDP 循环与功能分类法
 
-### 1.1 概念溯源
+### 1.1 定义溯源
 
-"世界模型"一词的思想史可追溯至 Kenneth Craik 在 1943 年的命题：心智通过运行现实的"小尺度模型"来推理[16]。这一概念在 1980 年代末被引入神经网络领域——Schmidhuber 在 1990 年的《Making the World Differentiable》[17]中首次提出了通过可微分神经网络学习世界模型的框架。Ha 和 Schmidhuber 在 2018 年的奠基论文《World Models》[1]中正式确立了现代世界模型的三组件架构（VAE + MDN-RNN + Controller），首次在"梦境"中训练策略并转移回真实环境。
+"世界模型"的思想史可追溯至 Craik (1943) 关于心智运行现实"小尺度模型"的命题，经 Schmidhuber (1990) 的可微分神经网络建模，至 Ha & Schmidhuber (2018) 的《World Models》确立现代三组件架构（VAE + MDN-RNN + Controller）。
 
-然而，"世界模型"已成为当代人工智能中最重要但也最被滥用的术语之一。计算机视觉、机器人学、强化学习和生成式 AI 各自声称在构建世界模型，各执一词。一个扩散模型可以生成视觉惊艳但物理上不可能的火焰，一个大语言模型可以从提示中即兴编出可玩的游戏，一个物理引擎可以忠实模拟燃烧——它们都被冠以同一名称。
+### 1.2 POMDP 形式化
 
-### 1.2 POMDP 的形式化定义
+一个部分可观测马尔可夫决策过程由 $\mathcal{M} = \langle S, A, O, T, E, R, \gamma \rangle$ 定义。世界模型被严格定义为对状态转移 $T(s_{t+1}|s_t,a_t)$、观测函数 $o_t \sim E(\cdot|s_t)$ 和奖励函数 $R$ 的近似学习。一个学习 $p(o_{t+1}|o_t,a_t)$ 但不对状态 $s_t$ 做结构化假设的模型，即使自称"世界模拟器"，也不符合这一定义。
 
-部分可观测马尔可夫决策过程（POMDP）是理解世界模型技术含义的数学基础。一个 POMDP 由以下元组定义：
+### 1.3 三类功能的形式化
 
-$$\mathcal{M} = \langle S, A, O, T, E, R, \gamma \rangle$$
+| 功能 | 学习目标 | 输出 | 合约 | 消费方 |
+|------|---------|------|------|-------|
+| **渲染器** | $p(o_t \mid s_t)$ | 观测/像素 | 视觉逼真 | 人眼 |
+| **模拟器** | $\hat{T}(s_{t+1} \mid s_t, a_t)$ | 状态(几何/物理) | 结构精确 | 人 + 程序 |
+| **规划器** | $\pi(a_t \mid s_t, g)$ | 行动序列 | 决策正确 | 智能体 |
 
-其中：
-- $s_t \in S$：不可直接观测的真实世界状态
-- $a_t \in A$：智能体采取的行动
-- $o_t \in O$：智能体接收到的观测，服从 $o_t \sim E(\cdot | s_t)$
-- $T(s_{t+1} | s_t, a_t)$：状态转移概率
-- $R(r_t | s_t, a_t)$：奖励函数
-- $\gamma \in [0,1)$：折扣因子
-
-智能体的目标：学习策略 $\pi(a_t | o_{\leq t}, a_{< t})$ 以最大化期望累积折扣回报 $\mathbb{E}[\sum_{t=0}^\infty \gamma^t r_t]$。
-
-在这个框架下，"世界模型"被严格定义为对**状态转移函数 $T$**、**观测函数 $E$** 和**奖励函数 $R$** 的近似学习。一个学习 $p(o_{t+1}|o_t,a_t)$ 但不对状态做任何结构化假设的模型，即使被称为"世界模拟器"，也不符合这一定义。
-
-### 1.3 三类功能的严格形式化
-
-World Labs 的功能分类法[8]在这一 POMDP 框架内识别出三种已被混淆的功能角色：
-
-**渲染器（Renderer）** 学习观测模型 $p(o_t | s_t)$ 或直接的条件分布 $p(o_{t+1} | o_t, a_t)$。其输出是观测序列，合约是视觉逼真。数学上等价于带条件的视频生成模型。渲染器无需也不试图推断背后的状态 $s_t$。
-
-**模拟器（Simulator）** 学习状态转移函数 $\hat{T}(s_{t+1} | s_t, a_t)$。其输出是状态（或状态表征），合约是结构精确——几何、物理、动力学必须在可计算层面上保持一致。模拟器同时服务两个消费端：人类（架构师、设计师）需要精度；程序（RL 智能体、机器人控制器）需要可交互的虚拟训练场。
-
-**规划器（Planner）** 学习策略 $\pi(a_t | s_t, g)$，其中 $g$ 为目标。其输出是行动序列，合约是决策正确。规划器是渲染器的对偶：渲染器以行动为输入产生观测，规划器以观测为输入产生行动，闭合感知-行动循环。
-
-三类功能的底层知识是相同的——几何、物理、动力学——只是投影方式不同。能使模型从任意角度渲染一个杯子的知识，原则上也应使其能模拟杯子被推后的物理因果链，并规划手去捡起杯子。
+核心命题：三类功能的底层知识（几何、物理、动力学）是相同的，仅是投影方式不同。模拟器是三类中的支点——掌握了模拟能力才能向上支持渲染、向下支撑规划。
 
 ---
 
-## 2. 渲染器的陷阱：被误称为世界模型的生成系统
+## 2. 方法论全景图：五条路线
 
-POMDP 框架提供了一个精确的判据来分离真正的世界模型与仅借用其名的系统。本节分析三个最典型的案例。
+本节覆盖 arXiv:2606.00133 识别出的五条方法论谱系，并在每条路线末尾以功能分类法进行标记。
 
-### 2.1 Sora：视觉合约而非结构合约
+### 2.1 状态空间与循环世界模型（SSM / Recurrent）
 
-OpenAI 的 Sora (2024) 以"Video generation models as world simulators"为题发布[7]。其技术核心：将视频压缩为潜空间 → 分解为时空 Patch (spacetime patches) → 用 Diffusion Transformer 生成。Sora 在视觉质量上达到了前所未有的水平，并展现出三维一致性、物体持久性等涌现属性。
+**谱系**：PlaNet (2018) → DreamerV1 (2019) → DreamerV2 (2020) → DreamerV3 (2023) → R2-Dreamer (2026)。核心技术为 RSSM（Recurrent State-Space Model），将隐状态分解为确定性 GRU 路径和随机后验/先验路径，在潜空间完成状态转移建模和规划。
 
-然而，Sora 没有输出任何可以被物理引擎消费的结构化表示。它的合约 100% 是视觉的。OpenAI 自承"does not accurately model the physics of many basic interactions, like glass shattering"[7]。一个无法预测碰撞后果的模型不是在模拟世界——它只是在渲染一个合理的版本。Sora 在功能分类法中是一个输入条件化的渲染器，学习的是 $p(o_t | \text{text})$，而非 $p(s_{t+1} | s_t, a_t)$。
+**关键特征**：循环结构天然适合时序建模，离散隐变量（V2 起）更匹配物理世界的离散结构。Simulator 和 Planner 同时在潜空间中联合训练。
 
-### 2.2 Genie：行动条件化的渲染器
+功能分类法标记：**Simulator ⭐⭐⭐， Planner ⭐⭐⭐， Renderer ⭐⭐（V1-V3）／ ⭐（R2 无解码器）**
 
-Google DeepMind 的 Genie (2024)[6] 以 110 亿参数成为当时最大的"基础世界模型"。其三组件架构——时空视频分词器、自回归动力学模型、学习的潜在动作模型——支持用户逐帧控制生成内容。
+### 2.2 Transformer 世界模型
 
-Genie 核心创新是**无监督学习潜在动作空间**——从无标注互联网视频中自动发现"动作"的编码。但从分类法看，它的"状态"始终隐式编码在视频 Token 中，未以几何形式呈现。Genie 的功能合约是 action-conditioned rendering：给定一个潜在动作编码，生成下一帧。它没有输出可被物理引擎消费的结构化状态。Genie 是渲染器，不是模拟器。
+**谱系**：IRIS (Micheli et al., 2022, NeurIPS) → TWM (Robine et al., 2022) → STORM (Zhang et al., 2023)。核心思路：用 Transformer 的自注意力替代 GRU 做时序建模。
 
-### 2.3 GATO：孤立的规划器
+IRIS 以 VQ-VAE 将像素离散化为视觉 Token，再用 GPT 式自回归 Transformer 在 Token 空间做轨迹预测。TWM 将 RSSM 的确定性 GRU 替换为 Transformer。STORM 进一步统一了模型架构和训练范式。
 
-DeepMind 的 GATO (2022) 代表了另一个极端。GATO 是一个通过行为克隆在数百个任务上训练的通用智能体[12]，输出行动序列。它不包含内部模拟器。GATO 是一个策略（policy），不是世界模型。
+**与 Dreamer 的关键差异**：Transformer 建模长程依赖的能力更强（注意力窗口内全连接），但计算量随序列长度二次增长。在 Atari 100k 基准上，TWM 在某些游戏上超越 DreamerV2，但在其他游戏上不如。
 
-渲染器和孤立规划器都是真实且有价值的贡献。但它们不符合 POMDP 传统赋予"世界模型"的技术含义。
+功能分类法标记：**Simulator ⭐⭐， Planner ⭐⭐， Renderer ⭐⭐**。Transformer WM 目前仍依赖像素重构，且 Planner 效率受限于自回归生成速度。
 
----
+### 2.3 扩散世界模型
 
-## 3. Dreamer 系列：唯一严格的 Simulator-Planner 双功能对齐
+**谱系**：Sora (OpenAI, 2024) → Genie (DeepMind, 2024) → Cosmos (NVIDIA, 2024) → GameNGen (2024)。核心技术：Diffusion Transformer (DiT) 或类似架构，在压缩潜空间中对带噪隐变量做去噪生成。
 
-Dreamer 系列由 Danijar Hafner 及其合作者在 Google DeepMind 从 2019 年发展至今，是唯一在四代架构中始终保持对模拟器和规划器双重承诺的系统家族。
+Sora 以时空 Patch 为最小单元，在 30 亿参数规模上展现了涌现的三维一致性和物体持久性。Genie 从 110 亿参数的无标注视频中学习可交互世界，但状态隐式编码在视频 Token 中。Cosmos 引入物理感知先验以提升生成内容的物理合理性。GameNGen 是首个以扩散模型驱动实时游戏引擎（Doom ~20FPS）的先例。
 
-### 3.1 RSSM：循环状态空间模型的数学原理
+功能分类法标记：**Renderer ⭐⭐⭐， Simulator ⭐， Planner ⭐**。Sora 和 Genie 本质上是 Renderer——它们输出的合约是视觉逼真而非结构精确。Cosmos 和 GameNGen 有向 Simulator 过渡的趋势，但 AI 生成几何的精度尚未达到传统物理引擎的水平。
 
-Dreamer 系列架构的核心是 RSSM（Recurrent State-Space Model），它解决了部分可观测环境中隐状态学习的根本矛盾：环境同时包含确定性元素（需长期记忆）和随机性元素（需概率建模）。
+### 2.4 物理先验世界模型
 
-RSSM 将隐状态分解为三条信息流：
+**谱系**：PINN (Physics-Informed Neural Networks, Raissi et al., 2019) → 可微分物理引擎 (DiffPhysics, GradSim, 2020-2024) → 神经物理引擎。核心思路不是在纯数据上学习动力学，而是在网络架构或损失函数中注入物理归纳偏置。
+
+PINN 将 PDE 残差作为正则项加入损失函数。可微分物理引擎（如 DiffTaichi, Brax）将刚体/柔性体模拟实现为可微计算图，允许梯度回传到物理参数。这些方法与 Dreamer 式数据驱动世界模型形成互补——前者保真度高但依赖已知物理方程，后者灵活性好但数据需求大。
+
+功能分类法标记：**Simulator ⭐⭐⭐， Planner ⭐， Renderer ⭐**。物理先验方法在特定域（流体、结构力学）的模拟精度远超数据驱动方法，但跨域泛化能力和规划能力弱。
+
+### 2.5 语言增强多模态世界模型
+
+**谱系**：VISTA (2026.02) → WorldVLA (2025.06) → VLAW (2026.02)。核心思路是世界模型与 VLA（Vision-Language-Action）策略融合。
+
+三种融合范式已在深蓝学院的系统梳理中被归纳：
+
+| 范式 | 代表 | 架构 | 功能分类法映射 |
+|------|------|------|-------------|
+| 分层解耦 | VISTA | 世界模型做高层规划器 → VLA 做底层执行器 | Simulator(高) → Planner(低) |
+| 统一自回归 | WorldVLA | 单 Transformer 同时预测图像+动作 | Renderer + Planner 合并 |
+| 闭环迭代 | VLAW | 真实数据→微调世界模型→生成仿真→训练 VLA | Simulator ↔ Planner 互馈 |
+
+VISTA (arXiv:2602.10983) 将在 OOD 场景下相同结构 VLA 的准确率从 14% 提升至 69%，验证了分层架构的泛化价值。WorldVLA (arXiv:2506.21539) 将动作生成和图像预测统一为 Next-Token Prediction，发现自回归动作序列存在误差累积问题并提出注意力掩码策略。VLAW (arXiv:2602.12063) 以真实机器人的交互数据驱动世界模型不断迭代，绝对成功率提升 39.2%。
+
+功能分类法标记：各范式不同。VISTA 的 WM 扮演 Planner 角色；WorldVLA 的"世界模型"实质是 Renderer+Planner 合一；VLAW 的 WM 是纯粹的 Simulator。
+
+**五条路线总览**
 
 ```
-确定性路径:  h_t = f_θ(h_{t-1}, s_{t-1}, a_{t-1})      # GRU 确定性更新
-后验路径:    s_t ∼ q_φ(s_t | h_t, o_t)                   # 从观测推断
-先验路径:    ŝ_t ∼ p_ψ(ŝ_t | h_t)                         # 不依赖观测的预测
+方法论谱系          Simulator   Planner   Renderer   审计结论
+SSM/循环 (Dreamer)   ★★★        ★★★       ★★~☆      唯一双功能对齐
+Transformer (IRIS)   ★★         ★★        ★★        功能覆盖不全
+扩散 (Sora/Genie)    ★          ☆         ★★★      主要是渲染器
+物理先验 (PINN)      ★★★        ★         ★         模拟精确但不规划
+语言增强 (VLA)       ★~★★★     ★~★★★     ★~★★★    因范式而异
 ```
 
-其中 $f_θ$ 是门控循环单元（GRU），$q_φ$ 是后验编码器（从当前观测提取信息修正信念），$p_ψ$ 是先验预测器（仅靠历史预测未来）。RSSM 的关键设计选择是：确定性 GRU 的输出 $h_t$ 既作为后验 $q_φ$ 的条件，也作为先验 $p_ψ$ 的条件。这使得先验和后验的差异仅在于是否引入了当前观测 $o_t$ 的信息。训练时最小化两者之间的 KL 散度：
+---
 
-$$\mathcal{L}_{\text{KL}} = D_{\text{KL}}(q_φ(s_t | h_t, o_t) \| p_ψ(s_t | h_t))$$
+## 3. Dreamer 系列与 MuZero：两种 Simulator-Planner 对齐方案
 
-当先验能够准确预测后验时，智能体就可以放弃观测、仅靠先验在"梦境"中规划。
+### 3.1 RSSM 数学原理
 
-### 3.2 DreamerV1：潜在想象的范式确立
+RSSM 将隐状态分解为三条信息流：确定性 GRU 路径 $h_t = f_\theta(h_{t-1}, s_{t-1}, a_{t-1})$，后验路径 $s_t \sim q_\phi(s_t|h_t,o_t)$，先验路径 $\hat{s}_t \sim p_\psi(\hat{s}_t|h_t)$。三者关系通过 KL 散度约束：
 
-DreamerV1[2]（ICLR 2020）是第一代在潜在空间中同时完成世界模型学习和行为优化的系统。其训练循环分为三步：
+$$\mathcal{L}_{\text{KL}} = D_{\text{KL}}(q_\phi(s_t|h_t,o_t) \| p_\psi(s_t|h_t))$$
 
-**第一步：世界模型学习。** 在真实环境中收集轨迹 $\{(o_t, a_t, r_t)\}_{t=1}^T$，通过最大化证据下界（ELBO）训练 RSSM + 奖励预测器：
+训练时最大化证据下界（ELBO），使先验学会匹配后验——这样在规划时，智能体无需观测即可独立向前滚动。
 
-$$\mathcal{L}_{\text{WM}} = \sum_{t} \left[ -\ln p(o_t | s_t) - \ln p(r_t | s_t) + \beta \cdot D_{\text{KL}}(q_φ(s_t|h_t,o_t) \| p_ψ(s_t|h_t)) \right]$$
+### 3.2 DreamerV1 到 R2-Dreamer 的演进
 
-编码器从观测 $o_t$ 编码到 $s_t$，解码器重构 $\hat{o}_t$ 和 $\hat{r}_t$，RSSM 在潜空间做时序预测。
+| 代际 | 隐变量 | Simulator | Planner | Renderer | 关键突破 |
+|-----|--------|----------|---------|---------|---------|
+| V1 (ICLR 2020) | 高斯连续 | RSSM | 潜空间Actor-Critic | VAE | 范式确立 |
+| V2 (ICLR 2021) | 分类离散 | RSSM (离散) | 同上 | VAE | 首个Atari人类级 |
+| V3 (2023) | 分类离散+Symlog | RSSM+3项鲁棒 | 分位数Actor-Critic | VAE (可选) | 150任务+Minecraft钻石 |
+| R2 (ICLR 2026) | 分类离散+冗余消除 | RSSM-解码器 | 同上 | **无** | 1.59×加速, 验证模拟器独立性 |
 
-**第二步：行为学习。** 在 RSSM 生成的想象轨迹上执行 Actor-Critic：
+R2-Dreamer 的实验验证了功能分类法的核心假设：去掉解码器（Renderer）后，Simulator 性能不降反升（尤其是在微小物体场景 DMC-Subtle 中），表明潜空间中学习的结构化知识足以支撑规划。
 
-$$\text{Actor: } \max_π \mathbb{E}_{p_ψ, π} \left[ \sum_{τ=t}^{t+H} \gamma^{τ-t} V(s_τ) \right]$$
+### 3.3 MuZero：基于搜索的世界模型
 
-$$\text{Critic: } \min_V \mathbb{E}_{p_ψ, π} \left[ \left( V(s_t) - \mathbb{E}_{p_ψ}[R_t + \gamma V(s_{t+1})] \right)^2 \right]$$
+MuZero (DeepMind, 2020) 代表了另一种 Simulator-Planner 对齐方式。与 Dreamer 的核心差异：
 
-其中 $H$ 为想象视野（通常 15 步），$R_t$ 为预测奖励。
+| 维度 | DreamerV3 | MuZero |
+|------|-----------|--------|
+| 世界模型 | RSSM: 显式生成 $\hat{s}_{t+1}, \hat{r}_{t+1}$ | 学习隐藏状态 $h_t$，同时预测策略 $p_t$、价值 $v_t$、奖励 $r_t$ |
+| 表征监督 | 通过像素重构 + 奖励预测 | 通过策略/价值/奖励一致性（无像素重构） |
+| 规划方式 | Actor-Critic 在隐想象轨迹上 | MCTS 在隐藏状态树上展开搜索 |
+| Simulator 性质 | **显式模拟器**: 输出状态转移+奖励 | **隐式模拟器**: 状态为规划服务，不单独输出 |
+| Planner 性质 | 隐式策略 (Actor) + 显式搜索 | 显式搜索 (MCTS) + 策略蒸馏 |
+| 学习范式 | 在想象轨迹上反向传播 | AlphaZero 式的自对弈 + 搜索 |
+| 适用范围 | 连续+离散动作 | 离散动作（Atari, 棋盘游戏） |
 
-**第三步：环境交互。** 将学到的 Actor 策略 $π(a_t|s_t)$ 部署到真实环境，收集新数据。
+MuZero 在 Atari 上达到了超越人类的性能，在围棋、国际象棋和将棋中达到了 AlphaZero 水平。其核心洞察是：**不需要显式建模环境的所有细节，只需建模对决策有用的信息**——策略、价值和奖励。这与功能分类法的 Simulator 定义为 "输出状态" 形成对比：MuZero 的"状态" $h_t$ 不服务于渲染或独立的模拟消费，而是纯为规划优化。
 
-在二十个连续控制任务上，DreamerV1 在数据效率和最终性能上超越了当时的无模型方法。
+功能分类法标记：**Simulator ⭐⭐（隐式）， Planner ⭐⭐⭐， Renderer ⭐**。
 
-### 3.3 DreamerV2：离散化跃迁与其深远后果
-
-DreamerV2[3]（ICLR 2021）的核心更改只有一个，但被证明具有决定意义：将 RSSM 的隐变量从连续高斯替换为**分类离散分布**：
-
-$$V1: s_t \sim \mathcal{N}(\mu_t, \sigma_t)$$
-$$V2: s_t \sim \prod_{k=1}^{K} \text{Cat}(\pi_t^k)$$
-
-其中 $K=32$ 个分类变量，每个 $|\mathcal{C}|=32$ 个类别，共 $32^{32}$ 种理论组合，常用 $32 \times 32 = 1024$ 个 logits。
-
-离散化的动机——物理世界的本质结构是离散的：物体的类型是离散的，事件边界是离散的，游戏状态切换是离散的。连续高斯分布假设隐变量属于各向同性的凸区域，但真实世界的状态空间可能具有复杂的拓扑结构。
-
-离散化的实际收益触发了领域级突破：
-- 在 55 个 Atari 游戏中达到人类水平均值，首个实现此成就的基于世界模型的智能体
-- 超越了当时最先进的无模型方法 IQN 和 Rainbow
-- 同一套代码可直接应用于连续控制任务（人形机器人行走）
-
-更重要的一阶推论是：**模拟器的质量设定了规划器性能的上限**。DreamerV2 的成功本质上是因为离散潜空间更精确地捕捉了 Atari 游戏中离散状态转换的结构。
-
-### 3.4 DreamerV3：通用算法的工程实现
-
-DreamerV3[4]（2023）证明单一固定超参数配置可驾驭 150+ 任务——横跨 Atari、DM Control、灵巧操作（Dexterous Manipulation）和 Minecraft，其中奖励量级跨越五个数量级（0/1 二元到上万的连续值）。
-
-三项鲁棒性技术在其通用性能中起关键作用：
-
-**Symlog 变换：** 将奖励和回报按符号压缩到对数空间：$\text{symlog}(x) = \text{sign}(x) \cdot \ln(|x| + 1)$。逆变换为 symexp。这使得网络输出层的尺度对不同量级的输入输出自动适应，消除了任务特定的奖励归一化。
-
-**分位数回归（Quantile Regression）：** 在 Critic 中用分位数损失替代均方误差：
-
-$$\mathcal{L}_{\text{QR}}(\tau, \hat{\tau}) = |\tau - \mathbb{I}(\hat{\tau} < \tau)| \cdot |\hat{\tau} - \tau| / \kappa(\tau)$$
-
-分位数回归不做任何目标值分布假设，天然适应多模态和高偏态回报。
-
-**双向 RMSNorm：** 对每个隐藏层同时施加 RMS 归一化和逆变换，使激活值在不同任务、不同数据统计量下保持稳定。
-
-**Minecraft 钻石成就：** Minecraft 的稀疏奖励和深层技能树（砍树→木板→木棍→木镐→石镐→铁→钻石）此前无 RL 算法完成。DreamerV3 在约 100M 环境步后首次成功，证明了世界模型在长程规划中的价值。
-
-在功能分类法下，DreamerV3 的双轴评分：
-- Simulator ⭐⭐⭐：RSSM 预测状态转移 + 奖励 + 回合终止
-- Planner ⭐⭐⭐：Actor-Critic 完全在想象轨迹中运行
-- Renderer ⭐⭐：解码器存在但仅用于监督训练，非主要功能输出
-
-### 3.5 R2-Dreamer：模拟器独立性的决定性检验
-
-R2-Dreamer[5]（Morihira et al., ICLR 2026）检验了功能分类法的一个核心假设：模拟器是否可以脱离渲染器独立存在。
-
-DreamerV3 的一个被广泛讨论的弱点是：解码器重构所有像素，包括大量任务无关区域（天空、背景纹理），浪费参数和计算。但去解码器面临的核心挑战是：没有像素重构的监督信号，什么是正确的隐空间表征？
-
-R2-Dreamer 的解决方案是冗余消除（Redundancy Reduction）：
-
-$$\mathcal{L}_{\text{RR}} = \sum_i (1 - C_{ii})^2 + \lambda \sum_{i \neq j} C_{ij}^2$$
-
-其中 $C$ 是不同数据增强视角下隐表征的互相关矩阵。第一项迫使对角元素接近 1（保留信息），第二项迫使非对角元素接近 0（消除冗余）。灵感来自 Barlow Twins 自监督学习。
-
-关键差异：R2-Dreamer 不需要外部的数据增强——旧有去解码器方法（如 TD-MPC2）严重依赖数据增强的强度，限制了通用性。R2-Dreamer 的正则化器是内部的。
-
-实验结果验证了假设：
-
-| 指标 | DreamerV3 | R2-Dreamer | 差距 |
-|------|-----------|-----------|------|
-| 训练速度 | 1× | **1.59×** | +59% |
-| DMControl 均值 | 基准 | 持平 | — |
-| Meta-World 成功率 | 基准 | 持平或略优 | — |
-| DMC-Subtle（微小物体） | 低 | **大幅超越** | 显著 |
-
-DMC-Subtle 的结果尤其值得注意：微小物体场景中，解码器的像素重构浪费了大量容量在背景上。R2-Dreamer 的冗余消除直接跳过这一无关信息，从未知中提取任务相关结构。
-
-这一发现有三个层次的含义：
-1. **实践层面**：去解码器架构可以训练 1.59× 更快，性能持平或更好
-2. **理论层面**：隐空间可以学到足够支撑规划的结构化知识，无需像素级监督
-3. **分类法层面**：模拟器是独立于渲染器的可行模块，不是两类功能之间的被动桥梁
-
-### 3.6 Dreamer 家族四代定量对比
-
-| 维度 | DreamerV1 (2019) | DreamerV2 (2020) | DreamerV3 (2023) | R2-Dreamer (2026) |
-|------|-----------------|-----------------|-----------------|-------------------|
-| **隐变量类型** | 高斯连续 | 分类离散 (K=32, |C|=32) | 分类离散 + Symlog | 分类离散 + 冗余消除 |
-| **Simulator** | RSSM (连续) | RSSM (离散) | RSSM + 三项鲁棒 | RSSM - 解码器 |
-| **Planner** | Actor-Critic (潜空间) | Actor-Critic (潜空间) | Actor-Critic (分位数) | Actor-Critic (分位数) |
-| **解码器** | 有 | 有 | 有 | **无** |
-| **任务数** | 20 | 55 + 连续控制 | **150+** | DMC + Meta-World |
-| **Minecraft 钻石** | ✗ | ✗ | **✓** | ✗ (未测试) |
-| **最高会议** | ICLR 2020 | ICLR 2021 | — | **ICLR 2026** |
-| **训练速度** | 1× | ~1× | ~1× | **1.59×** |
-| **开源** | ✗ | TensorFlow | ✓ (JAX) | ✓ (PyTorch) |
+从功能分类法角度看，Dreamer 和 MuZero 是"Simulator+Planner"的双功能对齐的两个端点：
+- Dreamer 走**显式模拟器**路线：状态转移可独立消费、可解码、可解释
+- MuZero 走**隐式模拟器**路线：状态仅为搜索服务，效率更高但不可消费
 
 ---
 
-## 4. 学派分裂：三种世界模型哲学
+## 4. 学派分裂：三派哲学分歧
 
-除了功能分类法提供的横向划分，该领域还存在三个深层的**纵向学派**分歧。它们关注的不是"输出什么"，而是"世界模型应该是什么"。
+### 4.1 生成式学派
 
-### 4.1 生成式学派（Scaling Law 纲领）
+**纲领**：Scaling Law — 在互联网视频上缩放生成模型，物理规则作为统计规律涌现。
+**代表**：OpenAI Sora, Google Genie。
+**论据**：三维一致性、物体持久性等涌现属性可通过足够大规模数据自发产生。
+**批评**：涌现不可靠、不可控，是统计一致性而非因果理解。
 
-代表：OpenAI Sora、Google Genie、Meta Video Joint Embedding
+### 4.2 结构化表征学派
 
-主张：在互联网规模的视频数据上缩放生成模型，物理规则会作为统计规律**涌现**。Sora 团队的论文标题本身就表达了这一立场——"Video generation models as world simulators"。
+**纲领**：MBRL — 世界模型必须显式建模状态的结构化表征，支持因果推理。
+**代表**：Dreamer 系列, LeCun JEPA, MuZero。
+**论据**：R2-Dreamer 去解码器后性能不降反升，证明结构化知识不需要像素监督。
+**两条子路线**：显式模拟器（Dreamer）vs 隐式模拟器（MuZero）。
 
-核心论据：三维一致性、物体持久性、动物行为等涌现属性可以通过足够大的模型和足够多的数据自发产生，无需显式物理建模。
+### 4.3 统一学派
 
-核心批评：涌现不可靠、不可控。Sora 可以生成一只行走的北极熊，但无法预测将一个杯子推下桌子的后果。涌现属性是**统计一致性**而非**因果理解**。
+**纲领**：同一架构同时支撑渲染、模拟、规划。
+**代表**：World Labs (Marble), NVIDIA (Cosmos)。
+**实践**：Marble 已输出 Gaussian splats + collision meshes，实现 Renderer+Simulator 融合，但尚无规划能力。
 
-### 4.2 结构化表征学派（MBRL 纲领）
+### 4.4 三派之外的第五路径：物理先验 + 数据驱动融合
 
-代表：Dreamer 系列、SimPLe、PILCO、LeCun JEPA
-
-主张：世界模型必须显式建模状态的结构化表征——要么是 RSSM 式的潜在动力学，要么是 JEPA 式的抽象预测空间。LeCun 在其客观函数（Objective-Driven AI）框架中明确指出，纯粹在像素空间预测未来浪费计算，应该在抽象表征空间中预测。
-
-核心论据：R2-Dreamer 的结果直接支持了这一立场——去掉像素重构后模拟器性能不降反升，证明任务相关的结构化知识不需要像素级监督来学习。
-
-### 4.3 统一学派（World Labs 纲领）
-
-代表：World Labs（Marble）、NVIDIA（Cosmos）
-
-主张：渲染、模拟、规划共享同一知识基础，应统一在同一架构中。Marble 输出 Gaussian splats（视觉）+ collision meshes（物理），是 Renderer+Simulator 统一的首个商业实例。World Labs 团队明确将"three categories collapsing into one another"定义为领域的定义性趋势。
-
-### 4.4 三派分歧的实质
-
-三个学派的根本分歧不在于技术路线，而在于对"世界模型"的核心功能定位：
-
-- 生成式学派：世界模型 ≈ 逼真的世界视频生成器
-- 结构化表征学派：世界模型 ≈ 可用于控制的因果动力学模型
-- 统一学派：世界模型 ≈ 支持渲染+模拟+决策的通用空间智能引擎
-
-功能分类法的价值在于：它为这三个看似不可通约的纲领提供了统一的比较维度——每个学派的系统都可以在 Renderer/Simulator/Planner 三个轴上定位，从而暴露它们"宣称了什么"和"提供了什么"之间的差异。
+arXiv:2606.00133 明确识别出的"物理先验网络"路线（PINN, 可微分物理引擎）正在与数据驱动方法融合。一个有希望的中间地带：在 RSSM 的损失函数中加入物理约束（如动量守恒），既保留数据驱动灵活性又提升物理保真度。
 
 ---
 
-## 5. 其他典型项目的功能边界
+## 5. 其他系统的功能边界评估
 
-除 Dreamer 系列外，当前领域内值得关注的系统可分为三类。
-
-### 5.1 Marble：唯一商业化的 Renderer+Simulator 融合
-
-World Labs 的 Marble (2025)[10]接收文本/图像/视频/空间草图等多模态输入，生成可探索的三维环境，同时输出 Gaussian splats（视觉消费）和 collision meshes（物理引擎消费）。这是当前唯一在单一模型中同时覆盖渲染器和模拟器的商业系统。但它不做规划，其作者对此边界有明确声明。
-
-### 5.2 PointWorld：纯粹模拟器的形态泛化
-
-PointWorld[9]（Huang, Fei-Fei Li et al., 2026）将机器人动作和世界状态统一表示为**三维点流**：
-
-给定 RGB-D 图像和动作序列 $(a_1, ..., a_T)$，预测每个像素在三维空间中的逐帧位移 $\{\Delta p_{ij}^t\}$。这一表示天然跨机械臂形态泛化——单臂 Franka 和双臂人形机器人的动作都统一为三维点位移。
-
-实验结果：单个预训练检查点使真实 Franka 机械臂从单张图片零样本执行刚体推动、可变形物体操作和工具使用。PointWorld 是纯 Simulator，规划由外挂 MPC 完成。
-
-### 5.3 NVIDIA Cosmos 与 sim-to-real 困境
-
-NVIDIA Cosmos 定位为世界基础模型（World Foundation Model），为自动驾驶和机器人训练生成物理感知视频。它是构建通用模拟器最有雄心的商业努力。但面临所有生成式模拟器的共同困境：AI 生成的几何可能外观正确但包含自相交或错误比例，导致物理引擎产生无意义的结果。Cosmos 的输出正在改进但尚未在高风险应用中取代传统引擎。
-
-### 5.4 功能边界汇总
+### 5.1 功能边界汇总表
 
 | 系统 | 自称 | Renderer | Simulator | Planner | 关键缺口 |
 |------|------|----------|-----------|---------|---------|
-| Sora | World Simulator | ★★★ | ☆ | ☆ | 无状态输出，自承物理不准确 |
-| Genie | Foundation WM | ★★★ | ☆ | ☆ | 状态隐式编码在 Token 中 |
-| Marble | Multimodal WM | ★★★ | ★★★ | ☆ | 不做规划 |
-| PointWorld | 3D WM | ☆ | ★★★ | ★★(外挂) | 规划器外挂非内生 |
-| Cosmos | Foundation WM | ★★ | ★★☆ | ☆ | sim-to-real 仍受限 |
-| GATO | Generalist | ☆ | ☆ | ★★ | 无世界模型组件，纯行为克隆 |
+| Sora (OpenAI, 2024) | World Simulator | ★★★ | ☆ | ☆ | 自承物理不准确 |
+| Genie (DeepMind, 2024) | Foundation WM | ★★★ | ★(隐式) | ☆ | 状态编码在Token中 |
+| Marble (World Labs, 2025) | Multimodal WM | ★★★ | ★★★ | ☆ | 不做规划 |
+| PointWorld (Stanford, 2026) | 3D WM | ☆ | ★★★ | ★★(外挂) | 规划器外挂 |
+| Cosmos (NVIDIA, 2024) | Foundation WM | ★★ | ★★☆ | ☆ | sim-to-real 未解决 |
+| IRIS (Meta, 2022) | Discrete WM | ★★ | ★★ | ★★ | Transformer WM |
+| MuZero (DeepMind, 2020) | Model-based RL | ☆ | ★★(隐式) | ★★★ | 隐式模拟器 |
+| GATO (DeepMind, 2022) | Generalist | ☆ | ☆ | ★★ | 纯行为克隆 |
+| VISTA (2026) | Hierarchical WM | ★★ | ★★(上层) | ★★(下层VLA) | 分层依赖 |
+| WorldVLA (2025) | Action WM | ★★ | ☆ | ★★ | 渲染器+规划器合一，无独立模拟器 |
+| VLAW (2026) | Co-Improvement | ★★ | ★★★(迭代) | ★★★(迭代) | 流程复杂 |
 | **DreamerV3** | World Model | ★★ | **★★★** | **★★★** | — |
 | **R2-Dreamer** | Redundancy-Reduced WM | ☆ | **★★★** | **★★★** | 无渲染能力 |
 
----
+### 5.2 关键审计结论
 
-## 6. 持续存在的技术瓶颈
-
-### 6.1 Simulator 的数据稀缺
-
-渲染器有整个互联网视频作为训练数据。规划器有来自遥操作和游戏记录的大量离线数据集。模拟器面临的却是根本性的稀缺：带显式几何、材质属性和物理标注的三维数据比供给渲染器的像素稀少数个数量级。这是目前领域内最重要的单一瓶颈。
-
-潜在突破路径：
-- 游戏引擎自动标注（Minecraft/Isaac Sim 可大规模生成带完整状态记录的数据）
-- 从渲染器蒸馏模拟器（利用海量视频训练隐式物理先验 → 迁移到结构化模拟器）
-- 自监督几何学习（PointWorld 和 R2-Dreamer 已经展示了不需要人工标注的路径）
-
-### 6.2 Sim-to-real 差距
-
-从仿真到现实的迁移损失是所有基于模拟器的系统必须面对的问题。当前格局：
-
-| 方法 | 模拟性能 | 真实世界性能 | 差距 |
-|------|---------|------------|------|
-| DreamerV3 (Minecraft) | ★★★★★ | 游戏本身是确定数字环境 | 无 |
-| R2-Dreamer | ★★★★☆ | 未在真实机器人验证 | 未知 |
-| PointWorld | ★★★★☆ | ★★★★☆ (短任务) | 任务视野受限 |
-| Cosmos | ★★★☆ | ★★☆ | 生成式几何缺陷 |
-
-### 6.3 三类功能同一架构中的目标冲突
-
-| 功能 | 优化目标 | 成功标准 | 可能的冲突 |
-|------|---------|---------|----------|
-| 渲染器 | 视觉逼真 | FID/CLIP | 为视觉美牺牲物理精度 |
-| 模拟器 | 结构精确 | 物理守恒偏差 | 需要精确但可能不美观的表示 |
-| 规划器 | 任务成功 | 成功率 | 学到了不具可解释性的隐表示 |
-
-R2-Dreamer 和 PointWorld 分别通过去渲染器和去渲染器+外挂规划器绕过了这一冲突。但它们也证明了在单一架构中同时优化三者的困难。
-
-### 6.4 评估基准缺失
-
-领域内尚无统一的评估框架可以同时衡量：
-- 渲染质量（视觉逼真度 + 物理合理性）
-- 模拟精度（几何正确率 + 物理守恒偏差 + 跨状态泛化）
-- 规划性能（从模拟到真实的零样本迁移成功率）
-
-每项子能力都在被独立测量，但联合评估的缺失使得系统之间的公平比较几乎不可能。
+- IRIS/TWM/STORM 等 Transformer WM 是"方法论创新"但有前景，目前未在 Simulator 或 Planner 任一项上超越 Dreamer 系列
+- MuZero 是 Dreamer 最有力的概念竞争者，两者代表 Simulator+Planner 对齐的两种哲学路线
+- 语言增强多模态世界模型（VISTA/WorldVLA/VLAW）是 2026 年最新涌现的方向，代表了世界模型从 RL 原生的 MBRL 问题转向与具身智能融合的重大趋势
 
 ---
 
-## 7. 收敛趋势与开放问题
+## 6. 应用全景图与太空具身智能前景
 
-### 7.1 三类边界消融的证据
+### 6.1 九大应用域的功能分类法分析
 
-| 融合方向 | 示例 | 意义 |
+| 应用域 | 代表系统 | 所需功能 | 当前覆盖 | 成熟度 |
+|--------|---------|---------|---------|-------|
+| 机器人操控 | DreamerV3, DayDreamer, PointWorld | Simulator+Planner | ★★★★☆ | 中等 |
+| 自动驾驶 | Cosmos, Tesla FSD, UniAD | Simulator+Planner | ★★★☆☆ | 发展中 |
+| 视频预测/生成 | Sora, Genie | Renderer | ★★★★★ | 已商业化 |
+| 多模态Agent | GATO, Voyager | Planner | ★★☆☆☆ | 早期 |
+| RL/游戏 | DreamerV2, MuZero | Simulator+Planner | ★★★★★ | 成熟 |
+| **科学模拟与发现** | PINN, AI Feynman | **Simulator** | ★★★☆☆ | 发展中 |
+| **医学影像** | 肿瘤演化 WM | **Simulator+Renderer** | ★★☆☆☆ | 早期 |
+| **教育测评** | 知识状态追踪 WM | **Simulator** | ★★☆☆☆ | 早期 |
+| **金融市场** | 市场动态 WM | **Simulator** | ★★☆☆☆ | 早期 |
+
+科学模拟、医学影像、教育和金融是 arXiv:2606.00133 扩展覆盖的新领域。这些域的共同特征是：**它们对 Simulator 的需求远大于对 Renderer 或 Planner 的需求**——因为它们关心的是"预测状态如何演化"而非"生成好看的画面"或"自主决策"。这是功能分类法的一个有趣推论：不同应用域天然偏向不同的功能组合。
+
+### 6.2 太空具身智能世界模型
+
+太空具身智能（Space Embodied AI）代表了传统机器人学中最为极端的部署环境。世界模型在该领域的应用处于**几乎空白的前夜**，但需求极为迫切。
+
+#### 6.2.1 太空环境的独特挑战
+
+| 挑战 | 对世界模型的影响 | 与地面环境的差异 |
+|------|---------------|----------------|
+| **极端物理条件**：微重力、极端温差、真空、辐射 | 地面训练的世界模型在动力学校验上完全失效 | RSSM 需重新学习 $T(s_{t+1}|s_t,a_t)$ |
+| **通信延迟与断链**：火星单程通信 4-24 分钟 | 无法依赖遥控——必须本地 Simulator+Planner | Planner 必须完全自主闭环 |
+| **非结构化地形**：陨石坑、沙地、岩石场 | 视觉观测 $o_t$ 与地面场景分布极度漂移 | Renderer 训练域外失效 |
+| **能源与计算受限** | 无法运行大规模扩散模型 | 小模型 RSSM 类优先 |
+| **任务长程与稀疏反馈**：持续月夜14天 | 奖励极端稀疏，需高效规划 | Dreamer 类算法的天然场景 |
+| **多模态感知受限**：弱光、无GPS、无高精地图 | 观测退化（单目+IMU为主） | POMDP 环路的极端情况 |
+
+#### 6.2.2 世界模型适用性预研
+
+基于功能分类法，太空具身智能对各种功能的需求权重为：
+
+| 功能 | 在地面 (Dreamer环境) | 在太空 | 原因 |
+|------|-------------------|--------|------|
+| **Simulator** | ★★★ | **★★★★★** | 唯一能替代缺失物理交互训练的途径 |
+| **Planner** | ★★★ | **★★★★★** | 通信延迟要求完全本地决策 |
+| **Renderer** | ★★ | ★★ | 视觉可用于故障诊断，但不能用于规划 |
+
+这产生了明确的结论：**太空具身智能对 Simulator 和 Planner 的需求均超过地面应用，而对 Renderer 的需求则持平。** 这意味着 Dreamer 系列的 Simulator+Planner 双功能对齐架构天然适合太空场景。
+
+#### 6.2.3 具体应用场景
+
+1. **行星车长期自主探索**：用异质（Heterogeneous）RSSM 模拟不同星壤的牵引力学，在潜空间中预演穿越路径
+2. **在轨组装与维修**：用物理先验世界模型模拟微重力下多体系统的接触动力学，MPC 底座进行抓取和对接规划
+3. **科学目标自主发现**：与 VISTA 的分层架构结合——世界模型做高层科学规划器（"在哪个区域采样最有科学价值"），底层 VLA 执行采样动作
+4. **星际空间站自主管理**：用世界模型模拟舱内环境状态（温度、气压、辐射等）的长期演化，提前规划干预措施
+
+#### 6.2.4 与现有工作的关联
+
+| 现有工作 | 太空应用适配 | 待解决问题 |
+|---------|------------|-----------|
+| DreamerV3 (Minecraft 钻石) | 类比火星表面探索（稀疏奖励+长程技能链） | 物理引擎替换为太空动力学 |
+| PointWorld (3D点流) | 在轨机械臂操控 | 微重力环境的动量守恒需新建模 |
+| MuZero (隐式模拟器) | 计算受限场景的轻量规划 | 可解释性需求高（任务关键系统） |
+| VLAW (闭环迭代) | 太空环境中的持续自适应性 | 在轨数据采集周期长 |
+
+### 6.3 功能分类法的预测
+
+> 假设功能分类法成立，那么一个应用域对世界模型的需求可被分解为 $(w_R, w_S, w_P)$ 三元组。太空具身智能的权重为 $(w_R=2, w_S=5, w_P=5)$，在地面机器人场景为 $(w_R=2, w_S=3, w_P=4)$，视频生成为 $(w_R=5, w_S=1, w_P=1)$。这一框架可指导资源分配：太空场景应优先押注 Simulator 和 Planner，而非投向上亿美元的视觉数据集。
+
+---
+
+## 7. 技术瓶颈
+
+### 7.1 数据稀缺（Simulator 的首要瓶颈）
+
+渲染器有整个互联网视频。规划器有大量离线数据。模拟器面临的三维几何/物理标注数据稀少数个数量级。
+
+### 7.2 Sim-to-Real 差距
+
+生成式几何可能外观正确但包含自相交或错误比例。从仿真到现实的迁移损失是所有 Simulator 的根本挑战。在太空场景中此问题尤为突出——地面获取的物理训练数据在微重力下几乎完全失效。
+
+### 7.3 长程一致性与误差累积
+
+arXiv:2606.00133 将这一挑战列为首要问题。RSSM 在多步展开中预测误差随步数指数增长。Minecraft 钻石任务证明 DreamerV3 可应对约 50 步的规划视野，但太空任务中的规划视野可能需要数千步。
+
+### 7.4 三类功能在同一架构中的目标冲突
+
+| 功能 | 优化目标 | 可能的冲突 |
+|------|---------|----------|
+| 渲染器 | 视觉逼真 | 为美牺牲物理精度 |
+| 模拟器 | 结构精确 | 精确但不美观 |
+| 规划器 | 任务成功 | 不可解释的隐表示 |
+
+### 7.5 评估基准碎片化
+
+无统一基准可同时衡量渲染质量、模拟精度和规划性能。科学模拟、医学影像、教育、金融等领域尚无标准测评协议。
+
+### 7.6 安全、鲁棒性与可解释性
+
+任务关键系统（太空、医疗、自动驾驶）中的世界模型必须满足安全性验证。当前数据驱动世界模型的鲁棒性边界不清、可解释性不足，部署风险高。
+
+---
+
+## 8. 收敛趋势与开放问题
+
+### 8.1 三类边界消融的证据
+
+| 融合方向 | 实例 | 意义 |
 |---------|------|------|
-| Renderer → Simulator | Marble: 同模型输出 splats + collision meshes | 视觉和几何可共用同一表征 |
-| Renderer → Planner | 预训练视频模型做动作预测骨干 | 渲染器中编码了部分动力学知识 |
-| Simulator → Planner | DreamerV3 RSSM → Actor-Critic | 隐空间动力学可直接支撑决策 |
-| Planner → Simulator | PointWorld MPC + 点流模型 | 规划需要模拟器提供预测 |
+| Renderer → Simulator | Marble: Gaussian splats + collision meshes | 同一模型覆盖两轴 |
+| Renderer → Planner | 视频模型作为动作预测骨干 | 渲染中编码了动力学知识 |
+| Simulator → Planner | RSSM → Actor-Critic | 隐空间动力学支撑决策 |
+| Planner → Simulator | MPC + 预测模型 | 规划依赖模拟器输出 |
 
-### 7.2 统一世界模型的架构挑战
+### 8.2 统一世界模型的前景
 
-逻辑终点的"统一世界模型"需要同时满足：
+arXiv:2606.00133 提出的"Foundation-scale Interactive Simulators"与我们的"统一世界模型"指向同一目标。逻辑终点是一个基础模型，切换输出模态以满足渲染、模拟或规划需求。当前 Marble 从 Renderer+Simulator 方向逼近，Dreamer 系列从 Simulator+Planner 方向逼近，MuZero 从 Planner+隐式Simulator 方向逼近。三者合一仍面临数据、目标和评估三大鸿沟。
 
-$$f_{\text{unified}}: (\text{prompt}, a_t) \mapsto (o_t, s_t, a_{t+1})$$
+### 8.3 太空具身智能的开放问题
 
-其中 prompt 可以是文本、图像、视频或草图，$o_t$ 是像素输出（渲染），$s_t$ 是几何/物理输出（模拟），$a_{t+1}$ 是行动输出（规划）。当前最接近的是：
-- Marble：实现了 prompt → (splats, meshes)，缺规划输出
-- DreamerV3：实现了 $a_t$ → 隐 $s_{t+1}$ → 隐规划，缺可视渲染输出
-- PointWorld：实现了 (RGB-D, $a_t$) → 3D 点位移，缺规划内生和渲染
-
-### 7.3 开放问题
-
-1. **Simulator 的可扩展性假设**：渲染器的 scaling law 已在 Sora 等模型中验证。模拟器是否也能在数据规模增长时展现出类似的幂律改进？目前没有确定性证据。
-
-2. **物理先验 vs 端到端学习**：是否需要在架构中注入物理归纳偏置（如动量守恒、因果结构）？RSSM 走的是最小先验路线，DreamerV3 在 Minecraft 中成功但许多物理交互场景仍失败。
-
-3. **统一模型的损失函数设计**：渲染损失（像素级 MSE/感知损失）、模拟损失（状态预测准确率）、规划损失（策略梯度）在同一架构中的权重和交互仍未解决。
-
-4. **从仿真到迁移到理解**：在模拟中训练的策略能否迁移到真实物理世界？当前 PointWorld 展示了短任务迁移，但长任务和复杂物理交互的迁移仍是开放挑战。
+1. **物理分布外泛化**：地面训练的 Simulator 在外太空完全不同的物理规律下如何迁移？
+2. **极度稀疏奖励下的规划**：月球表面 14 天极夜的间歇通信和操作如何建模？
+3. **任务关键系统的安全性验证**：世界模型驱动的太空任务需达到怎样的置信度才能替代传统控制？
+4. **在轨自监督学习**：如何利用在轨数据增量更新世界模型，不依赖地面重训练？
 
 ---
 
-## 8. 结论
+## 9. 结论
 
-本文以 2026 年 World Labs 功能分类法为分析框架，对世界模型领域进行了系统性过滤和深入分析。
+本文以 World Labs 功能分类法为批判性审计透镜，在 arXiv:2606.00133 描述性全景方法论的基础上，进行了三重拓展。
 
-**第一，大多数自称世界模型的系统实际上只覆盖三类功能中的一类。** Sora 和 Genie 是渲染器——输出像素而非状态，具有视觉合约而非结构合约。GATO 是孤立的规划器——输出行动而不预测世界。这些系统都是重要且有价值的技术贡献，但它们不是 POMDP 传统意义上的世界模型。
+第一，对五条方法论谱系的审计表明：仅 Dreamer 系列（SSM/循环路线）在 Simulator+Planner 双功能上严格对齐分类法定义。Transformer 世界模型具潜力但尚未超越，扩散世界模型本质是渲染器，物理先验网络模拟精确但不规划，语言增强多模态世界模型则因范式不同而覆盖各异。
 
-**第二，Dreamer 系列是唯一同时覆盖模拟器和规划器的系统家族。** 四代架构中，RSSM 持续扮演模拟器角色（隐空间中的状态转移预测），Actor-Critic 持续扮演规划器角色（在想象轨迹中决策）。R2-Dreamer（ICLR 2026）进一步证明：去除解码器后模拟器训练加快 59%，且在微小物体场景中表现更好，验证了分类法的核心预测——模拟器可以不依赖渲染器独立存在。
+第二，Dreamer 系列与 MuZero 代表了 Simulator+Planner 双功能对齐的两种哲学路线——显式模拟器 vs 隐式模拟器。这一区分对功能分类法的后续演进有理论意义：是否应承认"隐式模拟器"为一类独立存在？
 
-**第三，三类功能的收敛是领域的主导趋势。** Marble（Renderer+Simulator）和 Dreamer 系列（Simulator+Planner）从两端逼近全功能统一。但三者合一的系统仍面临数据稀缺、sim-to-real 差距、评估基准缺失和架构内目标冲突等根本挑战。解决这些挑战——而非继续稀释术语——是世界模型研究的下一个关键步骤。
+第三，世界模型的应用版图正从 RL/游戏领域向科学模拟、医学影像、教育和金融等九大领域扩展。太空具身智能作为最极端的应用场景，对 Simulator+Planner 的需求强度远超地面应用，同时面临物理分布外泛化、极度稀疏奖励和安全性验证等根本挑战——这使得它既是世界模型研究的最难测试场，也可能是最有价值的突破方向。
 
 ---
 
@@ -381,26 +347,42 @@ $$f_{\text{unified}}: (\text{prompt}, a_t) \mapsto (o_t, s_t, a_{t+1})$$
 
 [5] Morihira, N., et al. R2-Dreamer: Redundancy-Reduced World Models without Decoders or Augmentation. *ICLR*, 2026. arXiv:2603.18202.
 
-[6] Bruce, J., et al. Genie: Generative Interactive Environments. 2024. arXiv:2402.15391.
+[6] Schrittwieser, J., et al. Mastering Atari, Go, Chess and Shogi by Planning with a Learned Model. *Nature*, 2020. (MuZero)
 
-[7] OpenAI. Video generation models as world simulators. 2024. https://openai.com/index/video-generation-models-as-world-simulators/
+[7] Micheli, V., et al. IRIS: Discrete Autoregressive World Models. *NeurIPS*, 2022. arXiv:2209.05747.
 
-[8] World Labs Team. A Functional Taxonomy of World Models: Renderers, Simulators, Planners, and the Loop That Connects Them. 2026. https://worldlabs.ai/blog/taxonomy-of-world-models
+[8] Robine, J., et al. Transformer World Model (TWM). *NeurIPS*, 2022.
 
-[9] Huang, W., Fei-Fei, L., et al. PointWorld: Scaling 3D World Models for In-The-Wild Robotic Manipulation. 2026. arXiv:2601.03782.
+[9] Bruce, J., et al. Genie: Generative Interactive Environments. 2024. arXiv:2402.15391.
 
-[10] World Labs. Marble: A Multimodal World Model. 2025. https://worldlabs.ai/blog/marble-world-model
+[10] OpenAI. Video generation models as world simulators. 2024. https://openai.com/index/video-generation-models-as-world-simulators/
 
-[11] Park, J.S., et al. Generative Agents: Interactive Simulacra of Human Behavior. *UIST*, 2023. arXiv:2304.03442.
+[11] World Labs Team. A Functional Taxonomy of World Models. 2026. https://worldlabs.ai/blog/taxonomy-of-world-models
 
-[12] Reed, S., et al. A Generalist Agent (GATO). *DeepMind*, 2022.
+[12] Huang, W., Fei-Fei, L., et al. PointWorld: Scaling 3D World Models for In-The-Wild Robotic Manipulation. 2026. arXiv:2601.03782.
 
-[13] Kaiser, L., et al. Model-Based Reinforcement Learning for Atari. 2019. arXiv:1903.00374.
+[13] Long, Q., et al. Scaling World Model for Hierarchical Manipulation Policies (VISTA). 2026. arXiv:2602.10983.
 
-[14] Valevski, D., et al. GameNGen. 2024. arXiv:2408.14837.
+[14] WorldVLA: Towards Autoregressive Action World Model. 2025. arXiv:2506.21539.
 
-[15] Wang, L., et al. A Survey on Large Language Model based Autonomous Agents. 2025. arXiv:2308.11432.
+[15] VLAW: Iterative Co-Improvement of Vision-Language-Action Policy and World Model. 2026. arXiv:2602.12063.
 
-[16] Craik, K. *The Nature of Explanation*. Cambridge University Press, 1943.
+[16] Zidan, A.H., et al. World Models: A Comprehensive Survey of Architectures, Methodologies, Reasoning Paradigms, and Applications. 2026. arXiv:2606.00133.
 
-[17] Schmidhuber, J. Making the world differentiable: On using fully recurrent self-supervised neural networks for dynamic robot control. *Neural Networks*, 1990.
+[17] Kaiser, L., et al. Model-Based Reinforcement Learning for Atari (SimPLe). 2019. arXiv:1903.00374.
+
+[18] Reed, S., et al. A Generalist Agent (GATO). *DeepMind*, 2022.
+
+[19] Valevski, D., et al. GameNGen. 2024. arXiv:2408.14837.
+
+[20] Craik, K. *The Nature of Explanation*. Cambridge University Press, 1943.
+
+[21] Schmidhuber, J. Making the world differentiable. *Neural Networks*, 1990.
+
+[22] Raissi, M., et al. Physics-Informed Neural Networks (PINN). *JCP*, 2019.
+
+[23] Li, Z., et al. A Comprehensive Survey on World Models for Embodied AI. 2025. arXiv:2510.16732.
+
+[24] Understanding World or Predicting Future? A Comprehensive Survey of World Models. 2024. arXiv:2411.14499.
+
+[25] Is Sora a World Simulator? A Comprehensive Survey on General World Models and Beyond. 2024. arXiv:2405.03520.
