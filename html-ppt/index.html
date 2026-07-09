@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>世界模型 · 批判性综述讨论</title><style>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>世界模型 · 批判性综述讨论</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script><style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0a;font-family:Inter,Helvetica Neue,Arial,Segoe UI,PingFang SC,Microsoft YaHei,sans-serif}
 #deck{display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;height:100vh;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
@@ -90,7 +90,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5vw;margin-bottom:3vh">
       <div style="background:rgba(255,255,255,.06);padding:2.4vh 1.5vw">
         <div style="font-size:min(2vw,3.6vh);font-weight:200;margin-bottom:1.2vh">Renderer</div>
-        <div class="body-sm" style="margin-bottom:.6vh">学习目标：p(o_t | s_t)</div>
+        <div class="body-sm" style="margin-bottom:.6vh">学习目标：$p(o_t \mid s_t)$</div>
         <div class="body-sm">输出：观测/像素</div>
         <div class="body-sm">合约：视觉逼真</div>
         <div class="mono" style="margin-top:1vh">代表：Sora, Genie</div>
@@ -205,10 +205,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     <div class="h1 h1-sm mb-4">四类模型 × 三项功能：能力对比</div>
     <div class="body mb-3">它们分别代表了不同的发展重点——Sora 强调观测生成，Genie 开始向 Simulator 延伸，MuZero 代表隐式 Simulator+Planner 路线，Dreamer 实现了显式 Simulator+Planner 的统一。功能分类法的价值，在于帮助我们更清晰地理解这些模型之间的能力边界，而不仅仅关注网络结构。</div>
     <div class="grid-4 mb-3">
-      <div class="box"><div style="font-weight:300;font-size:min(1.4vw,2.6vh);margin-bottom:.6vh">Sora</div><div class="mono-accent">Renderer ★★★</div><div class="mono" style="color:#999">Sim ☆ Pln ☆</div><div class="body-sm" style="margin-top:.6vh">输出观测/像素，非世界状态</div></div>
-      <div class="box"><div style="font-weight:300;font-size:min(1.4vw,2.6vh);margin-bottom:.6vh">Genie</div><div class="mono-accent">Renderer ★★★</div><div class="mono" style="color:#999">Sim ★(隐) Pln ☆</div><div class="body-sm" style="margin-top:.6vh">状态编码在 Token 中</div></div>
-      <div class="box"><div style="font-weight:300;font-size:min(1.4vw,2.6vh);margin-bottom:.6vh">MuZero</div><div class="mono-accent">Sim ★★(隐)</div><div class="mono-accent">Pln ★★★</div><div class="body-sm" style="margin-top:.6vh">隐藏状态为搜索服务</div></div>
-      <div class="box" style="background:rgba(255,107,53,.15)"><div style="font-weight:300;font-size:min(1.4vw,2.6vh);margin-bottom:.6vh;color:#FF8A50">Dreamer</div><div class="mono-accent">Sim ★★★</div><div class="mono-accent">Pln ★★★</div><div class="body-sm" style="margin-top:.6vh;color:#FF8A50">唯一双功能对齐</div></div>
+      <div class="box"><div style="font-weight:300;font-size:min(1.4vw,2.6vh);margin-bottom:.6vh">Sora</div><div class="mono-accent">Renderer ★★★</div><div class="mono" style="color:#999">$\mathrm{Sim}\,\emptyset$ $\mathrm{Pln}\,\emptyset$</div><div class="body-sm" style="margin-top:.6vh">输出观测/像素，非世界状态</div></div>
+      <div class="box"><div style="font-weight:300;font-size:min(1.4vw,2.6vh);margin-bottom:.6vh">Genie</div><div class="mono-accent">Renderer ★★★</div><div class="mono" style="color:#999">$\mathrm{Sim}\,\star$(隐) $\mathrm{Pln}\,\emptyset$</div><div class="body-sm" style="margin-top:.6vh">状态编码在 Token 中</div></div>
+      <div class="box"><div style="font-weight:300;font-size:min(1.4vw,2.6vh);margin-bottom:.6vh">MuZero</div><div class="mono-accent">$\mathrm{Sim}\,\star\star$(隐)</div><div class="mono-accent">$\mathrm{Pln}\,\star\star\star$</div><div class="body-sm" style="margin-top:.6vh">隐藏状态为搜索服务</div></div>
+      <div class="box" style="background:rgba(255,107,53,.15)"><div style="font-weight:300;font-size:min(1.4vw,2.6vh);margin-bottom:.6vh;color:#FF8A50">Dreamer</div><div class="mono-accent">$\mathrm{Sim}\,\star\star\star$</div><div class="mono-accent">$\mathrm{Pln}\,\star\star\star$</div><div class="body-sm" style="margin-top:.6vh;color:#FF8A50">唯一双功能对齐</div></div>
     </div>
     <div class="accent-bg"><div class="body" style="font-weight:300">核心结论：Function > Architecture。评价系统是不是世界模型，关键不在网络结构，而在它真正完成了哪些功能。当前世界模型的发展不是比较"哪个更先进"，而是不同模型围绕三类功能进行了不同的能力组合。</div></div>
   </div>
@@ -233,7 +233,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
       </div>
       <div class="col col-center">
         <div class="stat-card bt-accent"><div class="stat-label">RSSM 三条信息流</div>
-        <div class="body-sm mt-2"><span style="font-weight:500">确定性 GRU 路径</span><br>h_t = f(h_{t-1}, s_{t-1}, a_{t-1})</div>
+        <div class="body-sm mt-2"><span style="font-weight:500">确定性 GRU 路径</span><br>\ = f(h_{t-1}, s_{t-1}, a_{t-1})\$</div>
         <div class="body-sm mt-2"><span style="font-weight:500">随机后验路径</span><br>s_t ~ q(s_t | h_t, o_t)</div>
         <div class="body-sm mt-2"><span style="font-weight:500">先验预测路径</span><br>ŝ_t ~ p(ŝ_t | h_t)</div>
         <div class="body-sm mt-2" style="color:#666">KL 散度约束使先验学会匹配后验——规划时无需观测即可独立向前滚动</div></div>
@@ -302,22 +302,22 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     <div class="grid-5 mb-3">
       <div class="box">
         <div style="font-weight:300;font-size:min(1.1vw,2.2vh);color:#FF8A50">SSM/循环</div>
-        <div class="mono-accent" style="font-size:max(11px,.65vw);margin-top:.6vh">Sim ★★★ Pln ★★★</div>
+        <div class="mono-accent" style="font-size:max(11px,.65vw);margin-top:.6vh">$\mathrm{Sim}\,\star\star\star$ $\mathrm{Pln}\,\star\star\star$</div>
         <div class="body-sm" style="margin-top:.6vh">潜空间状态演化建模。不关注图像逼真，关注状态能否准确预测未来。适合 RL、机器人控制、具身智能。RSSM 是核心。</div>
       </div>
       <div class="box">
         <div style="font-weight:300;font-size:min(1.1vw,2.2vh);color:#FF8A50">Transformer</div>
-        <div class="mono" style="color:#999;font-size:max(11px,.65vw);margin-top:.6vh">Sim ★★ Pln ★★</div>
+        <div class="mono" style="color:#999;font-size:max(11px,.65vw);margin-top:.6vh">$\mathrm{Sim}\,\star\star$ $\mathrm{Pln}\,\star\star$</div>
         <div class="body-sm" style="margin-top:.6vh">VQ-VAE 离散化 + 自回归。长序列建模能力强。但计算量二次增长，自回归逐帧推进效率低，低数据场景易过拟合。</div>
       </div>
       <div class="box">
         <div style="font-weight:300;font-size:min(1.1vw,2.2vh);color:#FF8A50">扩散模型</div>
-        <div class="mono" style="color:#999;font-size:max(11px,.65vw);margin-top:.6vh">Ren ★★★ Sim ★</div>
+        <div class="mono" style="color:#999;font-size:max(11px,.65vw);margin-top:.6vh">$\mathrm{Ren}\,\star\star\star$ $\mathrm{Sim}\,\star$</div>
         <div class="body-sm" style="margin-top:.6vh">DiT 去噪生成。观测空间生成质量极高。但关注的是"未来应该看到什么"，而非"未来内部如何变化"。本质是 Renderer。</div>
       </div>
       <div class="box">
         <div style="font-weight:300;font-size:min(1.1vw,2.2vh);color:#FF8A50">物理先验</div>
-        <div class="mono" style="color:#999;font-size:max(11px,.65vw);margin-top:.6vh">Sim ★★★ Pln ★</div>
+        <div class="mono" style="color:#999;font-size:max(11px,.65vw);margin-top:.6vh">$\mathrm{Sim}\,\star\star\star$ $\mathrm{Pln}\,\star$</div>
         <div class="body-sm" style="margin-top:.6vh">PINN/GNS/可微分引擎。在架构中注入物理归纳偏置。特定域保真度高，但跨域泛化弱。需与 Dreamer 配合构成完整系统。</div>
       </div>
       <div class="box">
@@ -358,7 +358,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     <div class="h1 h1-sm mb-3">为什么是低轨星载机器人？</div>
     <div class="body mb-3">对于地面机器人，环境变化时可以重新采集数据、重新训练模型，甚至人工远程干预。但太空机器人一旦进入轨道，面对的是高动态、高风险、高代价的环境：任何轨道机动都消耗推进剂，每次操作都可能不可逆，通信窗口有限（LEO 过境仅 5-10 分钟/轨）。它不能持续依赖地面控制，必须具备更强的自主决策能力。这意味着它不仅要能"看见"世界，更重要的是要能预测世界、理解世界，并利用世界完成规划——这正是世界模型希望解决的问题。</div>
     <div class="grid-3">
-      <div class="stat-card bt-accent"><div class="stat-label">高动态</div><div class="stat-note">微重力 10⁻⁶g，控制输入持续影响轨道和姿态</div></div>
+      <div class="stat-card bt-accent"><div class="stat-label">高动态</div><div class="stat-note">微重力 $10^{-6}g$，控制输入持续影响轨道和姿态</div></div>
       <div class="stat-card bt-accent"><div class="stat-label">高风险</div><div class="stat-note">轨道机动消耗推进剂，操作不可逆</div></div>
       <div class="stat-card bt-accent"><div class="stat-label">高代价</div><div class="stat-note">通信窗口 5-10 min/轨，无法实时遥操作</div></div>
     </div>
@@ -372,7 +372,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     <div class="h1 h1-sm mb-3">低轨环境的六大独特挑战</div>
     <div class="body mb-3">这六个挑战几乎全部对应世界模型最核心的能力：状态预测（Simulator）、自主规划（Planner）以及长期推理。</div>
     <div class="grid-3 flex-1">
-      <div class="stat-card bt-accent"><div class="stat-label">① 微重力</div><div class="body-sm mt-1">10⁻⁶g 稳定残差重力。机器人与目标的相对运动高度耦合，一个小控制输入都可能持续影响轨道和姿态。地面动力学模型完全失效，但物理规则可精确建模。</div></div>
+      <div class="stat-card bt-accent"><div class="stat-label">① 微重力</div><div class="body-sm mt-1">$10^{-6}g$ 稳定残差重力。机器人与目标的相对运动高度耦合，一个小控制输入都可能持续影响轨道和姿态。地面动力学模型完全失效，但物理规则可精确建模。</div></div>
       <div class="stat-card bt-accent"><div class="stat-label">② 热真空循环</div><div class="body-sm mt-1">±150°C，周期 90 分钟。空间环境影响传感器性能和执行机构状态，使模型长期运行中不断产生分布漂移。材料热形变、润滑剂挥发影响精度。</div></div>
       <div class="stat-card bt-accent"><div class="stat-label">③ 通信窗口</div><div class="body-sm mt-1">LEO 过境窗口仅 5-10 分钟/轨。无法持续遥控，Planner 必须在过境窗口外完全自主闭环。</div></div>
       <div class="stat-card bt-accent"><div class="stat-label">④ 星载计算约束</div><div class="body-sm mt-1">星载单板计算机（Rad-Hard，~1W）。扩散模型不可行，SSM/RSSM 是唯一选项——轻量架构天然契合。</div></div>
@@ -461,5 +461,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
 <script>
 (function(){const deck=document.getElementById('deck');const slides=deck.querySelectorAll('.slide');const nav=document.createElement('div');nav.id='nav';slides.forEach((s,i)=>{const a=document.createElement('a');a.href='javascript:void(0)';a.onclick=function(){deck.scrollLeft=i*window.innerWidth};if(i===0)a.className='active';nav.appendChild(a)});document.body.appendChild(nav);deck.addEventListener('scroll',function(){const idx=Math.round(this.scrollLeft/window.innerWidth);nav.querySelectorAll('a').forEach((a,i)=>a.className=i===idx?'active':'');document.body.classList.toggle('dark-bg',slides[idx]&&(slides[idx].classList.contains('dark')||slides[idx].classList.contains('hero')))});document.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key==='PageDown'){e.preventDefault();deck.scrollLeft+=window.innerWidth}if(e.key==='ArrowLeft'||e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();deck.scrollLeft-=window.innerWidth}if(e.key==='Home'){e.preventDefault();deck.scrollLeft=0}if(e.key==='End'){e.preventDefault();deck.scrollLeft=(slides.length-1)*window.innerWidth}});deck.addEventListener('wheel',function(e){if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.preventDefault();deck.scrollLeft+=e.deltaY}},{passive:false})})();
 </script>
+<script>document.addEventListener('DOMContentLoaded',function(){renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false})});</script>
 <div id="hint">← → 翻页</div>
 </body></html>
