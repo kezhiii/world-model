@@ -1466,12 +1466,12 @@ go(Number.isFinite(initialSlide) ? initialSlide : 0);
 <script type="module">
 let motion;
 try {
-  motion = await import('./assets/motion.min.js');
+  motion = await import('https://cdn.jsdelivr.net/npm/motion@11.11.17/+esm');
 } catch(e1) {
   try {
-    motion = await import('https://cdn.jsdelivr.net/npm/motion@11.11.17/+esm');
+    motion = await import('./assets/motion.min.js');
   } catch(e2) {
-    console.warn('[motion] local + CDN both failed, disabling animations', e1, e2);
+    console.warn('[motion] CDN + local both failed, disabling animations', e1, e2);
     document.querySelectorAll('[data-anim]').forEach(el=>{el.style.opacity='1';el.style.transform='none'});
     document.querySelectorAll('[data-animate="pipeline"] [data-anim]').forEach(el=>el.style.opacity='1');
   }
