@@ -143,7 +143,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     </div>
   </div>
 
-    <div class="prompt">Sora输出视频，不是世界状态 → 视觉真实≠结构真实</div>
+    <div class="prompt">Sora：生成逼真视频，似乎能"预测"未来，但输出的是视频而非世界状态。自承"does not accurately model physics"。核心能力属于Renderer，不是Simulator。</div>
 </section>
 
 <!-- 7: Genie -->
@@ -164,7 +164,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     </div>
   </div>
 
-    <div class="prompt">Genie开始交互，但状态仍隐式编码 → Renderer向Simulator演进</div>
+    <div class="prompt">Genie：比Sora更进一步，允许交互，开始有世界模型特征。但对环境表示仍服务于交互式生成，状态隐式编码在Token中。属于Renderer向Simulator演进的中间态。</div>
 </section>
 
 <!-- 8: MuZero -->
@@ -185,7 +185,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     </div>
   </div>
 
-    <div class="prompt">MuZero关注决策而非生成 → 学习状态的目的是什么？</div>
+    <div class="prompt">MuZero：与前两类最大的不同是关注决策而非生成。学习隐藏状态用于搜索规划，但状态不独立输出。属于隐式Simulator+Planner路线。核心问题：这算Simulator吗？</div>
 </section>
 
 <!-- 9: Dreamer -->
@@ -206,7 +206,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     </div>
   </div>
 
-    <div class="prompt">Dreamer同时完成世界建模和策略学习 → 唯一同时覆盖Simulator+Planner</div>
+    <div class="prompt">Dreamer：用RSSM在潜空间学习状态演化，再用预测状态直接训练策略。世界建模和决策规划在同一个潜空间中协同完成，同时覆盖Simulator和Planner。</div>
 </section>
 
 <!-- 10: Comparison -->
@@ -224,7 +224,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     <div class="accent-bg"><div class="body" style="font-weight:300">核心结论：Function > Architecture。评价系统是不是世界模型，关键不在网络结构，而在它真正完成了哪些功能。当前世界模型的发展不是比较"哪个更先进"，而是不同模型围绕三类功能进行了不同的能力组合。</div></div>
   </div>
 
-    <div class="prompt">四类模型围绕Renderer/Simulator/Planner做了不同的能力组合</div>
+    <div class="prompt">小结：Sora=Renderer，Genie=Renderer→Simulator过渡，MuZero=隐式Simulator+Planner，Dreamer=显式Simulator+Planner。Function > Architecture是核心原则。</div>
 </section>
 
 <!-- 11: Discussion 2 -->
@@ -255,7 +255,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     </div>
   </div>
 
-    <div class="prompt">RSSM不是预测像素，是预测状态 → "如果我做某个动作，未来会怎样？"</div>
+    <div class="prompt">RSSM三步：①编码观测→潜在状态 ②预测下一状态 ③在潜空间中做imagined rollout训练Actor-Critic。真正学习的是"状态如何变化"而非"像素如何变化"。</div>
 </section>
 
 <!-- 13: Evolution -->
@@ -272,10 +272,36 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     <div class="grey-bg"><div class="body" style="font-weight:300">R2-Dreamer 说明了一件非常重要的事情：<span style="font-weight:600;color:#FF6B35">Simulator 可以独立于 Renderer 而存在</span>。一个世界模型并不一定需要生成图像，只要能够准确预测状态演化并支撑决策规划，它依然是一个完整的世界模型。</div></div>
   </div>
 
-    <div class="prompt">R2-Dreamer：Simulator可以独立于Renderer而存在</div>
+    <div class="prompt">R2-Dreamer：Simulator可以独立于Renderer而存在。世界模型不一定需要生成图像。</div>
 </section>
 
-<!-- 14: Dreamer vs MuZero -->
+<!-- 14: Notation -->
+<section class="slide light">
+  <div class="slide-inner">
+    <div class="disc-tag">Discussion 2 · 变量对照</div>
+    <div class="h1 h1-sm mb-4">两种路线使用不同的状态变量</div>
+    <div class="body mb-3">在对比之前，先明确两条路线各自的变量定义。Dreamer 走显式模拟器路线，输出可直接消费的预测状态；MuZero 走隐式模拟器路线，隐藏状态仅为搜索服务。</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2vw;margin-bottom:2vh">
+      <div style="background:rgba(255,107,53,.1);padding:2.4vh 1.5vw;border-top:3px solid #FF6B35">
+        <div style="font-weight:300;font-size:min(1.6vw,3vh);color:#FF6B35;margin-bottom:1.2vh">Dreamer · 显式模拟器</div>
+        <div class="body-sm">$\hat{s}_{t+1}$ — 预测的下一时刻潜在状态</div>
+        <div class="body-sm" style="margin-top:.6vh">$\hat{r}_{t+1}$ — 预测的下一时刻奖励</div>
+        <div class="body-sm" style="margin-top:.6vh;color:#FF6B35">状态可独立消费、可解码、可解释 → 真正的"世界模型"</div>
+      </div>
+      <div style="background:rgba(255,255,255,.03);padding:2.4vh 1.5vw;border-top:3px solid #999">
+        <div style="font-weight:300;font-size:min(1.6vw,3vh);color:#999;margin-bottom:1.2vh">MuZero · 隐式模拟器</div>
+        <div class="body-sm">$h_t$ — 学习得到的隐藏状态</div>
+        <div class="body-sm" style="margin-top:.6vh">$p_t$ — 策略预测（下一步动作概率分布）</div>
+        <div class="body-sm" style="margin-top:.6vh">$v_t$ — 价值预测（期望累积回报）</div>
+        <div class="body-sm" style="margin-top:.6vh">$r_t$ — 奖励预测</div>
+        <div class="body-sm" style="margin-top:.6vh;color:#999">状态仅为搜索服务，不单独输出 → 任务导向型表示</div>
+      </div>
+    </div>
+    <div class="prompt" style="margin-top:0">核心问题：两种路线都做世界建模，但建模目标不同 → Dreamer注重状态演化，MuZero注重决策支持。Hidden State到底算不算Simulator？</div>
+  </div>
+</section>
+
+<!-- 15: Dreamer vs MuZero -->
 <section class="slide light">
   <div class="slide-inner">
     <div class="disc-tag">Discussion 2 · 范式对比</div>
@@ -305,14 +331,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     <div class="prompt">学习状态的目的是什么？ → 显式模拟器(Dreamer) vs 隐式模拟器(MuZero)</div>
 </section>
 
-<!-- 15: Discussion 3 -->
+<!-- 16: Discussion 3 -->
 <section class="slide hero light">
     <div class="mono-accent" style="margin-bottom:2vh">Discussion 3</div>
   <div class="h1" style="font-size:min(4.4vw,8vh)">世界模型会走向哪条技术路线？</div>
   <div class="h2" style="font-weight:200;margin-top:3vh;max-width:70%;line-height:1.6">除了 Dreamer 和 MuZero，还有 Transformer、扩散模型、物理先验以及语言增强等多条路线。这些路线为什么形成？它们分别适合完成哪些功能？</div>
 </section>
 
-<!-- 16: 5 Routes -->
+<!-- 17: 5 Routes -->
 <section class="slide dark">
   <div class="slide-inner">
     <div class="mono-accent" style="margin-bottom:1.5vh">Discussion 3 · 五条技术路线</div>
@@ -351,10 +377,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     </div>
   </div>
 
-    <div class="prompt">SSM/Transformer/扩散/物理先验/语言增强 → 没有一条能覆盖三种能力</div>
+    <div class="prompt">五条路线：SSM善模拟与规划，Transformer善长时序建模，扩散善观测生成，物理先验强调动力学，语言善高层理解。它们不是竞争，是不同维度的探索。未来方向是融合而非继续分化。</div>
 </section>
 
-<!-- 17: Unified -->
+<!-- 18: Unified -->
 <section class="slide light hero">
   <div class="h1 h1-sm mb-3">统一世界模型</div>
   <div class="h2" style="font-weight:200;max-width:80%;line-height:1.6">未来真正值得关注的问题已经不是"哪一种模型能取代其他模型"，而是"如何构建一个能够同时具备 Renderer、Simulator 和 Planner 能力的统一世界模型"。当前三类功能正在从三个方向加速收敛：Marble 从 Renderer+Simulator 方向逼近，Dreamer 系列从 Simulator+Planner 方向逼近，MuZero 从 Planner+隐式 Simulator 方向逼近。三者合一仍面临数据、目标和评估三大鸿沟。</div>
@@ -365,14 +391,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
   </div>
 </section>
 
-<!-- 18: Discussion 4 -->
+<!-- 19: Discussion 4 -->
 <section class="slide hero light">
     <div class="mono-accent" style="margin-bottom:2vh">Discussion 4</div>
   <div class="h1" style="font-size:min(4.4vw,8vh)">为什么太空具身智能？</div>
   <div class="h2" style="font-weight:200;margin-top:3vh;max-width:70%;line-height:1.6">经过前面讨论，我们已经分析了世界模型的能力边界和技术路线。最后，最需要世界模型的地方在哪？为什么低轨星载机器人可能是最具挑战性、也最能体现其价值的场景？</div>
 </section>
 
-<!-- 19: Why Space -->
+<!-- 20: Why Space -->
 <section class="slide light">
   <div class="slide-inner">
     <div class="disc-tag">Discussion 4 · 为什么太空</div>
@@ -385,10 +411,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     </div>
   </div>
 
-    <div class="prompt">高动态·高风险·高代价 → 六大挑战全部对应世界模型核心能力</div>
+    <div class="prompt">为何太空：地面可重采数据、远程干预，太空不能。高动态(微重力耦合)、高风险(操作不可逆)、高代价(推进剂有限)。六大挑战全对应世界模型核心能力。</div>
 </section>
 
-<!-- 20: 6 Challenges -->
+<!-- 21: 6 Challenges -->
 <section class="slide light">
   <div class="slide-inner">
     <div class="disc-tag">Discussion 4 · 六大挑战</div>
@@ -405,7 +431,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
   </div>
 </section>
 
-<!-- 21: Physics+WM -->
+<!-- 22: Physics+WM -->
 <section class="slide light">
   <div class="slide-inner">
     <div class="disc-tag">Discussion 4 · 混合范式</div>
@@ -426,10 +452,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     </div>
   </div>
 
-    <div class="prompt">已知规律→物理模型，未知扰动→世界模型</div>
+    <div class="prompt">混合范式：太空不是重新学习动力学，而是已知规律(轨道/姿态动力学)→物理模型，未知扰动(推进器误差/柔性振动/传感器噪声)→世界模型。RSSM学习残差而非整个动力学。</div>
 </section>
 
-<!-- 22: Tasks -->
+<!-- 23: Tasks -->
 <section class="slide light">
   <div class="slide-inner">
     <div class="disc-tag">Discussion 4 · 四类任务</div>
@@ -451,10 +477,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     </div>
   </div>
 
-    <div class="prompt">在轨交会接近/碎片捕获/在轨装配维修/在轨模型自适应</div>
+    <div class="prompt">四类任务：交会接近(预测轨迹规划路径)、碎片捕获(GNS模拟接触)、在轨装配(长程预测+MPC减振)、模型自适应(在轨数据增量微调RSSM)。每类都依赖Simulator+Planner协同。</div>
 </section>
 
-<!-- 23: Summary -->
+<!-- 24: Summary -->
 <section class="slide light">
   <div class="slide-inner">
     <div class="mono-accent" style="margin-bottom:1.5vh">Summary · 5 min</div>
@@ -477,7 +503,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
   </div>
 </section>
 
-<!-- 24: Thank You -->
+<!-- 25: Thank You -->
 <section class="slide hero dark">
   <div class="h1" style="font-size:min(4vw,7.5vh)">感谢聆听</div>
   <div class="body" style="margin-top:3vh;max-width:60%;line-height:1.6">世界模型的发展不是比较"哪个更先进"，而是不同模型围绕 Renderer、Simulator 和 Planner 三类核心功能进行了不同的能力组合。功能分类法的价值，在于帮助我们更清晰地理解这些能力边界。</div>
