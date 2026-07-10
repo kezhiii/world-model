@@ -37,6 +37,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
 .mt-1{margin-top:1vh}.mt-2{margin-top:2vh}.mt-3{margin-top:3vh}.mt-4{margin-top:4vh}.mb-3{margin-bottom:3vh}.mb-4{margin-bottom:4vh}
 .border-top{border-top:1px solid #d4d4d2;padding-top:2vh;margin-top:2vh}
 .mid-dot{display:inline-block;width:4px;height:4px;border-radius:50%;background:currentColor;vertical-align:middle}
+.prompt{font-size:max(11px,.68vw);line-height:1.4;opacity:.35;margin-top:1.2vh;border-top:1px solid rgba(127,127,127,.2);padding-top:.8vh;font-style:italic;letter-spacing:.02em}
+.dark .prompt{color:#aaa}
 #nav{position:fixed;bottom:2.5vh;left:50%;transform:translateX(-50%);z-index:100;display:flex;gap:7px;max-width:90vw;flex-wrap:wrap;justify-content:center}
 #nav a{display:block;width:7px;height:7px;background:rgba(0,0,0,.25);transition:all .3s;border:0;outline:0;flex-shrink:0}
 #nav a.active{background:#FF6B35;width:16px}
@@ -59,6 +61,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     <div class="mono-accent" style="margin-bottom:2vh">Opening</div>
     <div class="h1" style="font-size:min(4.8vw,8.5vh);margin-bottom:4vh">到底什么才是<br>真正的世界模型？</div>
     <div class="h2" style="font-weight:200;line-height:1.6">近年来，从强化学习、机器人到视频生成、多模态智能体，越来越多的工作开始使用"World Model"或"World Simulator"来描述自己的系统。例如 Dreamer 系列、MuZero、Sora、Genie。但这些工作解决的问题完全不同——有的生成逼真视频，有的学习环境动力学，有的负责规划决策。如果没有统一标准，"世界模型"已逐渐变成一个过于宽泛的概念。</div>
+    <div class="prompt">几乎所有生成视频、机器人和RL模型都自称World Model → 到底什么才是真正的世界模型？</div>
   </div>
 </section>
 
@@ -78,6 +81,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
       </div>
     </div>
   </div>
+
+    <div class="prompt">它们都叫世界模型，但能力完全不同 → 该按结构还是按功能分类？</div>
 </section>
 
 <!-- 4: Taxonomy -->
@@ -108,9 +113,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
         <div class="body-sm">合约：决策正确</div>
         <div class="mono" style="margin-top:1vh">代表：Dreamer, MuZero</div>
       </div>
+      </div>
     </div>
-    <div class="accent-bg"><div class="body" style="font-weight:300">核心命题：模拟器是三类中的支点——掌握了模拟能力才能向上支持渲染、向下支撑规划。评价一个系统是不是世界模型，关键不在于它采用了什么网络结构，而在于它真正完成了哪些功能。</div></div>
+    <div class="prompt">它们都叫世界模型，但能力完全不同 → 该按结构分类还是按功能分类？</div>
   </div>
+
+    <div class="prompt">Function > Architecture：评价标准不是网络结构，而是系统真正完成了哪些功能</div>
 </section>
 
 <!-- 5: Discussion 1 -->
@@ -138,6 +146,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
       </div>
     </div>
   </div>
+
+    <div class="prompt">Sora输出视频，不是世界状态 → 视觉真实≠结构真实</div>
 </section>
 
 <!-- 7: Genie -->
@@ -157,6 +167,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
       </div>
     </div>
   </div>
+
+    <div class="prompt">Genie开始交互，但状态仍隐式编码 → Renderer向Simulator演进</div>
 </section>
 
 <!-- 8: MuZero -->
@@ -176,6 +188,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
       </div>
     </div>
   </div>
+
+    <div class="prompt">MuZero关注决策而非生成 → 学习状态的目的是什么？</div>
 </section>
 
 <!-- 9: Dreamer -->
@@ -195,6 +209,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
       </div>
     </div>
   </div>
+
+    <div class="prompt">Dreamer同时完成世界建模和策略学习 → 唯一同时覆盖Simulator+Planner</div>
 </section>
 
 <!-- 10: Comparison -->
@@ -211,6 +227,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     </div>
     <div class="accent-bg"><div class="body" style="font-weight:300">核心结论：Function > Architecture。评价系统是不是世界模型，关键不在网络结构，而在它真正完成了哪些功能。当前世界模型的发展不是比较"哪个更先进"，而是不同模型围绕三类功能进行了不同的能力组合。</div></div>
   </div>
+
+    <div class="prompt">四类模型围绕Renderer/Simulator/Planner做了不同的能力组合</div>
 </section>
 
 <!-- 11: Discussion 2 -->
@@ -240,6 +258,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
       </div>
     </div>
   </div>
+
+    <div class="prompt">RSSM不是预测像素，是预测状态 → "如果我做某个动作，未来会怎样？"</div>
 </section>
 
 <!-- 13: Evolution -->
@@ -255,6 +275,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     </div>
     <div class="grey-bg"><div class="body" style="font-weight:300">R2-Dreamer 说明了一件非常重要的事情：<span style="font-weight:600;color:#FF6B35">Simulator 可以独立于 Renderer 而存在</span>。一个世界模型并不一定需要生成图像，只要能够准确预测状态演化并支撑决策规划，它依然是一个完整的世界模型。</div></div>
   </div>
+
+    <div class="prompt">R2-Dreamer：Simulator可以独立于Renderer而存在</div>
 </section>
 
 <!-- 14: Dreamer vs MuZero -->
@@ -283,6 +305,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     </div>
     <div class="border-top"><div class="h2-accent" style="font-size:min(1.6vw,3vh)">核心问题：Hidden State 到底是不是 Simulator？——这对功能分类法的后续演进有理论意义：是否应承认"隐式模拟器"为第三类模拟器的独立存在？</div></div>
   </div>
+
+    <div class="prompt">学习状态的目的是什么？ → 显式模拟器(Dreamer) vs 隐式模拟器(MuZero)</div>
 </section>
 
 <!-- 15: Discussion 3 -->
@@ -330,6 +354,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
       <div class="box"><div class="body-sm" style="color:#FF8A50">未来方向</div><div class="body-sm" style="margin-top:.6vh">不是五条路线继续分化，而是逐渐融合。高质量 Renderer 与结构化 Simulator 结合、物理先验引入潜空间、语言模型承担规划功能——正在现实中发生。</div></div>
     </div>
   </div>
+
+    <div class="prompt">SSM/Transformer/扩散/物理先验/语言增强 → 没有一条能覆盖三种能力</div>
 </section>
 
 <!-- 17: Unified -->
@@ -362,6 +388,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
       <div class="stat-card bt-accent"><div class="stat-label">高代价</div><div class="stat-note">通信窗口 5-10 min/轨，无法实时遥操作</div></div>
     </div>
   </div>
+
+    <div class="prompt">高动态·高风险·高代价 → 六大挑战全部对应世界模型核心能力</div>
 </section>
 
 <!-- 20: 6 Challenges -->
@@ -401,6 +429,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
       </div>
     </div>
   </div>
+
+    <div class="prompt">已知规律→物理模型，未知扰动→世界模型</div>
 </section>
 
 <!-- 22: Tasks -->
@@ -424,6 +454,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
       </div>
     </div>
   </div>
+
+    <div class="prompt">在轨交会接近/碎片捕获/在轨装配维修/在轨模型自适应</div>
 </section>
 
 <!-- 23: Summary -->
