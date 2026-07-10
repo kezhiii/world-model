@@ -431,31 +431,81 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
   </div>
 </section>
 
-<!-- 22: Physics+WM -->
+<!-- 22: Physics-guided RSSM -->
 <section class="slide light">
   <div class="slide-inner">
-    <div class="disc-tag">Discussion 4 · 混合范式</div>
-    <div class="h1 h1-sm mb-3">Physics + World Model：混合范式</div>
+    <div class="disc-tag">Discussion 4 · 混合范式 · 思路一</div>
+    <div class="h1 h1-sm mb-3">Physics-guided RSSM</div>
     <div class="body mb-3">现有世界模型不能简单迁移到太空——不是重新学习整个动力学，而是采用 Physics + World Model 的混合范式。已知规律交给物理模型，未知扰动交给世界模型。</div>
-    <div class="grid-2 flex-1">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2vw;flex:1">
       <div class="col col-center">
-        <div class="stat-card bt-accent"><div class="stat-label">思路一：Physics-guided RSSM</div></div>
-        <div class="body-sm mt-1">状态演化拆分为两部分：已知物理模型（轨道传播、姿态动力学等解析模型）+ 神经网络学习残差动力学（环境扰动、执行器误差、感知偏差）。世界模型学习的不再是整个动力学，而是未知部分，显著减少训练数据需求。</div>
-        <div class="stat-card bt-accent mt-2"><div class="stat-label">思路二：物理约束潜空间</div></div>
-        <div class="body-sm mt-1">RSSM 的潜在状态缺乏物理约束。将轨道动力学约束（$\dot{\omega} = I^{-1}(\tau - \omega \times I\omega)$）加入潜空间优化，不仅要求预测未来，还要求预测结果满足动力学一致性。</div>
+        <div class="stat-card bt-accent"><div class="stat-label">第一部分：已知物理模型</div></div>
+        <div class="body-sm mt-1">负责轨道传播、姿态动力学等解析模型。这部分知识我们已经非常成熟，无需学习。</div>
+        <div class="stat-card bt-accent mt-2"><div class="stat-label">第二部分：神经网络残差动力学</div></div>
+        <div class="body-sm mt-1">学习物理模型无法准确描述的残差：环境扰动、执行器误差、感知偏差。世界模型学习的不再是整个动力学，而是未知部分。</div>
       </div>
-      <div class="col col-center">
-        <div class="stat-card bt-accent"><div class="stat-label">思路三：分层建模（针对接触动力学）</div></div>
-        <div class="body-sm mt-1">轨道运动可用成熟动力学模型，而真正复杂的是机械臂与目标之间的接触过程。分层建模：物理模型负责自由飞行，GNS（图网络模拟器）负责接触交互，RSSM 负责统一整个任务过程中的状态演化。不同模型各自发挥优势。</div>
-        <div class="accent-bg mt-2"><div class="body-sm" style="font-weight:300">未来方向：已知规律→物理模型，未知扰动→世界模型。物理模型负责描述已知世界，世界模型负责学习未知世界。</div></div>
+      <div class="col col-center" style="justify-content:center">
+        <div style="background:rgba(255,107,53,.1);padding:2.4vh 1.5vw;border-top:3px solid #FF6B35">
+          <div style="font-weight:300;font-size:min(1.6vw,3vh);color:#FF6B35;margin-bottom:1.2vh">这样做的优势</div>
+          <div class="body-sm" style="margin-top:.6vh">显著减少训练数据需求</div>
+          <div class="body-sm" style="margin-top:.6vh">提高模型的物理一致性</div>
+          <div class="body-sm" style="margin-top:.6vh">增强在轨泛化能力</div>
+        </div>
       </div>
     </div>
   </div>
-
-    <div class="prompt">混合范式：太空不是重新学习动力学，而是已知规律(轨道/姿态动力学)→物理模型，未知扰动(推进器误差/柔性振动/传感器噪声)→世界模型。RSSM学习残差而非整个动力学。</div>
 </section>
 
-<!-- 23: Tasks -->
+<!-- 23: Physics-constrained Latent Space -->
+<section class="slide light">
+  <div class="slide-inner">
+    <div class="disc-tag">Discussion 4 · 混合范式 · 思路二</div>
+    <div class="h1 h1-sm mb-3">物理约束潜空间</div>
+    <div class="body mb-3">RSSM 的潜在状态本身缺乏物理约束。我们可以进一步引入轨道动力学约束，将物理规律作为潜空间优化的一部分。</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2vw;flex:1">
+      <div class="col col-center">
+        <div class="stat-card bt-accent"><div class="stat-label">核心思路</div></div>
+        <div class="body-sm mt-1">在模型训练过程中，不仅要求潜在状态能够预测未来，还要求预测结果满足基本的动力学一致性：</div>
+        <div class="body-sm mt-2" style="padding:1.2vh;background:rgba(255,255,255,.05)">$\dot{\omega} = I^{-1}(\tau - \omega \times I\omega)$</div>
+        <div class="body-sm mt-2">这样的约束确保学习到的世界表示不仅服务规划，也更加符合真实物理过程。</div>
+      </div>
+      <div class="col col-center" style="justify-content:center">
+        <div style="background:rgba(255,107,53,.1);padding:2.4vh 1.5vw;border-top:3px solid #FF6B35">
+          <div style="font-weight:300;font-size:min(1.6vw,3vh);color:#FF6B35;margin-bottom:1.2vh">意义</div>
+          <div class="body-sm" style="margin-top:.6vh">将轨道动力学约束加入 RSSM 损失函数</div>
+          <div class="body-sm" style="margin-top:.6vh">同时优化预测精度 + 物理一致性</div>
+          <div class="body-sm" style="margin-top:.6vh">减少数据驱动模型对大量训练数据的依赖</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 24: Hierarchical Modeling -->
+<section class="slide light">
+  <div class="slide-inner">
+    <div class="disc-tag">Discussion 4 · 混合范式 · 思路三</div>
+    <div class="h1 h1-sm mb-3">分层建模：针对接触动力学</div>
+    <div class="body mb-3">轨道运动可以依赖成熟的动力学模型，而真正复杂的是机械臂与目标之间的接触过程——碎片捕获、卫星维修、在轨装配，接触关系不断变化，很难建立统一解析模型。</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5vw;flex:1">
+      <div class="col col-center">
+        <div class="stat-card bt-accent"><div class="stat-label">物理模型</div></div>
+        <div class="body-sm mt-1">负责自由飞行阶段的轨道和姿态预测。这部分已有成熟解析模型，可靠且高效。</div>
+      </div>
+      <div class="col col-center">
+        <div class="stat-card bt-accent"><div class="stat-label">GNS 图网络</div></div>
+        <div class="body-sm mt-1">负责接触交互——机械臂与目标之间的碰撞、抓取、装配等复杂动力学过程。GNS 以图神经网络对粒子系统交互进行学习式模拟。</div>
+      </div>
+      <div class="col col-center">
+        <div class="stat-card bt-accent"><div class="stat-label">RSSM</div></div>
+        <div class="body-sm mt-1">负责统一整个任务过程中的状态演化，协调物理模型和 GNS 之间的切换。不同模型各自发挥优势。</div>
+      </div>
+    </div>
+    <div class="accent-bg mt-2"><div class="body-sm" style="font-weight:300">最终范式：物理模型负责自由飞行，图网络负责接触交互，RSSM 负责统一整个任务过程中的状态演化。</div></div>
+  </div>
+</section>
+
+<!-- 25: Tasks -->
 <section class="slide light">
   <div class="slide-inner">
     <div class="disc-tag">Discussion 4 · 四类任务</div>
@@ -480,10 +530,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
     <div class="prompt">四类任务：交会接近(预测轨迹规划路径)、碎片捕获(GNS模拟接触)、在轨装配(长程预测+MPC减振)、模型自适应(在轨数据增量微调RSSM)。每类都依赖Simulator+Planner协同。</div>
 </section>
 
-<!-- 24: Summary -->
+<!-- 26: Summary -->
 <section class="slide light">
   <div class="slide-inner">
-    <div class="mono-accent" style="margin-bottom:1.5vh">Summary · 5 min</div>
+    <div class="mono-accent" style="margin-bottom:1.5vh">Summary</div>
     <div class="h1 h1-sm mb-4">我们今天讨论的四件事</div>
     <div class="body mb-3">我们的讨论围绕四个核心观点展开，它们构成了一个递进的逻辑链条：从"如何定义"，到"什么最好"，再到"如何融合"，最后到"哪里最需要"。</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:2vw;flex:1">
@@ -503,7 +553,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#faf8f6;color:#0a0a0
   </div>
 </section>
 
-<!-- 25: Thank You -->
+<!-- 27: Thank You -->
 <section class="slide hero dark">
   <div class="h1" style="font-size:min(4vw,7.5vh)">感谢聆听</div>
   <div class="body" style="margin-top:3vh;max-width:60%;line-height:1.6">世界模型的发展不是比较"哪个更先进"，而是不同模型围绕 Renderer、Simulator 和 Planner 三类核心功能进行了不同的能力组合。功能分类法的价值，在于帮助我们更清晰地理解这些能力边界。</div>
