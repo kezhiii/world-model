@@ -1218,10 +1218,7 @@
 
 <div id="deck">
 
-<!-- ======================================================================
-     S01 · Cover
-     对应演讲稿：开场 · PSIOS 是什么
-     ====================================================================== -->
+<!-- ====================================================================== S01 Cover ====================================================================== -->
 <section class="slide accent" data-animate="hero" data-layout="S01">
   <div class="canvas-card">
     <canvas class="ascii-bg" aria-hidden="true"></canvas>
@@ -1244,8 +1241,7 @@
 </section>
 
 <!-- ======================================================================
-     S02 · 问题提出
-     对应演讲稿：一、开场 —— 地面自动驾驶能搬到太空吗？
+     S02: 地面 vs 太空 · 必须明确指出两个世界的根本区别
      ====================================================================== -->
 <section class="slide split" data-animate="split-statement" data-layout="S03">
   <div class="canvas-card">
@@ -1254,97 +1250,90 @@
         <div class="chrome-min" style="margin-bottom:0"><div class="l">02 / 23</div><div class="r">HOOK</div></div>
         <div data-anim="manifesto" style="display:flex;flex-direction:column;gap:2.2vh">
           <div class="t-meta" style="color:rgba(255,255,255,.78);letter-spacing:.22em">GROUND AUTONOMOUS DRIVING</div>
-          <h2 style="font-family:var(--sans),var(--sans-zh);font-size:min(4.2vw,7.5vh);line-height:1.05;font-weight:200;color:#fff">经验驱动的<br><span style="font-style:italic;font-weight:300">开放世界</span></h2>
-          <div style="font-size:max(16px,1vw);line-height:1.75;color:rgba(255,255,255,.82);font-weight:300;max-width:34ch">行人不可预测。前车可能突然变道。道路施工、大雾、暴雨——这些都没有统一的数学模型可以精确描述。所以自动驾驶必须依赖海量数据来学习隐含模式。<span style="font-weight:500">它学的是"世界本身"。</span></div>
+          <h2 style="font-family:var(--sans),var(--sans-zh);font-size:min(4.2vw,7.5vh);line-height:1.05;font-weight:200;color:#fff">地面自动驾驶面对的是<br><span style="font-style:italic;font-weight:300">经验驱动的开放世界</span></h2>
+          <div style="font-size:max(18px,1.1vw);line-height:1.75;color:rgba(255,255,255,.82);font-weight:300;max-width:34ch">行人不可预测。前车可能突然变道。道路施工、大雾、暴雨都没有统一的数学模型。自动驾驶必须依赖海量数据来学习隐含模式——<span style="font-weight:500">它学的是"世界本身"。</span></div>
         </div>
       </div>
       <div class="half" style="padding:5.6vh 3.6vw 4.4vh;justify-content:center;gap:3vh">
         <div class="chrome-min" style="margin-bottom:0"><div class="l"></div><div class="r">vs</div></div>
         <div data-anim="rules" style="display:flex;flex-direction:column;gap:2.2vh">
-          <h2 style="font-family:var(--sans),var(--sans-zh);font-size:min(4.2vw,7.5vh);line-height:1.05;font-weight:200;color:var(--ink)">物理驱动的<br><span style="font-style:italic;font-weight:300">确定性世界</span></h2>
-          <div style="font-size:max(16px,1vw);line-height:1.75;color:var(--text-secondary);font-weight:400;max-width:34ch">轨道运动严格遵循经典力学——两体动力学方程、J2 摄动、大气阻力、太阳辐射压——这些都是经过 <span style="color:var(--accent);font-weight:500">几十年工程验证的确定性方程</span>。轨道传播的误差主要来源于参数精度，而不是环境本身的不确定性。</div>
+          <h2 style="font-family:var(--sans),var(--sans-zh);font-size:min(4.2vw,7.5vh);line-height:1.05;font-weight:200;color:var(--ink)">航天器面对的是<br><span style="font-style:italic;font-weight:300">物理驱动的确定性世界</span></h2>
+          <div style="font-size:max(18px,1.1vw);line-height:1.75;color:var(--text-secondary);font-weight:400;max-width:34ch">轨道运动严格遵循经典力学——两体动力学、J2摄动、大气阻力、太阳辐射压——这些都是<span style="color:var(--accent);font-weight:500">经过几十年工程验证的确定性方程</span>。轨道传播误差主要来自参数精度，而非环境本身的不确定性。</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ======================================================================
-     S03 · 核心洞察：Physics Unknown vs Physics Beyond
-     对应演讲稿：Physics Unknown → Physics Beyond
-     ====================================================================== -->
+<!-- ====================================================================== S03 Duo: Physics Unknown vs Physics Beyond ====================================================================== -->
 <section class="slide light" data-animate="duo-mirror" data-layout="S08">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">03 / 23 · 核心洞察</div><div class="r">KEY INSIGHT</div></div>
     <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:3vh">
       <div style="display:flex;flex-direction:column;gap:.8vh">
-        <div class="t-cat">两种自动驾驶面对的是两种完全不同的世界</div>
+        <div class="t-cat">两种自动驾驶面对两种完全不同的世界——前提不同，智能产生的路径也必然不同</div>
         <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em">Physics Unknown → Physics Beyond</h2>
-        <p style="font-size:max(18px,1vw);line-height:1.7;color:var(--text-secondary)">地面自动驾驶学习的是 Physics Unknown（未知的物理）——它要用数据替代物理。太空自动驾驶学习的是 Physics Beyond（物理之外的语义和不确定性）——它要在已有物理模型的基础上扩展认知。<span style="color:var(--accent);font-weight:500">AI 不应该是物理模型的替代者，而应该是物理模型的扩展者。</span></p>
       </div>
       <div class="duo-compare" style="flex:1">
         <div class="duo-half" style="justify-content:flex-start;gap:2vh">
           <div class="t-cat" style="color:var(--text-placeholder)">地面自动驾驶 · GROUND</div>
           <h3 style="font-weight:200;font-size:min(2.6vw,4.6vh);letter-spacing:-.02em">Physics <span style="color:var(--accent);font-style:italic;font-weight:300">Unknown</span></h3>
-          <div style="font-size:max(16px,.94vw);line-height:1.7;color:var(--text-secondary)">
-            <p style="margin-bottom:.8vh">学习对象：世界本身——行人、驾驶员、环境全都不可预测</p>
-            <p style="margin-bottom:.8vh">AI 角色：物理规律的<span style="color:var(--text-placeholder)">替代者</span>——大规模数据驱动</p>
-            <p style="margin-bottom:.8vh">环境特征：高度不确定，无统一数学模型</p>
-            <p style="color:var(--text-helper);font-size:max(13px,.78vw)">代表：Tesla FSD · Waymo · Apollo</p>
+          <div style="font-size:max(18px,1vw);line-height:1.7;color:var(--text-secondary)">
+            <p style="margin-bottom:1vh"><span style="color:var(--accent);font-weight:500">学习对象：</span>世界本身——行人、驾驶员、环境全都不可预测</p>
+            <p style="margin-bottom:1vh"><span style="color:var(--accent);font-weight:500">AI 角色：</span>物理规律的<span style="color:var(--text-placeholder)">替代者</span>——大规模数据驱动</p>
+            <p style="margin-bottom:1vh"><span style="color:var(--accent);font-weight:500">环境特征：</span>高度不确定，无统一数学模型</p>
+            <p style="color:var(--text-helper);font-size:max(14px,.8vw)">代表：Tesla FSD · Waymo · Apollo</p>
           </div>
         </div>
         <span class="vrule"></span>
         <div class="duo-half" style="justify-content:flex-start;gap:2vh">
           <div class="t-cat">太空自动驾驶 · SPACE</div>
           <h3 style="font-weight:200;font-size:min(2.6vw,4.6vh);letter-spacing:-.02em">Physics <span style="color:var(--accent);font-style:italic;font-weight:300">Beyond</span></h3>
-          <div style="font-size:max(16px,.94vw);line-height:1.7;color:var(--text-secondary)">
-            <p style="margin-bottom:.8vh">学习对象：物理<span style="color:var(--accent);font-weight:500">之外</span>的语义——任务意图、风险评估、多目标决策</p>
-            <p style="margin-bottom:.8vh">AI 角色：物理模型的<span style="color:var(--accent);font-weight:500">扩展者</span>——已知规律→物理，未知→AI</p>
-            <p style="margin-bottom:.8vh">环境特征：确定性动力学 + Safety-Critical 强约束</p>
-            <p style="color:var(--text-helper);font-size:max(13px,.78vw)">约束：推进剂/电源/热控/通信严格受限</p>
+          <div style="font-size:max(18px,1vw);line-height:1.7;color:var(--text-secondary)">
+            <p style="margin-bottom:1vh"><span style="color:var(--accent);font-weight:500">学习对象：</span>物理<span style="color:var(--accent);font-weight:500">之外</span>的语义——任务意图·风险评估·多目标决策</p>
+            <p style="margin-bottom:1vh"><span style="color:var(--accent);font-weight:500">AI 角色：</span>物理模型的<span style="color:var(--accent);font-weight:500">扩展者</span>——已知规律→物理，未知→AI</p>
+            <p style="margin-bottom:1vh"><span style="color:var(--accent);font-weight:500">环境特征：</span>确定性动力学 + Safety-Critical 强约束</p>
+            <p style="color:var(--text-helper);font-size:max(14px,.8vw)">约束：推进剂/电源/热控/通信严格受限</p>
           </div>
         </div>
       </div>
       <div style="border-top:2px solid var(--accent);padding-top:2vh;display:flex;align-items:center;gap:2vw">
-        <div style="font-size:max(18px,1.1vw);color:var(--accent);font-weight:500;flex:1">AI 没有必要重新学习已被物理规律准确描述的世界。真正需要智能学习的是那些动力学模型无法覆盖的部分。</div>
+        <div style="font-size:max(20px,1.2vw);color:var(--accent);font-weight:500;flex:1">AI 不应该替代物理模型，而应该扩展物理模型——学习 Physics Beyond，而非 Physics Unknown。</div>
         <div class="t-meta" style="color:var(--text-helper)">→ PSIOS 的核心哲学</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ======================================================================
-     S04 · 两条路线的困境
-     对应演讲稿：模型驱动 vs 数据驱动
-     ====================================================================== -->
+<!-- ====================================================================== S04: 两条路线 ====================================================================== -->
 <section class="slide light" data-animate="grid-reveal" data-layout="S19">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">04 / 23 · 现状诊断</div><div class="r">CRISIS</div></div>
     <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.4vh">
       <div style="display:flex;flex-direction:column;gap:.8vh">
-        <div class="t-cat">当前航天智能研究的两条技术路线——完全割裂</div>
+        <div class="t-cat">当前航天自主控制的两条技术路线——完全割裂</div>
         <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em">模型驱动 vs 数据驱动</h2>
       </div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.5vw;flex:1">
-        <div class="card-fill" style="padding:2.2vh 1.4vw;border-top:3px solid var(--text-secondary);display:flex;flex-direction:column;gap:1vh">
+        <div class="card-fill" style="padding:2.4vh 1.4vw;border-top:3px solid var(--text-secondary);display:flex;flex-direction:column;gap:1vh">
           <div style="font-family:var(--sans);font-weight:200;font-size:min(3vw,5vh);line-height:.9">01</div>
-          <h3 style="font-weight:400;font-size:max(18px,1.1vw);line-height:1.2">模型驱动方法</h3>
-          <p style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)">完全建立在轨道动力学基础上，通过最优控制、MPC（模型预测控制）、轨迹优化完成自主导航。优势：可解释、可靠、工程验证充分。问题：缺乏学习能力，遇到未知环境就手足无措。</p>
+          <h3 style="font-weight:400;font-size:max(18px,1.1vw);line-height:1.2">模型驱动</h3>
+          <p style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)">完全建立在轨道动力学之上。最优控制、MPC（模型预测控制）、轨迹优化。可解释、可靠、工程验证充分。但缺乏学习能力——面对未知环境手足无措。</p>
         </div>
-        <div class="card-fill" style="padding:2.2vh 1.4vw;border-top:3px solid var(--text-secondary);display:flex;flex-direction:column;gap:1vh">
+        <div class="card-fill" style="padding:2.4vh 1.4vw;border-top:3px solid var(--text-secondary);display:flex;flex-direction:column;gap:1vh">
           <div style="font-family:var(--sans);font-weight:200;font-size:min(3vw,5vh);line-height:.9">02</div>
-          <h3 style="font-weight:400;font-size:max(18px,1.1vw);line-height:1.2">数据驱动方法</h3>
-          <p style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)">用神经网络、强化学习直接学轨迹规划和控制策略。<span style="color:var(--accent);font-weight:500">两个致命问题：</span>(1) 神经网络花大量算力去拟合解析公式就能精确计算的东西；(2) 纯神经网络是黑箱，没法做 Safety-Critical 的安全验证。</p>
+          <h3 style="font-weight:400;font-size:max(18px,1.1vw);line-height:1.2">数据驱动</h3>
+          <p style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)">神经网络、强化学习直接学轨迹和控制。两个致命问题：(1) 花钱算力去拟合解析公式就能算的东西；(2) 黑箱决策无法通过 Safety-Critical 安全验证。</p>
         </div>
-        <div class="card-accent" style="padding:2.2vh 1.4vw;display:flex;flex-direction:column;gap:1vh">
+        <div class="card-accent" style="padding:2.4vh 1.4vw;display:flex;flex-direction:column;gap:1vh">
           <div style="font-family:var(--sans);font-weight:200;font-size:min(3vw,5vh);line-height:.9;color:#fff">03</div>
           <h3 style="font-weight:500;font-size:max(18px,1.1vw);line-height:1.2;color:#fff">核心瓶颈：割裂</h3>
-          <p style="font-size:max(16px,.94vw);line-height:1.6;color:rgba(255,255,255,.85)">模型驱动强调物理规律却缺乏学习能力，数据驱动强调学习能力却忽略了物理规律。两者本应解决不同层次的问题，但目前彼此独立、互不融合。整个领域卡在这两条路线之间的鸿沟里。</p>
+          <p style="font-size:max(16px,.94vw);line-height:1.6;color:rgba(255,255,255,.85)">模型驱动强调物理却无学习能力，数据驱动强调学习却忽略物理——两者本应解决不同层次的问题，但目前彼此独立、互不融合。</p>
         </div>
-        <div class="card-fill" style="padding:2.2vh 1.4vw;border-top:3px solid var(--accent);display:flex;flex-direction:column;gap:1vh">
+        <div class="card-fill" style="padding:2.4vh 1.4vw;border-top:3px solid var(--accent);display:flex;flex-direction:column;gap:1vh">
           <div style="font-family:var(--sans);font-weight:200;font-size:min(3vw,5vh);line-height:.9;color:var(--accent)">04</div>
           <h3 style="font-weight:400;font-size:max(18px,1.1vw);line-height:1.2;color:var(--accent)">不要选边站</h3>
-          <p style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)">未来的方向不应是"选模型驱动还是数据驱动"。我们需要重新定义物理模型和神经网络之间的关系——物理负责演化，神经网络负责认知，二者深度融合而非彼此替代。</p>
+          <p style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)">未来的方向不是二选一。我们需要重新定义物理模型和神经网络之间的关系——物理负责演化，神经网络负责认知，二者深度融合而非彼此替代。</p>
         </div>
       </div>
     </div>
@@ -1352,106 +1341,102 @@
 </section>
 
 <!-- ======================================================================
-     S05 · Physics-Native Intelligence 范式定义
-     对应演讲稿：二、什么是 Physics-Native Intelligence
+     S05: Physics-Native Intelligence · 先定意义，再作对比
      ====================================================================== -->
 <section class="slide dark" data-animate="manifesto" data-layout="S12">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">05 / 23 · 范式定义</div><div class="r">PHYSICS-NATIVE</div></div>
-    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:3vh">
-      <div style="display:flex;flex-direction:column;gap:1.4vh">
-        <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em">不是 Physics-Informed Learning · 不是把约束加进 loss 函数</div>
-        <h2 style="font-family:var(--sans),var(--sans-zh);font-size:min(4vw,7vh);line-height:1.05;letter-spacing:-.02em;font-weight:200;color:#fff">物理规律不是智能系统的<span style="color:var(--accent-bright);font-style:italic;font-weight:300">外部约束</span><br>而是智能产生过程的<span style="color:var(--accent-bright);font-style:italic;font-weight:300">内部组成部分</span></h2>
-        <div style="font-size:max(16px,.94vw);line-height:1.7;color:rgba(255,255,255,.7);font-weight:300;max-width:60ch;margin-top:1vh">Physics-Informed Learning 把物理规律放在损失函数里——训练时约束网络，训练完物理就退出了。Physics-Native Intelligence 不同：物理模型始终作为运行时组件持续参与整个智能循环。神经网络不覆盖物理模型，而是在物理模型的确定性基础上学习未知知识。最终的智能行为，来自物理推理和数据推理的<span style="color:var(--accent-bright);font-weight:400">持续协同</span>。</div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:3.2vh">
+      <div style="display:flex;flex-direction:column;gap:1.6vh">
+        <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em">不是 Physics-Informed Learning · 不是把约束加进 loss 函数那么简单</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-size:min(3.8vw,6.8vh);line-height:1.05;letter-spacing:-.02em;font-weight:200;color:#fff">Physics-Native Intelligence 是：</h2>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-size:min(4vw,7vh);line-height:1.1;letter-spacing:-.02em;font-weight:200;color:var(--accent-bright)">将轨道动力学作为智能系统的原生组成部分</h2>
+        <div style="font-size:max(18px,1.1vw);line-height:1.75;color:rgba(255,255,255,.75);font-weight:300;max-width:62ch;margin-top:1vh">物理模型不是训练阶段的外部约束——<span style="color:#fff;font-weight:500">它在运行时与神经网络平等参与推理</span>。神经网络不覆盖物理模型，而是在物理模型的确定性基础上学习未知知识。最终的智能行为，来自物理推理和数据推理的<span style="color:var(--accent-bright);font-weight:400">持续协同</span>。</div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.2vw">
-        <div class="card-fill" style="padding:2vh 1.5vw;background:rgba(255,255,255,.06);border-top:3px solid var(--accent-bright);display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent-bright);letter-spacing:.15em">Evolution · 物理模型</div>
-          <p style="font-size:max(16px,.88vw);line-height:1.5;color:rgba(255,255,255,.65)">负责描述世界如何演化。轨道未来十分钟什么样？可达域在哪？还剩多少推进剂？——基于动力学方程精确计算，不依赖数据学习。</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.4vw">
+        <div class="card-fill" style="padding:2.2vh 1.5vw;background:rgba(255,255,255,.06);border-top:3px solid var(--accent-bright);display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:var(--accent-bright);letter-spacing:.15em">Evolution · 物理模型</div>
+          <p style="font-size:max(18px,1vw);line-height:1.5;color:rgba(255,255,255,.7)">描述世界如何演化——轨道未来什么样？可达域在哪？还剩多少推进剂？基于动力学方程精确计算，不依赖数据学习。</p>
         </div>
-        <div class="card-fill" style="padding:2vh 1.5vw;background:rgba(255,255,255,.06);border-top:3px solid var(--accent-bright);display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent-bright);letter-spacing:.15em">Cognition · 神经网络</div>
-          <p style="font-size:max(16px,.88vw);line-height:1.5;color:rgba(255,255,255,.65)">负责理解世界意味着什么。目标是否在主动接近？有没有碰撞风险？当前通信窗口还能用多久？——这些信息无法从动力学方程中直接获得。</p>
+        <div class="card-fill" style="padding:2.2vh 1.5vw;background:rgba(255,255,255,.06);border-top:3px solid var(--accent-bright);display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:var(--accent-bright);letter-spacing:.15em">Cognition · 神经网络</div>
+          <p style="font-size:max(18px,1vw);line-height:1.5;color:rgba(255,255,255,.7)">理解世界意味着什么——目标是否在主动接近？有碰撞风险吗？通信窗口还能用多久？这些无法从方程中直接获得。</p>
         </div>
-        <div class="card-fill" style="padding:2vh 1.5vw;background:rgba(255,255,255,.06);border-top:3px solid var(--accent-bright);display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent-bright);letter-spacing:.15em">Decision · 智能决策</div>
-          <p style="font-size:max(16px,.88vw);line-height:1.5;color:rgba(255,255,255,.65)">负责确定下一步做什么。在物理约束和认知信息的基础上，生成候选行为、评估优劣、选择最优方案。三者共同参与推理，不是 Physics + AI 的简单叠加。</p>
+        <div class="card-fill" style="padding:2.2vh 1.5vw;background:rgba(255,255,255,.06);border-top:3px solid var(--accent-bright);display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:var(--accent-bright);letter-spacing:.15em">Decision · 智能决策</div>
+          <p style="font-size:max(18px,1vw);line-height:1.5;color:rgba(255,255,255,.7)">下一步做什么——在物理约束和认知信息的基础上，生成候选行为、评估优劣、选择最优。三者共同推理，不是简单叠加。</p>
         </div>
       </div>
-      <div class="ink-banner-full" style="margin:auto -5vw -4.4vh;padding:2.4vh 5vw;background:var(--accent);display:flex;align-items:center;justify-content:space-between">
-        <div style="font-size:max(16px,.94vw);color:#fff;font-weight:400">智能不是一次计算结果，而是一种持续运行的能力</div>
-        <div style="font-size:max(14px,.82vw);color:rgba(255,255,255,.78)">Evolution · Cognition · Decision</div>
+      <div class="ink-banner-full" style="margin:auto -5vw -4.4vh;padding:2.6vh 5vw;background:var(--accent);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:max(18px,1.1vw);color:#fff;font-weight:400">智能不是一次计算结果，而是一种持续运行的能力</div>
+        <div style="font-size:max(16px,.9vw);color:rgba(255,255,255,.78)">Evolution · Cognition · Decision</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ======================================================================
-     S06 · Physics-Informed vs Physics-Native 五点对比
-     对应演讲稿：二、什么是 Physics-Native Intelligence
+     S06: PiL vs PNI 对比（紧接定义之后）
      ====================================================================== -->
 <section class="slide light" data-animate="duo-mirror" data-layout="S08">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">06 / 23 · 范式对比</div><div class="r">PiL vs PNI</div></div>
-    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.5vh">
-      <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em">Physics-Informed / Physics-Native</h2>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.4vh">
+      <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em">Physics-Informed Learning<br>vs Physics-Native Intelligence</h2>
       <div class="duo-compare" style="flex:1">
-        <div class="duo-half" style="gap:1.5vh;justify-content:flex-start">
+        <div class="duo-half" style="gap:1.4vh;justify-content:flex-start">
           <div class="t-cat">Physics-Informed Learning</div>
-          <div style="font-size:max(16px,.94vw);line-height:1.7;color:var(--text-secondary)">
-            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--text-placeholder)">物理位置</span><br>出现在损失函数、正则项、网络结构设计中</p>
-            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--text-placeholder)">物理角色</span><br>训练阶段的约束条件——训练完成即退出</p>
-            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--text-placeholder)">网络学什么</span><br>动力学 + 未知因素——目标是做更准的预测器</p>
-            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--text-placeholder)">系统架构</span><br>AI 为主，物理为辅——神经网络是核心</p>
-            <p style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--text-placeholder)">根本差异</span><br>物理 = 外部约束</p>
+          <div style="font-size:max(18px,1vw);line-height:1.75;color:var(--text-secondary)">
+            <p style="margin-bottom:.8vh"><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--text-placeholder)">物理位置</span> 损失函数、正则项、网络结构</p>
+            <p style="margin-bottom:.8vh"><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--text-placeholder)">物理角色</span> 训练约束 → 训练后退出</p>
+            <p style="margin-bottom:.8vh"><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--text-placeholder)">NN 学什么</span> 动力学 + 未知因素</p>
+            <p style="margin-bottom:.8vh"><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--text-placeholder)">架构</span> AI 为主，物理为辅</p>
+            <p><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--text-placeholder)">根本差异</span> 物理 = 外部约束</p>
           </div>
         </div>
         <span class="vrule"></span>
-        <div class="duo-half" style="gap:1.5vh;justify-content:flex-start">
+        <div class="duo-half" style="gap:1.4vh;justify-content:flex-start">
           <div class="t-cat" style="color:var(--accent)">Physics-Native Intelligence</div>
-          <div style="font-size:max(16px,.94vw);line-height:1.7;color:var(--text-secondary)">
-            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">物理位置</span><br>体现在系统运行时的持续组件中</p>
-            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">物理角色</span><br>运行时持续参与推理——从不退出</p>
-            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">网络学什么</span><br>仅学物理之外的未知因素——语义、意图、风险</p>
-            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">系统架构</span><br>物理为基，AI 增强——二者平等协同</p>
-            <p style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">根本差异</span><br>物理 = 内部组成部分</p>
+          <div style="font-size:max(18px,1vw);line-height:1.75;color:var(--text-secondary)">
+            <p style="margin-bottom:.8vh"><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">物理位置</span> 系统运行时的持续组件</p>
+            <p style="margin-bottom:.8vh"><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">物理角色</span> 运行时参与推理 → 永不退出</p>
+            <p style="margin-bottom:.8vh"><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">NN 学什么</span> 仅学未知因素</p>
+            <p style="margin-bottom:.8vh"><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">架构</span> 物理为基，AI 增强</p>
+            <p><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">根本差异</span> 物理 = 内部组成部分</p>
           </div>
         </div>
       </div>
-      <div style="border-top:1px solid var(--border-subtle);padding-top:1.5vh;font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500">本质区别：</span>Physics-Informed 把物理当作"训练时的老师"——教你一次，然后离开。Physics-Native 把物理当作"永远的同事"——始终在场，和你一起推理。</div>
+      <div style="border-top:1px solid var(--border-subtle);padding-top:1.5vh;font-size:max(18px,1vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500">本质区别：</span>PiL 把物理当作"训练时的老师"——教你一次然后离开。PNI 把物理当作"永远的同事"——始终在场，和你一起推理。</div>
     </div>
   </div>
 </section>
 
-<!-- ======================================================================
-     S07 · 四项基本原则
-     对应演讲稿：二、四项基本原则
-     ====================================================================== -->
+<!-- ====================================================================== S07: 四项基本原则 ====================================================================== -->
 <section class="slide light" data-animate="grid-reveal" data-layout="S19">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">07 / 23 · 设计原则</div><div class="r">PRINCIPLES</div></div>
     <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.4vh">
       <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em">贯穿 PNIE 全部模块设计的四项基本原则</h2>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.5vw;flex:1">
-        <div class="card-accent" style="padding:2.2vh 1.2vw;display:flex;flex-direction:column;gap:1vh">
+        <div class="card-accent" style="padding:2.4vh 1.4vw;display:flex;flex-direction:column;gap:1vh">
           <div style="font-family:var(--sans);font-weight:200;font-size:min(2.6vw,4.6vh);line-height:.9;color:#fff">01</div>
-          <h3 style="font-weight:500;font-size:max(18px,1vw);line-height:1.2;color:#fff">Physics First<br>物理优先</h3>
-          <p style="font-size:max(16px,.88vw);line-height:1.5;color:rgba(255,255,255,.85)">所有状态演化必须遵循客观物理规律。任何学习算法不能突破动力学约束。物理模型在所有推理环节中处于最高优先级——它首先确定"什么是可能的"，然后神经网络再在可能空间中寻找"什么是最优的"。</p>
+          <h3 style="font-weight:500;font-size:max(18px,1.1vw);line-height:1.2;color:#fff">Physics First<br>物理优先</h3>
+          <p style="font-size:max(16px,.94vw);line-height:1.5;color:rgba(255,255,255,.85)">所有状态演化必须遵循客观物理规律。任何学习算法不能突破动力学约束。物理模型在所有推理环节中处于最高优先级。</p>
         </div>
-        <div class="card-fill" style="padding:2.2vh 1.2vw;display:flex;flex-direction:column;gap:1vh">
+        <div class="card-fill" style="padding:2.4vh 1.4vw;display:flex;flex-direction:column;gap:1vh">
           <div style="font-family:var(--sans);font-weight:200;font-size:min(2.6vw,4.6vh);line-height:.9">02</div>
-          <h3 style="font-weight:400;font-size:max(18px,1vw);line-height:1.2">职责分离</h3>
-          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">物理模型负责世界演化（How the world changes），神经网络负责环境认知（What the world means）。神经网络不应该学习已由物理定律描述的内容——这是避免重复学习的关键。</p>
+          <h3 style="font-weight:400;font-size:max(18px,1.1vw);line-height:1.2">职责分离</h3>
+          <p style="font-size:max(16px,.94vw);line-height:1.5;color:var(--text-secondary)">物理负责世界演化（How），神经网络负责环境认知（What）。职责明确不相互替代——神经网络不应学习已由物理定律描述的内容。</p>
         </div>
-        <div class="card-fill" style="padding:2.2vh 1.2vw;display:flex;flex-direction:column;gap:1vh">
+        <div class="card-fill" style="padding:2.4vh 1.4vw;display:flex;flex-direction:column;gap:1vh">
           <div style="font-family:var(--sans);font-weight:200;font-size:min(2.6vw,4.6vh);line-height:.9">03</div>
-          <h3 style="font-weight:400;font-size:max(18px,1vw);line-height:1.2">持续推理</h3>
-          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">智能不是一次计算结果，而是持续运行的能力。系统在整个任务生命周期内持续进行状态传播、环境认知、策略优化和行为验证——不会因为某次推理结束而停止。</p>
+          <h3 style="font-weight:400;font-size:max(18px,1.1vw);line-height:1.2">持续推理</h3>
+          <p style="font-size:max(16px,.94vw);line-height:1.5;color:var(--text-secondary)">智能不是一次计算结果，而是持续运行的能力。系统在任务全生命周期内持续传播、认知、优化、验证——不会因一次推理结束而停止。</p>
         </div>
-        <div class="card-fill" style="padding:2.2vh 1.2vw;display:flex;flex-direction:column;gap:1vh">
+        <div class="card-fill" style="padding:2.4vh 1.4vw;display:flex;flex-direction:column;gap:1vh">
           <div style="font-family:var(--sans);font-weight:200;font-size:min(2.6vw,4.6vh);line-height:.9">04</div>
-          <h3 style="font-weight:400;font-size:max(18px,1vw);line-height:1.2">可扩展</h3>
-          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">系统能不断增加新的智能能力（新任务类型、新感知模态、新控制策略），而无需改变底层运行机制。新能力以插件形式加入——以能力单元而非功能模块组织。</p>
+          <h3 style="font-weight:400;font-size:max(18px,1.1vw);line-height:1.2">可扩展</h3>
+          <p style="font-size:max(16px,.94vw);line-height:1.5;color:var(--text-secondary)">系统能不断增加新智能能力（新任务/新感知/新控制），无需改变底层机制。以能力单元而非功能模块组织——插件式扩展。</p>
         </div>
       </div>
     </div>
@@ -1459,147 +1444,141 @@
 </section>
 
 <!-- ======================================================================
-     S08 · 为什么叫操作系统？
-     对应演讲稿：二、为什么叫操作系统
+     S08: 为什么叫操作系统？· 两栏大字体布局
      ====================================================================== -->
 <section class="slide dark" data-animate="grid-reveal" data-layout="S17">
   <div class="canvas-card">
-    <div class="chrome-min"><div class="l">08 / 23 · 系统定位</div><div class="r">WHY OS</div></div>
-    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.4vh">
+    <div class="chrome-min"><div class="l">08 / 23 · 系统定位</div><div class="r">WHY "OS"</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.6vh">
       <div style="display:flex;flex-direction:column;gap:.6vh">
-        <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em">PSIOS = 操作系统，而不是框架。PNIE = PSIOS 的内核。</div>
+        <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em;font-size:max(14px,.78vw)">PSIOS = 操作系统，不是框架。PNIE = PSIOS 的内核。</div>
         <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em;color:#fff">为什么称为"操作系统"？</h2>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1vw;flex:1">
-        <div class="card-fill" style="padding:1.8vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">资源管理</div>
-          <div style="font-size:max(13px,.72vw);color:rgba(255,255,255,.5)">传统：CPU/内存<br>PSIOS：推进剂/电源/通信</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2vw;flex:1">
+        <div style="display:flex;flex-direction:column;gap:1.4vh">
+          <div class="card-fill" style="padding:2.2vh 1.6vw;background:rgba(255,255,255,.06);display:flex;align-items:center;gap:2vw">
+            <div style="font-family:var(--mono);font-size:max(18px,1vw);color:var(--accent-bright);min-width:6ch">资源管理</div>
+            <div style="font-size:max(18px,1vw);color:rgba(255,255,255,.7);line-height:1.5">传统 OS 管理 CPU / 内存 / I/O<br>PSIOS 管理推进剂 / 电源 / 通信 / 计算</div>
+          </div>
+          <div class="card-fill" style="padding:2.2vh 1.6vw;background:rgba(255,255,255,.06);display:flex;align-items:center;gap:2vw">
+            <div style="font-family:var(--mono);font-size:max(18px,1vw);color:var(--accent-bright);min-width:6ch">进程调度</div>
+            <div style="font-size:max(18px,1vw);color:rgba(255,255,255,.7);line-height:1.5">传统 OS 管理和调度进程<br>PSIOS 管理和调度 Runtime</div>
+          </div>
+          <div class="card-fill" style="padding:2.2vh 1.6vw;background:rgba(255,255,255,.06);display:flex;align-items:center;gap:2vw">
+            <div style="font-family:var(--mono);font-size:max(18px,1vw);color:var(--accent-bright);min-width:6ch">安全机制</div>
+            <div style="font-size:max(18px,1vw);color:rgba(255,255,255,.7);line-height:1.5">传统 OS 用户态 / 内核态隔离<br>PSIOS Physics-First 约束验证</div>
+          </div>
         </div>
-        <div class="card-fill" style="padding:1.8vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">进程调度</div>
-          <div style="font-size:max(13px,.72vw);color:rgba(255,255,255,.5)">传统：管理进程<br>PSIOS：管理 Runtime</div>
-        </div>
-        <div class="card-fill" style="padding:1.8vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">安全机制</div>
-          <div style="font-size:max(13px,.72vw);color:rgba(255,255,255,.5)">传统：用户态/内核态<br>PSIOS：Physics-First</div>
-        </div>
-        <div class="card-fill" style="padding:1.8vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">驱动层</div>
-          <div style="font-size:max(13px,.72vw);color:rgba(255,255,255,.5)">传统：硬件驱动<br>PSIOS：GNC 接口</div>
-        </div>
-        <div class="card-fill" style="padding:1.8vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">文件系统</div>
-          <div style="font-size:max(13px,.72vw);color:rgba(255,255,255,.5)">传统：数据持久化<br>PSIOS：USS 状态持久化</div>
-        </div>
-        <div class="card-fill" style="padding:1.8vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">持续运行</div>
-          <div style="font-size:max(13px,.72vw);color:rgba(255,255,255,.5)">传统：OS 不关机<br>PSIOS：引擎永不停</div>
+        <div style="display:flex;flex-direction:column;gap:1.4vh">
+          <div class="card-fill" style="padding:2.2vh 1.6vw;background:rgba(255,255,255,.06);display:flex;align-items:center;gap:2vw">
+            <div style="font-family:var(--mono);font-size:max(18px,1vw);color:var(--accent-bright);min-width:6ch">驱动层</div>
+            <div style="font-size:max(18px,1vw);color:rgba(255,255,255,.7);line-height:1.5">传统 OS 硬件驱动<br>PSIOS GNC 底层执行接口</div>
+          </div>
+          <div class="card-fill" style="padding:2.2vh 1.6vw;background:rgba(255,255,255,.06);display:flex;align-items:center;gap:2vw">
+            <div style="font-family:var(--mono);font-size:max(18px,1vw);color:var(--accent-bright);min-width:6ch">文件系统</div>
+            <div style="font-size:max(18px,1vw);color:rgba(255,255,255,.7);line-height:1.5">传统 OS 数据持久化存储<br>PSIOS USS 状态持久化</div>
+          </div>
+          <div class="card-fill" style="padding:2.2vh 1.6vw;background:rgba(255,255,255,.06);display:flex;align-items:center;gap:2vw">
+            <div style="font-family:var(--mono);font-size:max(18px,1vw);color:var(--accent-bright);min-width:6ch">持续运行</div>
+            <div style="font-size:max(18px,1vw);color:rgba(255,255,255,.7);line-height:1.5">传统 OS 不关机<br>PSIOS 智能引擎永不停止</div>
+          </div>
         </div>
       </div>
-      <div style="padding:2vh 1.5vw;background:rgba(232,125,80,.12);border-left:3px solid var(--accent);display:flex;gap:3vw;align-items:flex-start">
-        <div style="font-size:max(16px,.94vw);line-height:1.6;color:rgba(255,255,255,.8);flex:1"><span style="color:#fff;font-weight:500">PNIE（Physics-Native Intelligence Engine）= PSIOS 的内核。</span>它负责管理所有 Runtime 的生命周期、维护 USS、调度能力执行，以及保证物理安全性。PNIE 之于 PSIOS，相当于 <span style="color:var(--accent-bright);font-weight:500">Linux Kernel 之于 Linux Distribution</span>。PSIOS 还包括：任务接口层、遥测遥信子系统、人机交互终端、以及地面端的数字孪生仿真环境。</div>
-        <div style="font-size:max(14px,.78vw);line-height:1.4;color:rgba(255,255,255,.45);max-width:18ch">PNIE 位于任务系统与 GNC 之间：上层提目标，下层执行控制，PNIE 转化任务为满足物理约束的自主行为序列</div>
-      </div>
+      <div style="padding:2vh 1.6vw;background:rgba(232,125,80,.12);border-left:3px solid var(--accent);font-size:max(18px,1.1vw);line-height:1.6;color:rgba(255,255,255,.8)"><span style="color:#fff;font-weight:500">PNIE 是 PSIOS 的内核。</span>它管理所有 Runtime 的生命周期、维护 USS、调度能力执行、保证物理安全。PNIE 之于 PSIOS，相当于 Linux Kernel 之于 Linux Distribution。</div>
     </div>
   </div>
 </section>
 
 <!-- ======================================================================
-     S09 · PNIE Runtime 架构 & 为什么用 Runtime
-     对应演讲稿：三、PNIE 总体架构
+     S09: Runtime 架构 · 只讲 Runtime 定义和为什么
      ====================================================================== -->
 <section class="slide light" data-animate="system-diagram" data-layout="S17">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">09 / 23 · 架构创新</div><div class="r">RUNTIME</div></div>
     <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.4vh">
       <div style="display:flex;flex-direction:column;gap:.6vh">
-        <div class="t-cat">传统航天软件按功能划分模块 → N 个模块产生 N² 条通信路径。PNIE 采用完全不同的组织方式。</div>
+        <div class="t-cat">传统航天软件：按功能划分模块 → N个模块产生 N² 条通信路径。PNIE 采用完全不同的组织方式。</div>
         <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em">从 Module 到 Runtime · 状态驱动架构</h2>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:2vw;flex:1">
         <div style="display:flex;flex-direction:column;gap:1.4vh;justify-content:center">
-          <div class="card-fill" style="padding:1.8vh 1.5vw">
-            <div style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">传统模块的局限</div>
-            <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary);margin-top:.4vh">Module 是"输入→计算→输出→结束"的一次性函数。增加一个自主交会能力，可能要同时修改轨道、规划、控制三个模块的接口。模块间点对点耦合形成 N² 条通信路径，系统复杂度随功能数量爆炸式增长。</p>
+          <div class="card-fill" style="padding:2vh 1.6vw">
+            <div style="font-family:var(--mono);font-size:max(16px,.84vw);color:var(--accent)">传统 Module 的局限</div>
+            <p style="font-size:max(18px,1vw);line-height:1.6;color:var(--text-secondary);margin-top:.5vh">Module 是"输入→计算→输出→结束"的一次性函数。增加一个自主交会能力，可能同时修改轨道、规划、控制三个模块接口——模块间形成 N² 条点对点通信路径，复杂度随功能爆炸增长。</p>
           </div>
-          <div class="card-fill" style="padding:1.8vh 1.5vw;border-left:3px solid var(--accent)">
-            <div style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">Runtime 的核心属性</div>
-            <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary);margin-top:.4vh"><span style="color:var(--accent);font-weight:500">持续性</span>——不是算完就退出的函数，任务期间永不停止。<span style="color:var(--accent);font-weight:500">独立状态</span>——每种 Runtime 维护自己的状态空间。<span style="color:var(--accent);font-weight:500">松耦合</span>——彼此不直接调用，通过 USS 共享信息。<span style="color:var(--accent);font-weight:500">异步</span>——轨道传播每秒更新，认知推理十秒一次，行为规划事件驱动，各自独立节拍。</p>
+          <div class="card-fill" style="padding:2vh 1.6vw;border-left:3px solid var(--accent)">
+            <div style="font-family:var(--mono);font-size:max(16px,.84vw);color:var(--accent)">Runtime = 持久运行的能力单元</div>
+            <p style="font-size:max(18px,1vw);line-height:1.6;color:var(--text-secondary);margin-top:.5vh">它不是算完就退出的函数，它在整个任务期间<span style="color:var(--accent);font-weight:500">永不停止</span>——持续维护自己的状态、持续更新。传统模块是"一次性工具"，Runtime 是"永久的同事"。</p>
           </div>
-          <div class="card-fill" style="padding:1.8vh 1.5vw">
-            <div style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">每个 Runtime 的四项基本属性</div>
-            <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary);margin-top:.4vh"><span style="font-weight:500">State</span>——维护自身负责的信息集合，持续存在并演化。<span style="font-weight:500">Behavior</span>——根据当前状态执行计算。<span style="font-weight:500">Interface</span>——通过 USS 读写，不直访其他 Runtime。<span style="font-weight:500">Lifecycle</span>——系统启动到任务结束，持续运行。</p>
+          <div class="card-fill" style="padding:2vh 1.6vw">
+            <div style="font-family:var(--mono);font-size:max(16px,.84vw);color:var(--accent)">Runtime 的四个关键特征</div>
+            <p style="font-size:max(18px,1vw);line-height:1.6;color:var(--text-secondary);margin-top:.5vh"><span style="font-weight:500">持续性</span>：任务期间永不退出。<span style="font-weight:500">独立状态</span>：各自维护自己的状态空间。<span style="font-weight:500">松耦合</span>：不直接调用对方，通过 USS 共享信息。<span style="font-weight:500">异步</span>：轨道每秒更新，认知十秒一次，行为事件驱动——各自独立节拍。</p>
           </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2vw;align-content:center">
-          <div class="card-accent" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.6vh;align-items:center;text-align:center">
-            <div style="font-weight:200;font-size:min(1.8vw,3.2vh);color:#fff">Physics</div>
-            <div style="font-size:max(14px,.78vw);color:rgba(255,255,255,.8)">世界如何演化？</div>
-            <div style="font-size:max(13px,.7vw);color:rgba(255,255,255,.55);line-height:1.3">轨道·姿态·约束·可达域·物理验证</div>
+          <div class="card-accent" style="padding:2.2vh 1.4vw;display:flex;flex-direction:column;gap:.6vh;align-items:center;text-align:center">
+            <div style="font-weight:200;font-size:min(2vw,3.6vh);color:#fff">Physics RT</div>
+            <div style="font-size:max(16px,.88vw);color:rgba(255,255,255,.85);line-height:1.3">世界如何<br>演化？</div>
           </div>
-          <div class="card-fill" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.6vh;align-items:center;text-align:center">
-            <div style="font-weight:200;font-size:min(1.8vw,3.2vh);color:var(--text-primary)">Neural</div>
-            <div style="font-size:max(14px,.78vw);color:var(--text-secondary)">世界意味着什么？</div>
-            <div style="font-size:max(13px,.7vw);color:var(--text-helper);line-height:1.3">意图·风险·语义·持续学习</div>
+          <div class="card-fill" style="padding:2.2vh 1.4vw;display:flex;flex-direction:column;gap:.6vh;align-items:center;text-align:center">
+            <div style="font-weight:200;font-size:min(2vw,3.6vh);color:var(--text-primary)">Neural RT</div>
+            <div style="font-size:max(16px,.88vw);color:var(--text-secondary);line-height:1.3">世界<br>意味着什么？</div>
           </div>
-          <div class="card-fill" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.6vh;align-items:center;text-align:center">
-            <div style="font-weight:200;font-size:min(1.8vw,3.2vh);color:var(--text-primary)">Behavior</div>
-            <div style="font-size:max(14px,.78vw);color:var(--text-secondary)">下一步做什么？</div>
-            <div style="font-size:max(13px,.7vw);color:var(--text-helper);line-height:1.3">行为生成·Graph·Capability</div>
+          <div class="card-fill" style="padding:2.2vh 1.4vw;display:flex;flex-direction:column;gap:.6vh;align-items:center;text-align:center">
+            <div style="font-weight:200;font-size:min(2vw,3.6vh);color:var(--text-primary)">Behavior RT</div>
+            <div style="font-size:max(16px,.88vw);color:var(--text-secondary);line-height:1.3">下一步<br>做什么？</div>
           </div>
-          <div class="card-fill" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.6vh;align-items:center;text-align:center">
-            <div style="font-weight:200;font-size:min(1.8vw,3.2vh);color:var(--text-primary)">Memory</div>
-            <div style="font-size:max(14px,.78vw);color:var(--text-secondary)">过去教会什么？</div>
-            <div style="font-size:max(13px,.7vw);color:var(--text-helper);line-height:1.3">历史·档案·策略·检索</div>
+          <div class="card-fill" style="padding:2.2vh 1.4vw;display:flex;flex-direction:column;gap:.6vh;align-items:center;text-align:center">
+            <div style="font-weight:200;font-size:min(2vw,3.6vh);color:var(--text-primary)">Memory RT</div>
+            <div style="font-size:max(16px,.88vw);color:var(--text-secondary);line-height:1.3">过去教会<br>什么？</div>
           </div>
         </div>
       </div>
       <div style="border-top:1px solid var(--border-subtle);padding-top:1.4vh;display:flex;gap:3vw">
-        <div style="font-size:max(15px,.88vw);color:var(--text-secondary);flex:1">所有 Runtime 都只与 USS 耦合，整个系统的耦合度从 <span style="color:var(--accent);font-weight:500">O(N²) 降至 O(N)</span>。计算需求：Physics RT 在 ARM M7 即可运行；Neural RT 需 NPU/低功耗 GPU；Behavior 和 Memory RT 计算量极低。星载平台如 Xilinx Versal、NVIDIA Jetson Orin Rad-Hard 版本已足够支持。</div>
-        <div style="font-size:max(14px,.78vw);color:var(--text-helper);max-width:16ch">相比纯神经网络方案大幅降低计算需求</div>
+        <div style="font-size:max(16px,.94vw);color:var(--text-secondary);flex:1">所有 Runtime 只与 USS 耦合——系统耦合度从 <span style="color:var(--accent);font-weight:500">O(N²) 降至 O(N)</span>。Physics RT 在 ARM M7 即可运行；Neural RT 需 NPU/低功耗 GPU。星载平台（Xilinx Versal、Jetson Orin Rad-Hard）已足够。</div>
+        <div style="font-size:max(15px,.82vw);color:var(--text-helper);max-width:16ch">相比纯神经网络方案计算需求大幅降低</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ======================================================================
-     S10 · Physics Runtime 五大职责
-     对应演讲稿：四、Physics Runtime
+     S10: Physics Runtime · 五大职责放大字号
      ====================================================================== -->
 <section class="slide dark" data-animate="grid-reveal" data-layout="S13">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">10 / 23 · Physics Runtime</div><div class="r">DIGITAL PHYSICS LAYER</div></div>
-    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.2vh">
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.4vh">
       <div style="display:flex;flex-direction:column;gap:.5vh">
-        <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em">从根上改变：轨道传播从"被调用的算法"变为"持续的运行时"</div>
-        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em;color:#fff">Physics Runtime · 五大职责</h2>
+        <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em;font-size:max(14px,.78vw)">从根上改变：轨道传播从"被调用的算法"变为"持续的运行时"——Digital Physics Layer</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em;color:#fff">Physics Runtime · 五大职责</h2>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.4vw;flex:1">
-        <div style="display:flex;flex-direction:column;gap:1.1vh">
-          <div class="card-fill" style="padding:1.6vh 1.3vw;background:rgba(255,255,255,.06)">
-            <span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent-bright)">01 动力学传播</span>
-            <p style="font-size:max(15px,.82vw);line-height:1.5;color:rgba(255,255,255,.6);margin-top:.3vh">两体模型→含J2/J3摄动模型→高精度数值积分→姿态动力学。不限制传播模型实现，但要求所有结果具有<span style="color:var(--accent-bright)">统一数据接口</span>——保证未来更换算法时对外表现一致。</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.6vw;flex:1">
+        <div style="display:flex;flex-direction:column;gap:1.4vh">
+          <div class="card-fill" style="padding:2vh 1.6vw;background:rgba(255,255,255,.06)">
+            <span style="font-family:var(--mono);font-size:max(16px,.82vw);color:var(--accent-bright);font-weight:500">01 动力学传播</span>
+            <p style="font-size:max(18px,1vw);line-height:1.5;color:rgba(255,255,255,.65);margin-top:.4vh">二体→J2/J3摄动→高精度数值积分→姿态动力学。不限制传播模型实现，但所有结果具有<span style="color:var(--accent-bright)">统一数据接口</span>——保证未来更换算法时对外一致。</p>
           </div>
-          <div class="card-fill" style="padding:1.6vh 1.3vw;background:rgba(255,255,255,.06)">
-            <span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent-bright)">02 约束维护</span>
-            <p style="font-size:max(15px,.82vw);line-height:1.5;color:rgba(255,255,255,.6);margin-top:.3vh">推进剂/推力/通信可见性/热控/姿态机动/电源——<span style="color:var(--accent-bright)">六类约束持续维护</span>。传统系统分散在多个模块中计算，PNIE 中由 Physics Runtime 统一管理，其他 Runtime 直接从 USS 读取。</p>
+          <div class="card-fill" style="padding:2vh 1.6vw;background:rgba(255,255,255,.06)">
+            <span style="font-family:var(--mono);font-size:max(16px,.82vw);color:var(--accent-bright);font-weight:500">02 约束维护</span>
+            <p style="font-size:max(18px,1vw);line-height:1.5;color:rgba(255,255,255,.65);margin-top:.4vh">推进剂·推力·通信可见性·热控·姿态机动·电源——<span style="color:var(--accent-bright)">六类约束持续维护</span>。其他 Runtime 直接从 USS 读取，无需重复计算。</p>
           </div>
-          <div class="card-fill" style="padding:1.6vh 1.3vw;background:rgba(255,255,255,.06)">
-            <span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent-bright)">03 可达域分析</span>
-            <p style="font-size:max(15px,.82vw);line-height:1.5;color:rgba(255,255,255,.6);margin-top:.3vh">系统不仅要知"现在在哪"，更要知道"未来能去哪"。实时计算可到达轨道集合、最小燃料轨迹、最小时间轨迹、安全轨迹空间。</p>
+          <div class="card-fill" style="padding:2vh 1.6vw;background:rgba(255,255,255,.06)">
+            <span style="font-family:var(--mono);font-size:max(16px,.82vw);color:var(--accent-bright);font-weight:500">03 可达域分析</span>
+            <p style="font-size:max(18px,1vw);line-height:1.5;color:rgba(255,255,255,.65);margin-top:.4vh">不仅要知"现在在哪"，更要知"未来能去哪"。实时计算可到达轨道集合、最小燃料轨迹、最小时间轨迹、安全空间。</p>
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:1.1vh">
-          <div class="card-fill" style="padding:1.6vh 1.3vw;background:rgba(255,255,255,.06)">
-            <span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent-bright)">04 资源演化</span>
-            <p style="font-size:max(15px,.82vw);line-height:1.5;color:rgba(255,255,255,.6);margin-top:.3vh">推进剂消耗/电池SoC/太阳输入/热平衡/执行机构寿命——这些物理量有明确数学规律，由 Physics Runtime 统一演化。</p>
+        <div style="display:flex;flex-direction:column;gap:1.4vh">
+          <div class="card-fill" style="padding:2vh 1.6vw;background:rgba(255,255,255,.06)">
+            <span style="font-family:var(--mono);font-size:max(16px,.82vw);color:var(--accent-bright);font-weight:500">04 资源演化</span>
+            <p style="font-size:max(18px,1vw);line-height:1.5;color:rgba(255,255,255,.65);margin-top:.4vh">推进剂消耗/电池SoC/太阳输入/热平衡/执行机构寿命——所有具有明确物理规律的资源状态由 Physics Runtime 统一演化。</p>
           </div>
-          <div class="card-fill" style="padding:1.6vh 1.3vw;background:rgba(232,125,80,.13);border-left:3px solid var(--accent)">
-            <span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">05 · SAFETY GUARDIAN</span>
-            <p style="font-size:max(15px,.84vw);line-height:1.5;color:rgba(255,255,255,.6);margin-top:.3vh">所有候选行为必须通过<span style="color:#fff;font-weight:500">四项验证</span>才可进入 GNC 执行：动力学一致性 → 工程约束 → 安全边界 → 资源可行性。Physics Runtime 是整个 PNIE 的安全守护角色——这是它最关键的职责。</p>
+          <div class="card-fill" style="padding:2vh 1.6vw;background:rgba(232,125,80,.14);border-left:3px solid var(--accent)">
+            <span style="font-family:var(--mono);font-size:max(16px,.84vw);color:var(--accent);font-weight:500">05 · SAFETY GUARDIAN</span>
+            <p style="font-size:max(18px,1vw);line-height:1.5;color:rgba(255,255,255,.65);margin-top:.4vh">所有候选行为必须通过<span style="color:#fff;font-weight:500">四项验证</span>才可进入 GNC 执行：动力学一致性 → 工程约束 → 安全边界 → 资源可行性。Physics Runtime 是整个 PNIE 的安全守护角色。</p>
           </div>
           <div style="border-top:1px solid rgba(255,255,255,.1);padding-top:1.2vh">
-            <p style="font-size:max(14px,.78vw);color:rgba(255,255,255,.45)"><span style="color:var(--accent-bright);font-weight:500">边界：</span>Physics Runtime 不学习、不预测任务语义、不输出行为策略。Neural Runtime 不负责轨道传播、不维护资源状态、不修改动力学模型。两者仅通过 USS 共享状态——这是 PNIE 中最重要的一条线。</p>
+            <p style="font-size:max(16px,.9vw);color:rgba(255,255,255,.5)"><span style="color:var(--accent-bright);font-weight:500">边界：</span>Physics RT 不学习、不预测语义——Neural RT 不传播轨道、不修改动力学。两者仅通过 USS 共享状态。</p>
           </div>
         </div>
       </div>
@@ -1608,190 +1587,178 @@
 </section>
 
 <!-- ======================================================================
-     S11 · Neural Runtime：认知建模
-     对应演讲稿：五、Neural Runtime
+     S11: Neural Runtime · 字号放大
      ====================================================================== -->
-<section class="slide light" data-animate="grid-reveal" data-layout="S13">
+<section class="slide light" data-animate="grid-reveal" data-layout="S19">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">11 / 23 · Neural Runtime</div><div class="r">COGNITIVE LAYER</div></div>
     <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.2vh">
       <div style="display:flex;flex-direction:column;gap:.5vh">
-        <div class="t-cat">PNIE 与传统 AI for Aerospace 最大的区别所在</div>
-        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em">从"状态预测"到"认知建模"</h2>
-        <p style="font-size:max(18px,1vw);line-height:1.7;color:var(--text-secondary)">传统 AI 让神经网络去学动力学、学轨迹、学控制策略——前提假设是神经网络是环境的替代者。但在航天领域，<span style="color:var(--accent);font-weight:500">这个假设是错的</span>。轨道动力学已有成熟解析模型，不需要重新学习。真正需要的，是理解物理状态背后的语义。</p>
+        <div class="t-cat" style="font-size:max(14px,.78vw)">PNIE 与传统 AI for Aerospace 最大的区别所在</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.8vw,10vh);line-height:1.05;letter-spacing:-.02em">Neural Runtime</h2>
+        <p style="font-size:max(20px,1.15vw);line-height:1.7;color:var(--accent);font-weight:500">关注"状态<span style="font-style:italic">意味着什么</span>"——而非"状态是什么"</p>
+        <p style="font-size:max(18px,1vw);line-height:1.6;color:var(--text-secondary)">传统 AI 让神经网络去学动力学、学轨迹、学控制——前提假设是神经网络是环境的替代者。但在航天领域，<span style="color:var(--accent);font-weight:500">这个假设是错的</span>。轨道动力学已有成熟解析模型，不需要重新学习。真正需要的，是理解物理状态背后的语义。</p>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.4vw;flex:1">
-        <div class="card-fill" style="padding:1.8vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">01 环境认知</div>
-          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">识别空间碎片密集区域、分析目标航天器运行状态、判断通信链路是否稳定。在物理状态之上形成<span style="color:var(--accent);font-weight:500">结构化空间态势理解</span>。</p>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.5vw;flex:1">
+        <div class="card-fill" style="padding:2.2vh 1.4vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:var(--accent);font-weight:500">01 环境认知</div>
+          <p style="font-size:max(18px,.95vw);line-height:1.5;color:var(--text-secondary)">识别空间碎片密集区域、分析目标运行状态、判断通信链路稳定性——在物理状态之上形成<span style="color:var(--accent);font-weight:500">结构化空间态势</span>。</p>
         </div>
-        <div class="card-fill" style="padding:1.8vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">02 目标理解</div>
-          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">两颗卫星完全相同相对状态：一颗在执行交会，另一颗在规避碰撞。从动力学角度完全一样，但从任务语义角度<span style="color:var(--accent);font-weight:500">完全不同</span>。仅靠位置和速度无法区分——这就是 Neural Runtime 存在的意义。</p>
+        <div class="card-fill" style="padding:2.2vh 1.4vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:var(--accent);font-weight:500">02 目标理解</div>
+          <p style="font-size:max(18px,.95vw);line-height:1.5;color:var(--text-secondary)">两颗卫星完全相同相对状态：一颗交会，另一颗避碰。从动力学角度完全一样——从任务语义角度<span style="color:var(--accent);font-weight:500">完全不同</span>。</p>
         </div>
-        <div class="card-fill" style="padding:1.8vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">03 风险推理</div>
-          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">碰撞风险/资源风险/任务冲突/通信中断——这些属于<span style="color:var(--accent);font-weight:500">高层语义风险</span>，无法通过动力学方程直接计算，需要通过认知推理形成评估。</p>
+        <div class="card-fill" style="padding:2.2vh 1.4vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:var(--accent);font-weight:500">03 风险推理</div>
+          <p style="font-size:max(18px,.95vw);line-height:1.5;color:var(--text-secondary)">碰撞风险/资源风险/任务冲突/通信中断——<span style="color:var(--accent);font-weight:500">高层语义风险</span>，无法通过动力学方程计算，需要认知推理。</p>
         </div>
-        <div class="card-accent" style="padding:1.8vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:rgba(255,255,255,.7)">04 持续学习</div>
-          <p style="font-size:max(16px,.88vw);line-height:1.5;color:rgba(255,255,255,.85)">不采用"地面训练+星上部署"的固定模式。更新来自三方面：<span style="font-weight:500">任务反馈</span>——当前策略有效吗？<span style="font-weight:500">环境变化</span>——出现新的碎片区域？<span style="font-weight:500">多智能体协同</span>——其他航天器分享经验。仅更新认知模型，不改变动力学模型。</p>
+        <div class="card-accent" style="padding:2.2vh 1.4vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:rgba(255,255,255,.75);font-weight:500">04 持续学习</div>
+          <p style="font-size:max(18px,.95vw);line-height:1.5;color:rgba(255,255,255,.85)">不采用"地面训练+星上部署"固定模式。任务反馈·环境变化·多智能体协同——三重更新来源。仅更新认知模型，不改变动力学。</p>
         </div>
-      </div>
-      <div style="border-top:2px solid var(--accent);padding-top:1.6vh;display:flex;gap:3vw">
-        <div style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary);flex:1"><span style="color:var(--accent);font-weight:500">关键区别：</span>Neural Runtime 不学动力学、不预测轨迹、不输出控制量——这些分别由 Physics Runtime、Planner、GNC 负责。它的输出是 <span style="color:var(--accent);font-weight:500">Cognitive Information</span>（认知信息）。传统 AI for Aerospace 的神经网络是"物理替代者"——PNIE 的 Neural Runtime 是"物理增强者"。</div>
-        <div style="font-size:max(14px,.82vw);line-height:1.5;color:var(--text-helper);max-width:20ch"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">示例</span><br>Physics RT："目标未来十分钟位置 X,Y,Z。"<br>Neural RT："目标正在主动接近，交会意图明确，风险低——建议继续当前策略。"</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ======================================================================
-     S12 · Memory Runtime
-     对应演讲稿：六、Memory Runtime
+     S12: Memory Runtime · 字号放大
      ====================================================================== -->
 <section class="slide light" data-animate="grid-reveal" data-layout="S19">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">12 / 23 · Memory Runtime</div><div class="r">LONG-TERM KNOWLEDGE</div></div>
     <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.2vh">
       <div style="display:flex;flex-direction:column;gap:.5vh">
-        <div class="t-cat">Neural Runtime 的 Experience Context = 工作记忆 · Memory Runtime = 长期记忆</div>
-        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em">让系统"越飞越聪明"</h2>
-        <p style="font-size:max(18px,1vw);line-height:1.7;color:var(--text-secondary)">Neural Runtime 虽然具备经验学习能力，但它主要关注<span style="color:var(--accent);font-weight:500">当前任务周期内</span>的认知推理。Memory Runtime 解决的是不同层次的问题——<span style="color:var(--accent);font-weight:500">跨越多个任务、多个轨道周期的长期知识积累和复用</span>。</p>
+        <div class="t-cat" style="font-size:max(14px,.78vw)">Neural RT 的 Experience Context = 工作记忆 · Memory RT = 长期记忆</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.8vw,10vh);line-height:1.05;letter-spacing:-.02em">Memory Runtime</h2>
+        <p style="font-size:max(20px,1.15vw);line-height:1.7;color:var(--accent);font-weight:500">让系统"越飞越聪明"——跨越多个任务周期的长期知识积累</p>
+        <p style="font-size:max(18px,1vw);line-height:1.6;color:var(--text-secondary)">Neural Runtime 解决当前任务内的认知推理。但"过去在这个轨道区域发生过什么？""历史数据显示这个目标的典型行为是什么？"——这些需要<span style="color:var(--accent);font-weight:500">跨越多个任务周期的长期知识</span>。</p>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.5vw;flex:1">
-        <div class="card-fill" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">任务历史</div>
-          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">每个已完成任务的完整轨迹、关键决策点、执行结果。结构化时序数据，任务结束时写入。</p>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.6vw;flex:1">
+        <div class="card-fill" style="padding:2.2vh 1.4vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:var(--accent);font-weight:500">任务历史</div>
+          <p style="font-size:max(18px,.95vw);line-height:1.5;color:var(--text-secondary)">已完成任务的完整轨迹、关键决策点、执行结果。结构化时序数据，任务结束时写入——形成可追溯的飞行履历。</p>
         </div>
-        <div class="card-fill" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">目标档案</div>
-          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">已知目标的轨道特征、历史行为模式、交互记录。如："这个轨道高度上的 GEO 卫星，90% 保持位置保持行为"。</p>
+        <div class="card-fill" style="padding:2.2vh 1.4vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:var(--accent);font-weight:500">目标档案</div>
+          <p style="font-size:max(18px,.95vw);line-height:1.5;color:var(--text-secondary)">已知目标的轨道特征、行为模式、交互记录。如："这个轨道高度的 GEO 卫星，90% 保持位置保持行为，历史异常概率低于 5%。"</p>
         </div>
-        <div class="card-fill" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">策略知识</div>
-          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">不同场景下各种策略的有效性评价——知识图谱存储。策略执行后增量更新评分。</p>
+        <div class="card-fill" style="padding:2.2vh 1.4vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:var(--accent);font-weight:500">策略知识</div>
+          <p style="font-size:max(18px,.95vw);line-height:1.5;color:var(--text-secondary)">不同场景下各种策略的有效性评价——知识图谱存储。哪种接近策略在什么条件下最可靠？策略执行后增量更新评分。</p>
         </div>
-        <div class="card-accent" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:rgba(255,255,255,.7)">经验检索</div>
-          <p style="font-size:max(16px,.88vw);line-height:1.5;color:rgba(255,255,255,.85)">向量嵌入+相似度搜索——给定当前状态，检索历史上最相似场景。结构化查询——"500km SSO 过去30天多少次碎片近距离交会？" 结果以结构化上下文注入 USS。</p>
+        <div class="card-accent" style="padding:2.2vh 1.4vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:rgba(255,255,255,.75);font-weight:500">经验检索</div>
+          <p style="font-size:max(18px,.95vw);line-height:1.5;color:rgba(255,255,255,.85)">向量嵌入+相似度搜索——给定当前状态，检索历史上最相似场景。检索结果以结构化上下文注入 USS，供 Neural RT 和 Behavior RT 使用。</p>
         </div>
       </div>
-      <div style="border-top:1px solid var(--border-subtle);padding-top:1.4vh;font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500">持续积累、从不删除</span>（除非知识被证伪）。任务结束后经验写入——下次遇到类似特征的卫星，系统不用重新判断，直接检索即可识别。这是 PNIE 实现"越飞越聪明"的核心机制。而所有这些分散的知识要能被有效检索——就需要一个统一的状态中枢。</div>
     </div>
   </div>
 </section>
 
 <!-- ======================================================================
-     S13 · USS & USR 统一状态空间
-     对应演讲稿：七、USS 和 USR
+     S13: USS & USR · 加解释：为什么先讲 USS 再讲 Behavior
      ====================================================================== -->
 <section class="slide dark" data-animate="system-diagram" data-layout="S17">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">13 / 23 · 状态中枢</div><div class="r">USS & USR</div></div>
     <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.2vh">
       <div style="display:flex;flex-direction:column;gap:.5vh">
-        <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em">USS 定义抽象状态空间 · USR 实现运行时管理 · 耦合 O(N²)→O(N)</div>
-        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em;color:#fff">统一状态空间 · 四类状态的动态耦合</h2>
+        <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em;font-size:max(14px,.78vw)">在讲 Behavior Runtime 之前，必须先回答一个问题：四类 Runtime 各自维护的状态如何统一？</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em;color:#fff">USS 统一状态空间 · 动态耦合 O(N²)→O(N)</h2>
+        <p style="font-size:max(18px,1vw);line-height:1.6;color:rgba(255,255,255,.65)">Physics RT 有物理状态，Neural RT 有认知状态，Behavior RT 有任务状态，Memory RT 有长期知识——如果这些状态之间无法统一表达，整个系统就无法形成一致的推理。<span style="color:var(--accent-bright);font-weight:500">USS 就是解决这个问题的：让四类不同层次的状态在同一框架内表达、相互耦合、共同参与推理。</span></p>
       </div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.2vw;flex:1">
-        <div class="card-fill" style="padding:1.8vh 1.1vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">Physical State</div>
-          <p style="font-size:max(16px,.86vw);line-height:1.5;color:rgba(255,255,255,.75)">轨道·姿态·引力场·大气·辐射压·约束 · <span style="color:var(--accent-bright);font-weight:500">Physics RT</span></p>
+        <div class="card-fill" style="padding:2vh 1.2vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:var(--accent-bright);font-weight:500">Physical<br>State</div>
+          <p style="font-size:max(16px,.9vw);line-height:1.5;color:rgba(255,255,255,.7)">轨道·姿态·引力场·大气·辐射压·约束 · Physics RT</p>
         </div>
-        <div class="card-fill" style="padding:1.8vh 1.1vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">Cognitive State</div>
-          <p style="font-size:max(16px,.86vw);line-height:1.5;color:rgba(255,255,255,.75)">态势·意图·风险·经验上下文 · <span style="color:var(--accent-bright);font-weight:500">Neural+Memory RT</span></p>
+        <div class="card-fill" style="padding:2vh 1.2vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:var(--accent-bright);font-weight:500">Cognitive<br>State</div>
+          <p style="font-size:max(16px,.9vw);line-height:1.5;color:rgba(255,255,255,.7)">态势·意图·风险·经验上下文 · Neural + Memory RT</p>
         </div>
-        <div class="card-fill" style="padding:1.8vh 1.1vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">Mission State</div>
-          <p style="font-size:max(16px,.86vw);line-height:1.5;color:rgba(255,255,255,.75)">目标·当前行为·进度·优先级 · <span style="color:var(--accent-bright);font-weight:500">Behavior RT</span></p>
+        <div class="card-fill" style="padding:2vh 1.2vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:var(--accent-bright);font-weight:500">Mission<br>State</div>
+          <p style="font-size:max(16px,.9vw);line-height:1.5;color:rgba(255,255,255,.7)">目标·当前行为·进度·优先级 · Behavior RT</p>
         </div>
-        <div class="card-fill" style="padding:1.8vh 1.1vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">Resource State</div>
-          <p style="font-size:max(16px,.86vw);line-height:1.5;color:rgba(255,255,255,.75)">推进剂·电源·热控·通信 · <span style="color:var(--accent-bright);font-weight:500">Physics RT</span></p>
+        <div class="card-fill" style="padding:2vh 1.2vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:var(--accent-bright);font-weight:500">Resource<br>State</div>
+          <p style="font-size:max(16px,.9vw);line-height:1.5;color:rgba(255,255,255,.7)">推进剂·电源·热控·通信 · Physics RT</p>
         </div>
       </div>
       <div style="padding:2vh 1.5vw;background:rgba(232,125,80,.12);border-left:3px solid var(--accent);display:flex;flex-direction:column;gap:1vh">
-        <p style="font-size:max(16px,.94vw);line-height:1.6;color:rgba(255,255,255,.8)"><span style="font-weight:500;color:#fff">动态耦合：</span>Physical State → Resource State（轨道机动→推进剂减少）→ Cognitive State → Mission State（识别风险→调整优先级）→ Physical State（新轨迹）→ Resource State → Mission State（推进剂不足→限制行为）——这不是四个独立数据库，而是一个持续耦合演化的有机整体。</p>
-        <p style="font-size:max(16px,.94vw);line-height:1.6;color:rgba(255,255,255,.8)"><span style="font-weight:500;color:#fff">USR 五项原则：</span>①Single Source of Truth——所有 Runtime 只能访问 USR；②状态共享而非模块通信——Behavior RT 不直接调用 Physics RT，只从 USR 读；③异步运行——不同频率不要求同步；④状态可追溯——来源/时间/可信度全记录；⑤统一 Read/Write API。</p>
+        <p style="font-size:max(18px,1vw);line-height:1.6;color:rgba(255,255,255,.8)"><span style="color:#fff;font-weight:500">动态耦合——</span>Physical State → Resource State（轨道机动→推进剂减少）→ Cognitive State → Mission State（识别风险→调整优先级）→ Physical State（新轨迹）。不是四个独立数据库，而是一个持续耦合演化的有机整体。</p>
+        <p style="font-size:max(16px,.94vw);line-height:1.6;color:rgba(255,255,255,.7)"><span style="color:var(--accent-bright);font-weight:500">USR 五项原则：</span>Single Source of Truth · 状态共享非模块通信 · 异步运行 · 状态可追溯 · 统一 Read/Write API。所有 Runtime 只与 USR 耦合——系统耦合度从 O(N²) 降至 O(N)。</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ======================================================================
-     S14 · Behavior Runtime：行为生成机制
-     对应演讲稿：八、Behavior Runtime
+     S14: Behavior Runtime · 四阶段循环 + 分层
      ====================================================================== -->
-<section class="slide light" data-animate="grid-reveal" data-layout="S13">
+<section class="slide light" data-animate="grid-reveal" data-layout="S19">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">14 / 23 · Behavior Runtime</div><div class="r">DECISION ENGINE</div></div>
-    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2vh">
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.2vh">
       <div style="display:flex;flex-direction:column;gap:.4vh">
-        <div class="t-cat">Behavior Runtime 输出行为，不是控制指令——那是 GNC 的职责</div>
-        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em">行为生成 · 四阶段循环</h2>
-        <div style="font-size:max(16px,.94vw);line-height:1.7;color:var(--text-secondary)">行为是一种<span style="color:var(--accent);font-weight:500">高于控制、低于任务</span>的智能表达：任务="对目标卫星完成补给"→行为="接近→对准→对接→补给→撤离"→轨迹="3次机动到达对接点"→控制="推力器1,50%,120秒"。Behavior Runtime 定位在行为层——它是连接高层任务目标和底层控制系统的唯一桥梁。</div>
+        <div class="t-cat">USS 统一了所有状态——Behavior Runtime 正是在这个基础上完成决策的</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.8vw,10vh);line-height:1.05;letter-spacing:-.02em">Behavior Runtime</h2>
+        <p style="font-size:max(18px,1.1vw);line-height:1.7;color:var(--text-secondary)">输出<span style="color:var(--accent);font-weight:500">行为（Behavior）</span>，而非控制指令。行为是一种高于控制、低于任务的智能表达——任务="对目标卫星完成补给"→行为="接近→对准→对接→补给→撤离"→轨迹="3次机动到达对接点"→控制="推力器1,50%,120秒"。Behavior Runtime 是连接高层任务目标和底层控制系统的唯一桥梁。</p>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.2vw;flex:1">
-        <div class="card-accent" style="padding:1.8vh 1.1vw;display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(13px,.68vw);color:rgba(255,255,255,.7)">01</div>
-          <div style="font-weight:500;font-size:max(18px,.95vw);color:#fff">状态感知</div>
-          <div style="font-size:max(15px,.8vw);line-height:1.4;color:rgba(255,255,255,.8)">从 USS 读取完整状态：我在哪？目标在做什么？现在什么阶段？还剩多少推进剂？</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.4vw;flex:1">
+        <div class="card-accent" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.72vw);color:rgba(255,255,255,.7)">01 状态感知</div>
+          <div style="font-size:max(16px,.9vw);line-height:1.5;color:rgba(255,255,255,.85)">从 USS 读取完整状态：我在哪里？目标在做什么？现在什么阶段？还剩多少推进剂？</div>
         </div>
-        <div class="card-fill" style="padding:1.8vh 1.1vw;display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(13px,.68vw);color:var(--accent)">02</div>
-          <div style="font-weight:400;font-size:max(18px,.95vw)">行为推理</div>
-          <div style="font-size:max(15px,.8vw);line-height:1.4;color:var(--text-secondary)">最重要目标？有风险吗？资源够吗？需要切换吗？→输出新行为状态（如"轨道保持"→"主动接近"）。</div>
+        <div class="card-fill" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">02 行为推理</div>
+          <div style="font-size:max(16px,.9vw);line-height:1.5;color:var(--text-secondary)">最重要目标是什么？有风险吗？资源够吗？需要切换吗？→输出新行为状态。</div>
         </div>
-        <div class="card-fill" style="padding:1.8vh 1.1vw;display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(13px,.68vw);color:var(--accent)">03</div>
-          <div style="font-weight:400;font-size:max(18px,.95vw)">能力选择</div>
-          <div style="font-size:max(15px,.8vw);line-height:1.4;color:var(--text-secondary)">从 Capability Library 选能力。如"自主接近"→Navigation Capability。不关心内部实现——EKF 还是粒子滤波。</div>
+        <div class="card-fill" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">03 能力选择</div>
+          <div style="font-size:max(16px,.9vw);line-height:1.5;color:var(--text-secondary)">从 Capability Library 选能力："自主接近"→Navigation Capability。</div>
         </div>
-        <div class="card-fill" style="padding:1.8vh 1.1vw;display:flex;flex-direction:column;gap:.6vh">
-          <div style="font-family:var(--mono);font-size:max(13px,.68vw);color:var(--accent)">04</div>
-          <div style="font-weight:400;font-size:max(18px,.95vw)">行为反馈</div>
-          <div style="font-size:max(15px,.8vw);line-height:1.4;color:var(--text-secondary)">Capability 执行后，结果写回 USS。下一周期重新评估——<span style="color:var(--accent);font-weight:500">四个阶段永不停止</span>。</div>
+        <div class="card-fill" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">04 行为反馈</div>
+          <div style="font-size:max(16px,.9vw);line-height:1.5;color:var(--text-secondary)">Capability 执行后写回 USS。下一周期重新评估——<span style="color:var(--accent);font-weight:500">永不停止。</span></div>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5vw;border-top:1px solid var(--border-subtle);padding-top:1.6vh">
-        <div><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">战略行为</span><br><span style="font-size:max(15px,.82vw);color:var(--text-secondary)">数小时~数天：完成任务</span></div>
-        <div><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">战术行为</span><br><span style="font-size:max(15px,.82vw);color:var(--text-secondary)">数分钟~数小时：接近/对接/传输</span></div>
-        <div><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">执行行为</span><br><span style="font-size:max(15px,.82vw);color:var(--text-secondary)">秒~分钟：调用+监测</span></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.6vw;border-top:1px solid var(--border-subtle);padding-top:1.4vh">
+        <div><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent);font-weight:500">战略行为</span><br><span style="font-size:max(16px,.88vw);color:var(--text-secondary)">数小时~数天：完成整个任务</span></div>
+        <div><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent);font-weight:500">战术行为</span><br><span style="font-size:max(16px,.88vw);color:var(--text-secondary)">数分钟~数小时：接近/对接/传输</span></div>
+        <div><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent);font-weight:500">执行行为</span><br><span style="font-size:max(16px,.88vw);color:var(--text-secondary)">秒~分钟：调用+监测</span></div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ======================================================================
-     S15 · Behavior Graph
-     对应演讲稿：九、Behavior Graph
+     S15: Behavior Graph · Node + Transition + 迁移连锁
      ====================================================================== -->
 <section class="slide light" data-animate="grid-reveal" data-layout="S17">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">15 / 23 · 行为组织</div><div class="r">BEHAVIOR GRAPH</div></div>
     <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2vh">
       <div style="display:flex;flex-direction:column;gap:.4vh">
-        <div class="t-cat">不是有限状态机，不是预定义脚本——是 USS 上的行为组织模型</div>
-        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em">Behavior Graph · 行为节点 + 迁移</h2>
+        <div class="t-cat">行为从"轨道保持"→"轨道转移"→"自主接近"→"对接"→"撤离"——谁来管理这种迁移？</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em">Behavior Graph · 节点 + 五维迁移</h2>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:2vw;flex:1">
         <div style="display:flex;flex-direction:column;gap:1.2vh">
-          <div class="card-fill" style="padding:1.8vh 1.4vw">
-            <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">Behavior Node · 行为节点</div>
-            <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary);margin-top:.6vh">每个节点是有明确语义的行为状态，包含六个字段：<span style="font-weight:500">Name</span>——行为名称；<span style="font-weight:500">Goal</span>——行为目标（连续参数）；<span style="font-weight:500">Activation Condition</span>——激活条件；<span style="font-weight:500">Completion Condition</span>——完成条件；<span style="font-weight:500">Recommended Capability</span>——推荐能力；<span style="font-weight:500">Safety Constraint</span>——安全约束。</p>
-            <p style="font-size:max(15px,.82vw);line-height:1.5;color:var(--text-helper);margin-top:.6vh">例："自主接近"节点——目标距离<200m；激活条件=目标已识别 AND 窗口可用；完成条件=距离<200m AND 速度匹配；推荐 Navigation Capability；安全约束=距离≥50m, 速度≤1m/s。</p>
+          <div class="card-fill" style="padding:2vh 1.5vw">
+            <div style="font-family:var(--mono);font-size:max(16px,.82vw);color:var(--accent);font-weight:500">Behavior Node · 行为节点</div>
+            <p style="font-size:max(18px,1vw);line-height:1.55;color:var(--text-secondary);margin-top:.5vh">每个节点包含六个字段。以"自主接近"为例：<span style="font-weight:500">Name</span>=Autonomous Approach · <span style="font-weight:500">Goal</span>=缩短距离至200m以内 · <span style="font-weight:500">Activation</span>=目标已识别 AND 窗口可用 · <span style="font-weight:500">Completion</span>=距离&lt;200m AND 速度匹配 · <span style="font-weight:500">Capability</span>=Navigation · <span style="font-weight:500">Safety</span>=距离≥50m, 速度≤1m/s。</p>
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:1.2vh">
-          <div class="card-fill" style="padding:1.8vh 1.4vw">
-            <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">Behavior Transition · 五维联合判断</div>
-            <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary);margin-top:.6vh">迁移条件由 USS 的五个维度联合决定——不是"距离<100m 就进入下一阶段"的单一阈值。①<span style="font-weight:500">物理状态</span>满足下一阶段动力学条件？②<span style="font-weight:500">认知状态</span>确认环境安全？③<span style="font-weight:500">任务状态</span>进入新阶段？④<span style="font-weight:500">资源状态</span>支持执行？⑤<span style="font-weight:500">历史经验</span>有无负面信号？<span style="color:var(--accent);font-weight:500">五个维度全部满足才触发迁移。</span></p>
+          <div class="card-fill" style="padding:2vh 1.5vw">
+            <div style="font-family:var(--mono);font-size:max(16px,.82vw);color:var(--accent);font-weight:500">Behavior Transition · 五维联合判断</div>
+            <p style="font-size:max(18px,1vw);line-height:1.55;color:var(--text-secondary);margin-top:.5vh">不是"距离&lt;100m 就进入下一阶段"的单阈值。需要全部五个维度满足：①<span style="font-weight:500">物理</span>——满足下一阶段动力学条件？②<span style="font-weight:500">认知</span>——环境确认安全？③<span style="font-weight:500">任务</span>——进入新阶段？④<span style="font-weight:500">资源</span>——支持继续？⑤<span style="font-weight:500">经验</span>——历史上该迁移有无失败记录？<span style="color:var(--accent);font-weight:500">全部满足才触发。</span></p>
           </div>
-          <div class="card-accent" style="padding:1.8vh 1.4vw">
-            <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:rgba(255,255,255,.7)">持续运行 · 不绑定任何一次规划</div>
-            <p style="font-size:max(16px,.88vw);line-height:1.5;color:rgba(255,255,255,.85);margin-top:.6vh">获取USS→评估当前节点→判断迁移条件→如果满足→切换到下一节点→调用推荐Capability→等待下一周期。如果途中 Neural Runtime 检测到目标异常机动，系统可以从"自主接近"立即切回"安全撤离"。</p>
+          <div class="card-accent" style="padding:2vh 1.5vw">
+            <div style="font-family:var(--mono);font-size:max(16px,.82vw);color:rgba(255,255,255,.75);font-weight:500">持续运行 · 随时回退</div>
+            <p style="font-size:max(18px,1vw);line-height:1.55;color:rgba(255,255,255,.85);margin-top:.5vh">获取USS→评估当前节点→判断五个迁移条件→切换→调用Capability→等待下周期。如果途中 Neural RT 检测到目标异常机动，系统从"自主接近"<span style="font-weight:500">立即切回"安全撤离"</span>——不是靠阈值，是靠对全局状态的持续评估。</p>
           </div>
         </div>
       </div>
@@ -1800,98 +1767,106 @@
 </section>
 
 <!-- ======================================================================
-     S16 · Co-Reasoning：五阶段循环
-     对应演讲稿：九、Co-Reasoning
+     S16: Co-Reasoning · 五阶段 + 讲法优化
      ====================================================================== -->
-<section class="slide light" data-animate="timeline-walk" data-layout="S11">
+<section class="slide dark" data-animate="timeline-walk" data-layout="S11">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">16 / 23 · 协同推理</div><div class="r">CO-REASONING</div></div>
     <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.4vh">
       <div style="display:flex;flex-direction:column;gap:.5vh">
-        <div class="t-cat">Co-Reasoning = 行为推理的精细化展开。四阶段→拆分为"物理→认知→规划"三步，变成五阶段。</div>
-        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em">Physics–Neural Co-Reasoning · 五阶段闭环</h2>
-        <p style="font-size:max(16px,.94vw);line-height:1.7;color:var(--text-secondary)">Physics Runtime 回答<span style="color:var(--accent);font-weight:500">"如果什么都不改变，世界将如何演化？"</span>Neural Runtime 回答<span style="color:var(--accent);font-weight:500">"这种演化对当前任务意味着什么？"</span>Behavior Runtime 综合两类预测，在物理约束下完成决策。</p>
+        <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em;font-size:max(14px,.78vw)">五阶段不是另一套独立流程——是将 Behavior Runtime 四阶段中的"行为推理"拆为"物理→认知→规划"三步</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em;color:#fff">Physics–Neural Co-Reasoning 循环</h2>
+        <p style="font-size:max(18px,1.05vw);line-height:1.6;color:rgba(255,255,255,.65)">Physics Runtime："如果什么都不改变，未来世界如何演化？" Neural Runtime："这种演化对当前任务意味着什么？" Behavior Runtime：综合两类预测，在物理约束下完成最终决策。<span style="color:var(--accent-bright);font-weight:500">三个角色各自独立回答各自的问题——五阶段描述的是它们如何在一个循环里协同。</span></p>
       </div>
       <div class="timeline-h" style="flex:1;align-content:center">
         <span class="tl-h-axis"></span>
-        <div class="tl-h-node"><span class="num">01</span><span class="dot"></span><span class="lbl">状态获取<br><small style="font-weight:400">USS读取</small></span></div>
-        <div class="tl-h-node"><span class="num">02</span><span class="dot"></span><span class="lbl">物理预测<br><small style="font-weight:400">确定性·可解释</small></span></div>
-        <div class="tl-h-node"><span class="num">03</span><span class="dot"></span><span class="lbl">认知推理<br><small style="font-weight:400">概率性·学习获取</small></span></div>
-        <div class="tl-h-node"><span class="num">04</span><span class="dot"></span><span class="lbl">行为规划<br><small style="font-weight:400">候选+筛选+评估</small></span></div>
-        <div class="tl-h-node"><span class="num">05</span><span class="dot"></span><span class="lbl">状态更新<br><small style="font-weight:400">写回USS</small></span></div>
+        <div class="tl-h-node"><span class="num" style="font-size:max(16px,.9vw)">01</span><span class="dot"></span><span class="lbl" style="font-size:max(18px,1vw)">状态获取<br><small style="font-weight:400;font-size:max(16px,.88vw);color:rgba(255,255,255,.55)">Behavior RT<br>读取 USS</small></span></div>
+        <div class="tl-h-node"><span class="num" style="font-size:max(16px,.9vw)">02</span><span class="dot"></span><span class="lbl" style="font-size:max(18px,1vw)">物理预测<br><small style="font-weight:400;font-size:max(16px,.88vw);color:rgba(255,255,255,.55)">Physics RT<br>确定性·可解释</small></span></div>
+        <div class="tl-h-node"><span class="num" style="font-size:max(16px,.9vw)">03</span><span class="dot"></span><span class="lbl" style="font-size:max(18px,1vw)">认知推理<br><small style="font-weight:400;font-size:max(16px,.88vw);color:rgba(255,255,255,.55)">Neural RT<br>概率性·学习获取</small></span></div>
+        <div class="tl-h-node"><span class="num" style="font-size:max(16px,.9vw)">04</span><span class="dot"></span><span class="lbl" style="font-size:max(18px,1vw)">行为规划<br><small style="font-weight:400;font-size:max(16px,.88vw);color:rgba(255,255,255,.55)">候选+筛选<br>+多维评估</small></span></div>
+        <div class="tl-h-node"><span class="num" style="font-size:max(16px,.9vw)">05</span><span class="dot"></span><span class="lbl" style="font-size:max(18px,1vw)">状态更新<br><small style="font-weight:400;font-size:max(16px,.88vw);color:rgba(255,255,255,.55)">Capability 执行<br>写回 USS</small></span></div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5vw;border-top:1px solid var(--border-subtle);padding-top:1.6vh">
-        <div style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(14px,.7vw)">双预测机制</span><br><span style="font-weight:500">物理预测</span>：确定性的——轨道演化、可达域、能耗，源于动力学方程，完全可解释。<span style="font-weight:500">认知预测</span>：概率性的——意图概率、风险分数、置信区间，源于学习和经验。Behavior Runtime 在两套预测共同作用下形成行为——不单独依赖任何一方。</div>
-        <div style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(14px,.7vw)">Physics-First 规划</span><br>ΔV 超过推进剂能力？→直接剔除。违反安全距离？→直接剔除。无法形成交会窗口？→不进入后续规划。大量不合理方案在规划早期即被物理模型排除——神经网络只需关注物理模型无法描述的不确定因素。</div>
-        <div style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(14px,.7vw)">三类一致性约束</span><br><span style="font-weight:500">物理一致性</span>——硬约束，违反即拒绝。<span style="font-weight:500">任务一致性</span>——技术可行但偏离目标的不采纳。<span style="font-weight:500">认知一致性</span>——Neural 判断异常机动风险时，不能继续输出接近行为。</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5vw;border-top:1px solid rgba(255,255,255,.12);padding-top:1.6vh">
+        <div style="font-size:max(18px,1vw);line-height:1.55;color:rgba(255,255,255,.65)">
+          <span style="color:var(--accent-bright);font-weight:500;font-family:var(--mono);font-size:max(16px,.8vw)">双预测机制</span><br><span style="font-weight:500">物理预测</span>：确定性的——轨道、可达域、能耗，源自动力学方程。<span style="font-weight:500">认知预测</span>：概率性的——意图概率、风险分数、置信区间，源自学习和经验。Behavior RT 在两类预测共同作用下形成行为。
+        </div>
+        <div style="font-size:max(18px,1vw);line-height:1.55;color:rgba(255,255,255,.65)">
+          <span style="color:var(--accent-bright);font-weight:500;font-family:var(--mono);font-size:max(16px,.8vw)">Physics-First 规划</span><br>候选行为需要的 ΔV 超过推进剂能力？直接剔除。违反安全距离？直接剔除。轨道动力学预测无法形成交会窗口？不进入后续规划。大量不合理方案在早期被排除。
+        </div>
+        <div style="font-size:max(18px,1vw);line-height:1.55;color:rgba(255,255,255,.65)">
+          <span style="color:var(--accent-bright);font-weight:500;font-family:var(--mono);font-size:max(16px,.8vw)">三类一致性约束</span><br><span style="font-weight:500">物理</span>——硬约束，违反即拒绝。<span style="font-weight:500">任务</span>——技术可行但偏离目标的不采纳。<span style="font-weight:500">认知</span>——Neural 判断有异常机动时，不能继续输出接近行为。
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ======================================================================
-     S17 · Behavior Planning vs Trajectory Planning
-     对应演讲稿：十、行为规划与轨迹规划
+     S17: Behavior Planning vs Trajectory · 串联逻辑
      ====================================================================== -->
-<section class="slide dark" data-animate="duo-mirror" data-layout="S08">
+<section class="slide light" data-animate="duo-mirror" data-layout="S08">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">17 / 23 · 规划层次</div><div class="r">PLANNING</div></div>
     <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.4vh">
-      <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em;color:#fff">行为规划 (What) / 轨迹规划 (How)</h2>
+      <div style="display:flex;flex-direction:column;gap:.5vh">
+        <div class="t-cat">Co-Reasoning 的四阶段"行为规划"——它的输出是什么？怎么执行？</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em">行为规划 / 轨迹规划 · 双层决策</h2>
+      </div>
       <div class="duo-compare" style="flex:1">
-        <div class="duo-half" style="gap:2vh;justify-content:flex-start">
-          <div class="t-cat" style="color:rgba(255,255,255,.5)">Behavior Planning</div>
-          <h3 style="font-weight:300;font-size:max(20px,1.2vw);color:#fff">行为规划 · "做什么"</h3>
-          <div style="font-size:max(16px,.94vw);line-height:1.7;color:rgba(255,255,255,.65)">
-            <p style="margin-bottom:1vh">复杂航天任务通常不存在唯一正确答案。目标不可观测时——可等待、可调整轨道、可重新规划。行为规划需要生成<span style="color:var(--accent-bright)">多个候选方案</span>综合评估。</p>
-            <p style="margin-bottom:1vh"><span style="color:rgba(255,255,255,.5);font-family:var(--mono);font-size:max(13px,.7vw)">回答：</span>保持轨道/主动接近/等待窗口/避碰？</p>
-            <p><span style="color:rgba(255,255,255,.5);font-family:var(--mono);font-size:max(13px,.7vw)">输出：</span>Behavior Intent</p>
+        <div class="duo-half" style="gap:1.8vh;justify-content:flex-start">
+          <div class="t-cat">Behavior Planning · "做什么"</div>
+          <h3 style="font-weight:200;font-size:min(2.8vw,5vh);letter-spacing:-.02em">行为规划</h3>
+          <div style="font-size:max(18px,1vw);line-height:1.7;color:var(--text-secondary)">
+            <p style="margin-bottom:1vh">复杂航天任务通常不存在唯一正确答案。目标不可观测时——可等待、可调整轨道、可重新规划。行为规划需要生成<span style="color:var(--accent);font-weight:500">多个候选方案</span>综合评估。</p>
+            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">输出</span> Behavior Intent</p>
+            <p><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">筛选方式</span> Physics-First——在生成阶段就用物理模型约束搜索空间</p>
           </div>
         </div>
-        <span class="vrule" style="opacity:.3"></span>
-        <div class="duo-half" style="gap:2vh;justify-content:flex-start">
-          <div class="t-cat" style="color:var(--accent-bright)">Trajectory Planning</div>
-          <h3 style="font-weight:300;font-size:max(20px,1.2vw);color:#fff">轨迹规划 · "怎么做"</h3>
-          <div style="font-size:max(16px,.94vw);line-height:1.7;color:rgba(255,255,255,.65)">
-            <p style="margin-bottom:1vh">在行为已确定后，将 Behavior Intent 转化为具体满足动力学约束的轨迹和<span style="color:var(--accent-bright)">控制指令</span>。</p>
-            <p style="margin-bottom:1vh"><span style="color:rgba(255,255,255,.5);font-family:var(--mono);font-size:max(13px,.7vw)">回答：</span>最优接近轨迹的参数？</p>
-            <p><span style="color:rgba(255,255,255,.5);font-family:var(--mono);font-size:max(13px,.7vw)">输出：</span>ΔV 序列 · 推进剂预算 · 控制指令</p>
+        <span class="vrule"></span>
+        <div class="duo-half" style="gap:1.8vh;justify-content:flex-start">
+          <div class="t-cat" style="color:var(--accent)">Trajectory Planning · "怎么做"</div>
+          <h3 style="font-weight:200;font-size:min(2.8vw,5vh);letter-spacing:-.02em;color:var(--accent)">轨迹规划</h3>
+          <div style="font-size:max(18px,1vw);line-height:1.7;color:var(--text-secondary)">
+            <p style="margin-bottom:1vh">在行为已确定后，将 Behavior Intent 转化为具体满足动力学约束的<span style="color:var(--accent);font-weight:500">轨迹和控制指令</span>。这一层属于 Capability Library 的范畴。</p>
+            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">输出</span> ΔV序列 · 推进剂预算 · 控制指令</p>
+            <p><span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">实现</span> Navigation / Docking / Refueling Capability</p>
           </div>
         </div>
       </div>
-      <div style="border-top:1px solid rgba(255,255,255,.15);padding-top:1.6vh">
-        <p style="font-size:max(16px,.94vw);line-height:1.6;color:rgba(255,255,255,.5)">分层思想与人类驾驶一致——先决定变道（行为），再打方向盘（控制）。PNIE 在行为规划层加入 <span style="color:var(--accent-bright);font-weight:500">Physics-First 筛选</span>：候选行为在生成阶段就由物理模型约束搜索空间。行为生成与能力执行分离——Behavior Runtime 不关心接近是用 EKF（扩展卡尔曼滤波）还是粒子滤波实现的。</p>
+      <div style="border-top:1px solid var(--border-subtle);padding-top:1.4vh">
+        <p style="font-size:max(18px,1vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500">双层分离的意义：</span>Behavior Planner 不关心接近是用 EKF（扩展卡尔曼滤波）还是粒子滤波实现的——它只输出 Intent。Trajectory Planner 不关心任务为什么要接近——它只负责把 Intent 转成轨迹。行为层与控制层彻底解耦。这种分层与人类驾驶的决策逻辑完全一致——先决定变道，再打方向盘。</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ======================================================================
-     S18 · Behavior Intent + 模型分析
-     对应演讲稿：十、行为建模与模型选型
+     S18: Behavior Intent + Model Analysis · 两栏布局
      ====================================================================== -->
-<section class="slide light" data-animate="grid-reveal" data-layout="S19">
+<section class="slide light" data-animate="grid-reveal" data-layout="S17">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">18 / 23 · 行为建模 + 模型选型</div><div class="r">MODELING</div></div>
     <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.2vh">
-      <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em">Behavior Intent + 模型适用性</h2>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5vw;flex:1">
+      <div style="display:flex;flex-direction:column;gap:.4vh">
+        <div class="t-cat">"做什么"输出的是 Behavior Intent——这个 Intent 长什么样？用什么 AI 模型来生成？</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em">Behavior Intent + 模型适用性</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.8vw;flex:1">
         <div style="display:flex;flex-direction:column;gap:1.4vh">
-          <div class="card-fill" style="padding:1.6vh 1.2vw;border-top:2px solid var(--accent)">
-            <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">三种常见表示均不适合</div>
-            <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary);margin-top:.6vh"><span style="font-weight:500">控制量</span>——属于 GNC 职责，不应是 Behavior Planner 的输出。<span style="font-weight:500">轨迹</span>——由动力学决定，不需要神经网络重新学习。<span style="font-weight:500">行为标签</span>——离散标签无法描述连续参数（距离/时间窗口/推进剂预算）。</p>
+          <div class="card-fill" style="padding:1.8vh 1.4vw;border-top:3px solid var(--accent)">
+            <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:var(--accent);font-weight:500">三种常见表示均不适合</div>
+            <p style="font-size:max(18px,.95vw);line-height:1.5;color:var(--text-secondary);margin-top:.5vh"><span style="font-weight:500">控制量</span>——属于 GNC 职责。 <span style="font-weight:500">轨迹</span>——由动力学决定，不需 NN 重学。 <span style="font-weight:500">行为标签</span>——离散标签无法描述连续参数（距离/时间窗口/推进剂预算）。</p>
           </div>
-          <div class="card-accent" style="padding:1.6vh 1.2vw">
-            <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:rgba(255,255,255,.7)">Behavior Intent · 统一参数化表示</div>
-            <p style="font-size:max(16px,.88vw);line-height:1.5;color:rgba(255,255,255,.85);margin-top:.6vh">六个参数：<span style="font-weight:500">Type</span>（行为类型）+ <span style="font-weight:500">Goal</span>（目标/距离等连续参数）+ <span style="font-weight:500">Constraint</span>（安全距离/速度上限等硬约束）+ <span style="font-weight:500">TimeWindow</span>（最早/最晚开始时间）+ <span style="font-weight:500">RiskPreference</span>（conservative/balanced/aggressive）+ <span style="font-weight:500">Budget</span>（ΔV/推进剂配额）。描述行为目标，非实现路径——彻底解耦行为层与控制层。</p>
+          <div class="card-accent" style="padding:1.8vh 1.4vw">
+            <div style="font-family:var(--mono);font-size:max(16px,.8vw);color:rgba(255,255,255,.75);font-weight:500">Behavior Intent · 统一参数化</div>
+            <p style="font-size:max(18px,.95vw);line-height:1.5;color:rgba(255,255,255,.85);margin-top:.5vh"><span style="font-weight:500">六个字段：</span>Type（行为类型）+ Goal（目标/距离）+ Constraint（安全距离/速度上限）+ TimeWindow（最早/最晚）+ RiskPreference（conservative/balanced/aggressive）+ Budget（ΔV/推进剂配额）。<span style="font-weight:500">描述目标而非路径——彻底解耦行为层与控制层。</span></p>
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:.8vh">
-          <div class="card-fill" style="padding:1.4vh 1.1vw;font-size:max(15px,.82vw);line-height:1.4;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(13px,.68vw)">✓ Transformer</span>——第一代 Generator。上下文建模强、成熟高效。局限：不适合多模态不确定性。</div>
-          <div class="card-fill" style="padding:1.4vh 1.1vw;font-size:max(15px,.82vw);line-height:1.4;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(13px,.68vw)">≈ Diffusion</span>——一对多生成。局限：多步去噪（10-100步），实时性不足。<span style="color:var(--accent)">离线候选+在线微调。</span></div>
-          <div class="card-fill" style="padding:1.4vh 1.1vw;font-size:max(15px,.82vw);line-height:1.4;color:var(--text-secondary)"><span style="font-weight:500;font-family:var(--mono);font-size:max(13px,.68vw)">✗ RL</span>——学长期收益但奖励函数设计困难（安全/燃料/时间难统一量化），策略黑箱。<span style="color:var(--text-placeholder)">辅助优化，不作主决策器。</span></div>
-          <div class="card-fill" style="padding:1.4vh 1.1vw;font-size:max(15px,.82vw);line-height:1.4;color:var(--text-secondary)"><span style="font-weight:500;font-family:var(--mono);font-size:max(13px,.68vw)">✗ World Model(Dreamer)</span>——动力学全由NN学，忽略已知规律。<span style="color:var(--text-placeholder)">需要 Physics-guided 改造。</span></div>
-          <div style="border-top:2px solid var(--accent);padding-top:1.2vh;font-size:max(15px,.84vw);line-height:1.5;color:var(--accent);font-weight:500">长期目标：$s_{t+1} = f_{physics} + f_{neural}(c_t)$ · 物理为基+残差学习</div>
+        <div style="display:flex;flex-direction:column;gap:1vh">
+          <div class="card-fill" style="padding:1.6vh 1.3vw;font-size:max(18px,.95vw);line-height:1.45;color:var(--text-secondary)"><span style="font-family:var(--mono);font-size:max(16px,.78vw);color:var(--accent);font-weight:500">✓ Transformer</span>——第一代 Generator。上下文建模强、成熟高效。局限：不适合多模态不确定性。</div>
+          <div class="card-fill" style="padding:1.6vh 1.3vw;font-size:max(18px,.95vw);line-height:1.45;color:var(--text-secondary)"><span style="font-family:var(--mono);font-size:max(16px,.78vw);color:var(--accent);font-weight:500">≈ Diffusion</span>——一对多生成。局限：多步去噪(10-100步)，实时性不足。<span style="color:var(--accent)">离线候选+在线微调。</span></div>
+          <div class="card-fill" style="padding:1.6vh 1.3vw;font-size:max(18px,.95vw);line-height:1.45;color:var(--text-secondary)"><span style="font-family:var(--mono);font-size:max(16px,.78vw);color:var(--text-placeholder);font-weight:500">✗ RL</span>——学长期收益但奖励函数设计困难（安全/燃料/时间难统一量化），策略黑箱。<span style="color:var(--text-placeholder)">辅助优化，不作主决策器。</span></div>
+          <div class="card-fill" style="padding:1.6vh 1.3vw;font-size:max(18px,.95vw);line-height:1.45;color:var(--text-secondary)"><span style="font-family:var(--mono);font-size:max(16px,.78vw);color:var(--text-placeholder);font-weight:500">✗ World Model</span>——动力学全由NN学，忽略已知物理规律。<span style="color:var(--text-placeholder)">需要 Physics-guided 改造。</span></div>
         </div>
       </div>
     </div>
@@ -1899,120 +1874,113 @@
 </section>
 
 <!-- ======================================================================
-     S19 · Physics-guided World Model
-     对应演讲稿：十、Physics-guided World Model
+     S19: PGWM · KaTeX 修复
      ====================================================================== -->
 <section class="slide dark" data-animate="manifesto" data-layout="S12">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">19 / 23 · 长期路线</div><div class="r">PGWM</div></div>
-    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:3vh">
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:3.2vh">
       <div style="display:flex;flex-direction:column;gap:1.2vh">
-        <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em">BEYOND DREAMER · BEYOND MUZERO</div>
-        <h2 style="font-family:var(--sans),var(--sans-zh);font-size:min(4vw,7vh);line-height:1.05;letter-spacing:-.02em;font-weight:200;color:#fff">$s_{t+1} = f_{physics}(s_t, a_t) + f_{neural}(s_t, a_t, c_t)$</h2>
-        <div style="font-size:max(16px,.94vw);line-height:1.7;color:rgba(255,255,255,.7);font-weight:300;max-width:54ch;margin-top:.6vh">传统 World Model 的状态转移完全由神经网络学习——对航天任务而言大量动力学已有解析模型。Physics-guided World Model 将转移拆分为两部分：<span style="color:#fff;font-weight:500">物理模型负责确定性演化</span>（$f_{physics}$），<span style="color:var(--accent-bright);font-weight:500">神经网络仅补偿模型残差和未知语义</span>（$f_{neural}$）。$c_t$ 为 Neural Runtime 提供的环境认知上下文。</div>
+        <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em;font-size:max(14px,.78vw)">BEYOND DREAMER · BEYOND MUZERO</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-size:min(3.6vw,6.5vh);line-height:1.05;letter-spacing:-.02em;font-weight:200;color:#fff;margin-bottom:.4vh">Physics-guided World Model</h2>
+        <div style="font-size:max(28px,1.8vw);line-height:1.3;color:var(--accent-bright);font-weight:200;font-family:var(--sans);letter-spacing:-.02em;margin:.8vh 0">状态转移 = 物理模型(确定性) + 神经网络(残差 + 语义)</div>
+        <div style="font-size:max(18px,1vw);line-height:1.7;color:rgba(255,255,255,.7);font-weight:300;max-width:54ch;margin-top:.6vh">传统 World Model 的动力学完全由神经网络学习——对航天任务而言大量规律已有解析模型，重新学习既无必要也降低可信度。Physics-guided World Model 将状态转移拆分为两部分：<span style="color:#fff;font-weight:500">物理模型负责确定性演化</span>（轨道动力学、姿态动力学、环境模型），<span style="color:var(--accent-bright);font-weight:500">神经网络仅补偿模型残差和未知语义</span>（未知扰动、执行器误差、未建模动力学）。$c_t$ 为 Neural Runtime 提供的环境认知上下文。</div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.2vw">
-        <div class="card-fill" style="padding:1.6vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.4vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">可解释</div>
-          <div style="font-size:max(14px,.76vw);color:rgba(255,255,255,.5)">物理部分可追溯至动力学方程</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.4vw">
+        <div class="card-fill" style="padding:2vh 1.2vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.4vh">
+          <div style="font-family:var(--mono);font-size:max(18px,.85vw);color:var(--accent-bright);font-weight:500">可解释</div>
+          <div style="font-size:max(16px,.88vw);color:rgba(255,255,255,.55)">物理部分完全可追溯至动力学方程</div>
         </div>
-        <div class="card-fill" style="padding:1.6vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.4vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">低数据需求</div>
-          <div style="font-size:max(14px,.76vw);color:rgba(255,255,255,.5)">仅学残差——比纯黑盒WM降低数个量级</div>
+        <div class="card-fill" style="padding:2vh 1.2vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.4vh">
+          <div style="font-family:var(--mono);font-size:max(18px,.85vw);color:var(--accent-bright);font-weight:500">低数据需求</div>
+          <div style="font-size:max(16px,.88vw);color:rgba(255,255,255,.55)">仅需学习残差——比纯黑盒 WM 降低数个量级</div>
         </div>
-        <div class="card-fill" style="padding:1.6vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.4vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">安全保证</div>
-          <div style="font-size:max(14px,.76vw);color:rgba(255,255,255,.5)">Physics RT 硬约束——不可产生非法预测</div>
+        <div class="card-fill" style="padding:2vh 1.2vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.4vh">
+          <div style="font-family:var(--mono);font-size:max(18px,.85vw);color:var(--accent-bright);font-weight:500">安全保证</div>
+          <div style="font-size:max(16px,.88vw);color:rgba(255,255,255,.55)">Physics RT 硬约束——不可产生非法预测</div>
         </div>
-        <div class="card-fill" style="padding:1.6vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.4vh">
-          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">物理外推</div>
-          <div style="font-size:max(14px,.76vw);color:rgba(255,255,255,.5)">动力学提供泛化边界——不需训练覆盖</div>
+        <div class="card-fill" style="padding:2vh 1.2vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.4vh">
+          <div style="font-family:var(--mono);font-size:max(18px,.85vw);color:var(--accent-bright);font-weight:500">物理外推</div>
+          <div style="font-size:max(16px,.88vw);color:rgba(255,255,255,.55)">动力学提供泛化边界——不依赖训练数据覆盖</div>
         </div>
       </div>
-      <div class="ink-banner-full" style="margin:auto -5vw -4.4vh;padding:2.4vh 5vw;background:var(--accent);display:flex;align-items:center;justify-content:space-between">
-        <div style="font-size:max(16px,.94vw);color:#fff;font-weight:400">不是"让神经网络学物理"，而是"利用物理，增强学习"——第一代：Transformer + Physics RT 分层实现</div>
-        <div style="font-size:max(14px,.78vw);color:rgba(255,255,255,.78)">可扩展原则的最终目标</div>
+      <div class="ink-banner-full" style="margin:auto -5vw -4.4vh;padding:2.6vh 5vw;background:var(--accent);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:max(18px,1vw);color:#fff;font-weight:400">不是"让神经网络学物理"，而是"利用物理，增强学习"——第一代：Transformer + Physics RT 分层实现</div>
+        <div style="font-size:max(16px,.88vw);color:rgba(255,255,255,.78)">可扩展原则的最终目标</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ======================================================================
-     S20 · 场景演练 自主交会全流程
-     对应演讲稿：十一、场景演练
+     S20: 场景演练 · 中文书写 + 大字
      ====================================================================== -->
 <section class="slide light" data-animate="timeline-walk" data-layout="S11">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">20 / 23 · 场景演练</div><div class="r">WALKTHROUGH</div></div>
     <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.4vh">
       <div style="display:flex;flex-direction:column;gap:.4vh">
-        <div class="t-cat">A: 500km SSO · B: 同轨前方 50km · 推进剂 2kg · 最小安全距离 100m · 接近速度 ≤ 2m/s · 通信窗口 T+8min 起 10min</div>
+        <div class="t-cat" style="font-size:max(14px,.78vw)">服务星 A：500km SSO。目标星 B：同轨前方 50km。推进剂 2kg。安全距离≥100m。接近速度≤2m/s。通信窗口 T+8min 起 10min。</div>
         <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em">自主交会补给 · 3 小时全流程</h2>
       </div>
       <div class="timeline-h" style="flex:1;align-content:center">
         <span class="tl-h-axis"></span>
-        <div class="tl-h-node"><span class="num">01</span><span class="dot"><small style="font-weight:400">T=1800s</small></span><span class="lbl">轨道转移<br><small style="font-weight:400">Hohmann ΔV 12m/s</small></span></div>
-        <div class="tl-h-node"><span class="num">02</span><span class="dot"><small style="font-weight:400">T=3600s</small></span><span class="lbl">自主接近<br><small style="font-weight:400">50km→500m</small></span></div>
-        <div class="tl-h-node"><span class="num">03</span><span class="dot"><small style="font-weight:400">★关键转折</small></span><span class="lbl">异常检测<br><small style="font-weight:400">B 漂移 0.05m/s</small></span></div>
-        <div class="tl-h-node"><span class="num">04</span><span class="dot"><small style="font-weight:400"></small></span><span class="lbl">候选评估<br><small style="font-weight:400">3 Intent 评分</small></span></div>
-        <div class="tl-h-node"><span class="num">05</span><span class="dot"><small style="font-weight:400">T=5400s</small></span><span class="lbl">继续接近<br><small style="font-weight:400">漂移消失</small></span></div>
-        <div class="tl-h-node"><span class="num">06</span><span class="dot"><small style="font-weight:400"></small></span><span class="lbl">对接补给<br><small style="font-weight:400">执行</small></span></div>
-        <div class="tl-h-node"><span class="num">07</span><span class="dot"><small style="font-weight:400">T=10800s</small></span><span class="lbl">经验写入<br><small style="font-weight:400">Memory RT</small></span></div>
+        <div class="tl-h-node"><span class="num" style="font-size:max(18px,1vw)">一</span><span class="dot"></span><span class="lbl" style="font-size:max(18px,1vw)">轨道转移<br><small style="font-weight:400;font-size:max(16px,.88vw);color:var(--text-helper)">前30分钟</small></span></div>
+        <div class="tl-h-node"><span class="num" style="font-size:max(18px,1vw)">二</span><span class="dot"></span><span class="lbl" style="font-size:max(18px,1vw)">自主接近<br><small style="font-weight:400;font-size:max(16px,.88vw);color:var(--text-helper)">后30分钟</small></span></div>
+        <div class="tl-h-node"><span class="num" style="font-size:max(18px,1vw);color:var(--accent)">三</span><span class="dot"></span><span class="lbl" style="font-size:max(18px,1vw);color:var(--accent);font-weight:500">★异常检测<br><small style="font-weight:400;font-size:max(16px,.88vw);color:var(--text-helper)">B漂移0.05m/s</small></span></div>
+        <div class="tl-h-node"><span class="num" style="font-size:max(18px,1vw)">四</span><span class="dot"></span><span class="lbl" style="font-size:max(18px,1vw)">候选评估<br><small style="font-weight:400;font-size:max(16px,.88vw);color:var(--text-helper)">三个方案评分</small></span></div>
+        <div class="tl-h-node"><span class="num" style="font-size:max(18px,1vw)">五</span><span class="dot"></span><span class="lbl" style="font-size:max(18px,1vw)">继续接近<br><small style="font-weight:400;font-size:max(16px,.88vw);color:var(--text-helper)">漂移消失</small></span></div>
+        <div class="tl-h-node"><span class="num" style="font-size:max(18px,1vw)">六</span><span class="dot"></span><span class="lbl" style="font-size:max(18px,1vw)">对接补给<br><small style="font-weight:400;font-size:max(16px,.88vw);color:var(--text-helper)">执行</small></span></div>
+        <div class="tl-h-node"><span class="num" style="font-size:max(18px,1vw)">七</span><span class="dot"></span><span class="lbl" style="font-size:max(18px,1vw)">经验写入<br><small style="font-weight:400;font-size:max(16px,.88vw);color:var(--text-helper)">后2小时</small></span></div>
       </div>
-      <div style="border-top:1px solid var(--border-subtle);padding-top:1.8vh;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5vw">
-        <div style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(14px,.7vw)">T=0→1800s 初始阶段</span><br>USS 初始化——Physics：Δr=50km — Cognitive：Intent(B)="station-keeping" 85% — Mission：rendezvous_and_refuel — Resource：propellant=2kg, power=95%。Physics RT 可达域分析：2kg → ΔV=18m/s。Hohmann 转移 ΔV=12m/s，四项验证通过。GNC 执行机动。</div>
-        <div style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(14px,.7vw)">T=3600s · 系统转折点</span><br>B 出现微小漂移 Δv≈0.05m/s。Neural RT 意图置信度 85%→60%，"unknown_maneuver" 升至 30%。<span style="color:var(--accent);font-weight:500">认知一致性检查触发——当前行为"自主接近"需要重新评估。</span>Behavior Planner 生成三个候选 Intent：Hold（分6.0）、Approach（分6.3）、Retreat（分6.3）→选择 Approach + 高度监测。</div>
-        <div style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(14px,.7vw)">T=5400→10800s · 收尾</span><br>B 漂移消失——原为正常热控推力器脉冲，周期约 1h。置信度回升至 90%。任务完成。Memory RT 写入：成功案例×1，B 档案更新——周期性推力器脉冲行为确认。下次遇到类似轨道特征的卫星，系统<span style="color:var(--accent);font-weight:500">不用重新评估三十多分钟，直接检索识别</span>。</div>
+      <div style="border-top:1px solid var(--border-subtle);padding-top:1.6vh;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5vw">
+        <div style="font-size:max(18px,.95vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(16px,.8vw)">初始阶段（前30分钟）</span><br>USS 初始化——Physics：相距 50km — Cognitive：目标 B 意图"位置保持"、置信度 85% — Mission：交会补给 — Resource：推进剂 2kg、电力 95%。Physics RT 计算可达域：2kg → ΔV=18m/s。规划霍曼转移：ΔV=12m/s。四项验证全部通过。GNC 执行第一次机动。</div>
+        <div style="font-size:max(18px,.95vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(16px,.8vw)">系统转折点（第1小时）</span><br>B 出现微小漂移——Δv 约 0.05m/s。Neural RT 意图置信度 85%→60%，"未知机动"升至 30%。<span style="color:var(--accent);font-weight:500">认知一致性检查触发——当前行为需要重新评估。</span>Behavior Planner 生成三个方案：Hold（评分 6.0）、Approach（评分 6.3）、Retreat（评分 6.3）→选择 Approach + 高度监测 B。</div>
+        <div style="font-size:max(18px,.95vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(16px,.8vw)">收尾阶段（第1.5~3小时）</span><br>B 漂移消失——原来是正常热控推力器周期性脉冲，周期约 1 小时。意图置信度回升至 90%。任务完成后 Memory RT 写入：成功案例 +1，B 档案更新——确认周期性推力器脉冲行为。下次遇到类似特征的卫星，<span style="color:var(--accent);font-weight:500">系统不用重新评估三十多分钟，直接检索识别</span>。</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ======================================================================
-     S21 · 核心特征总结
-     对应演讲稿：十一、关键观察
-     ====================================================================== -->
+<!-- ====================================================================== S21 Dark: 五大特征 ====================================================================== -->
 <section class="slide dark" data-animate="grid-reveal" data-layout="S19">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">21 / 23 · 关键特征</div><div class="r">FEATURES</div></div>
     <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.2vh">
-      <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em">场景演练验证的 PNIE 五大核心特征</div>
+      <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em;font-size:max(14px,.78vw)">一次场景演练 · 验证 PNIE 五大核心特征</div>
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1.2vw;flex:1">
-        <div class="card-accent" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
-          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.4vw,4vh);color:#fff">01</div>
-          <div style="font-weight:500;font-size:max(18px,1vw);color:#fff">持续推理</div>
-          <div style="font-size:max(16px,.84vw);line-height:1.4;color:rgba(255,255,255,.8)">三小时内从未停止。每个决策周期都在重新评估状态。</div>
+        <div class="card-accent" style="padding:2.2vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.6vw,4.5vh);color:#fff">01</div>
+          <div style="font-weight:500;font-size:max(20px,1.1vw);color:#fff">持续推理</div>
+          <div style="font-size:max(18px,.95vw);line-height:1.4;color:rgba(255,255,255,.8)">三小时内从未停止——每个决策周期都在重新评估</div>
         </div>
-        <div class="card-fill" style="padding:2vh 1.2vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.8vh">
-          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.4vw,4vh);color:var(--accent-bright)">02</div>
-          <div style="font-weight:400;font-size:max(18px,1vw);color:#fff">Physics First</div>
-          <div style="font-size:max(16px,.84vw);line-height:1.4;color:rgba(255,255,255,.65)">B只要有一点轨道变化，Physics RT 立即更新物理事实。物理模型是最先响应的组件。</div>
+        <div class="card-fill" style="padding:2.2vh 1.2vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.6vw,4.5vh);color:var(--accent-bright)">02</div>
+          <div style="font-weight:400;font-size:max(20px,1.1vw);color:#fff">Physics First</div>
+          <div style="font-size:max(18px,.95vw);line-height:1.4;color:rgba(255,255,255,.65)">B 只要有一点轨道变化——Physics RT 立即更新物理事实</div>
         </div>
-        <div class="card-fill" style="padding:2vh 1.2vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.8vh">
-          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.4vw,4vh);color:var(--accent-bright)">03</div>
-          <div style="font-weight:400;font-size:max(18px,1vw);color:#fff">认知驱动</div>
-          <div style="font-size:max(16px,.84vw);line-height:1.4;color:rgba(255,255,255,.65)">Neural RT 检测异常 → 触发重新评估 → 3个候选综合评分 → 非盲目继续接近。</div>
+        <div class="card-fill" style="padding:2.2vh 1.2vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.6vw,4.5vh);color:var(--accent-bright)">03</div>
+          <div style="font-weight:400;font-size:max(20px,1.1vw);color:#fff">认知驱动</div>
+          <div style="font-size:max(18px,.95vw);line-height:1.4;color:rgba(255,255,255,.65)">检测异常→触发重评估→三个候选综合评分→非盲目接近</div>
         </div>
-        <div class="card-fill" style="padding:2vh 1.2vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.8vh">
-          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.4vw,4vh);color:var(--accent-bright)">04</div>
-          <div style="font-weight:400;font-size:max(18px,1vw);color:#fff">松耦合</div>
-          <div style="font-size:max(16px,.84vw);line-height:1.4;color:rgba(255,255,255,.65)">Neural 更新模型、Memory 更新档案——都不影响 Physics 的轨道传播。</div>
+        <div class="card-fill" style="padding:2.2vh 1.2vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.6vw,4.5vh);color:var(--accent-bright)">04</div>
+          <div style="font-weight:400;font-size:max(20px,1.1vw);color:#fff">松耦合</div>
+          <div style="font-size:max(18px,.95vw);line-height:1.4;color:rgba(255,255,255,.65)">NN 更新模型、Memory 更新档案——不影响 Physics 轨道传播</div>
         </div>
-        <div class="card-fill" style="padding:2vh 1.2vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.8vh">
-          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.4vw,4vh);color:var(--accent-bright)">05</div>
-          <div style="font-weight:400;font-size:max(18px,1vw);color:#fff">经验积累</div>
-          <div style="font-size:max(16px,.84vw);line-height:1.4;color:rgba(255,255,255,.65)">任务结束后 B 的新特征被永久记录——下次可快速识别，不需重新评估。</div>
+        <div class="card-fill" style="padding:2.2vh 1.2vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.6vw,4.5vh);color:var(--accent-bright)">05</div>
+          <div style="font-weight:400;font-size:max(20px,1.1vw);color:#fff">经验积累</div>
+          <div style="font-size:max(18px,.95vw);line-height:1.4;color:rgba(255,255,255,.65)">B 新特征永久记录——下次快速识别，不需重新评估</div>
         </div>
       </div>
-      <div style="border-top:1px solid rgba(255,255,255,.15);padding-top:1.4vh;font-size:max(16px,.94vw);line-height:1.6;color:rgba(255,255,255,.6)">对比：传统 AI Agent 是 Observation→Reasoning→Action 三阶段。<span style="color:var(--accent-bright);font-weight:500">PNIE 是 O→Physical→Cognitive→Planning→Execution→State Update——多了一个独立的物理推理层。</span>LLM Agent 的物理约束靠 prompt 实现——PNIE 的物理约束靠 Physics Runtime 硬保证。PNIE 是面向<span style="color:var(--accent-bright);font-weight:500">物理世界</span>的 Agent，不是面向文本世界的 Agent。</div>
+      <div style="border-top:1px solid rgba(255,255,255,.15);padding-top:1.4vh;font-size:max(18px,1vw);line-height:1.6;color:rgba(255,255,255,.6)">对比：传统 AI Agent 是 Observation→Reasoning→Action。 <span style="color:var(--accent-bright);font-weight:500">PNIE 是 O→Physical→Cognitive→Planning→Execution→State Update</span>——多了一个独立的物理推理层。LLM Agent 的物理约束靠 prompt——PNIE 的物理约束靠 Physics Runtime 硬保证。PNIE 是面向<span style="color:var(--accent-bright);font-weight:500">物理世界</span>的 Agent。</div>
     </div>
   </div>
 </section>
 
-<!-- ======================================================================
-     S22 · 核心论断
-     对应演讲稿：总结
-     ====================================================================== -->
+<!-- ====================================================================== S22 Dark Dot: Thesis ====================================================================== -->
 <section class="slide dark" data-animate="statement-rise" data-layout="S09">
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">22 / 23 · 核心论断</div><div class="r">THESIS</div></div>
@@ -2026,10 +1994,7 @@
   </div>
 </section>
 
-<!-- ======================================================================
-     S23 · Closing: 三大贡献 + 展望
-     对应演讲稿：十二、总结与展望
-     ====================================================================== -->
+<!-- ====================================================================== S23 Closing ====================================================================== -->
 <section class="slide split" data-animate="split-statement" data-layout="S10">
   <div class="canvas-card">
     <div class="split-half">
@@ -2037,13 +2002,13 @@
         <canvas class="ascii-bg" aria-hidden="true"></canvas>
         <div class="chrome-min" style="margin-bottom:0;position:relative;z-index:1"><div class="l">23 / 23</div><div class="r">CLOSING</div></div>
         <div data-anim="manifesto" style="display:flex;flex-direction:column;gap:2vh;position:relative;z-index:1">
-          <div class="t-meta" style="color:rgba(255,255,255,.78);letter-spacing:.22em;margin-bottom:1.6vh">从单星任务迈向空间智能生态</div>
+          <div class="t-meta" style="color:rgba(255,255,255,.78);letter-spacing:.22em;margin-bottom:1.6vh;font-size:max(14px,.78vw)">从单星任务迈向空间智能生态</div>
           <h2 style="font-family:var(--sans),var(--sans-zh);font-size:min(5.8vw,10.2vh);line-height:.94;letter-spacing:-.025em;font-weight:200;color:#fff">从自动控制<br>迈向<span style="font-style:italic;font-weight:300">自主智能</span></h2>
-          <div style="font-size:max(14px,.94vw);line-height:1.6;color:rgba(255,255,255,.82);font-weight:400;max-width:30ch;margin-top:1.2vh">PNIE 不是一种算法，而是一种新的空间自主智能体系结构。近期（1-2年）：数字孪生原型验证。中期（3-5年）：Physics-guided World Model。长期（5-10年）：多航天器分布式智能网络 —— 从一颗卫星的自动驾驶，演进为整个空间基础设施的自主运行。</div>
+          <div style="font-size:max(16px,.94vw);line-height:1.6;color:rgba(255,255,255,.82);font-weight:400;max-width:30ch;margin-top:1.2vh">近期（1-2年）：数字孪生原型验证。中期（3-5年）：Physics-guided World Model。长期（5-10年）：多航天器分布式智能网络——从一颗卫星的自动驾驶，演进为整个空间基础设施的自主运行。</div>
         </div>
         <div data-anim="signature" style="display:flex;justify-content:space-between;align-items:end;border-top:1px solid rgba(255,255,255,.22);padding-top:2vh;position:relative;z-index:1">
-          <div class="t-meta" style="color:rgba(255,255,255,.62)">PSIOS · 2026.07</div>
-          <div class="t-meta" style="color:rgba(255,255,255,.62)">感谢聆听</div>
+          <div class="t-meta" style="color:rgba(255,255,255,.62);font-size:max(14px,.78vw)">PSIOS · 2026.07</div>
+          <div class="t-meta" style="color:rgba(255,255,255,.62);font-size:max(14px,.78vw)">感谢聆听</div>
         </div>
       </div>
       <div class="half" style="padding:5.6vh 3.6vw 4.4vh;justify-content:space-between">
@@ -2052,26 +2017,26 @@
           <div style="display:grid;grid-template-columns:auto 1fr;gap:2vw;align-items:start;padding:2.2vh 0;border-top:1px solid var(--border-subtle)">
             <div style="font-family:var(--sans);font-weight:200;font-size:min(3.6vw,6vh);line-height:.9">01</div>
             <div>
-              <h3 style="font-weight:400;font-size:max(18px,1.4vw);line-height:1.2;margin-bottom:.6vh">范式 · Physics-Native Intelligence</h3>
-              <p style="font-size:max(16px,.86vw);line-height:1.5;color:var(--text-secondary)">物理模型不是训练约束，而是运行时持续参与推理的原生组件——Evolution + Cognition + Decision 三元协同</p>
+              <h3 style="font-weight:400;font-size:max(20px,1.5vw);line-height:1.2;margin-bottom:.6vh">范式 · Physics-Native</h3>
+              <p style="font-size:max(18px,1vw);line-height:1.5;color:var(--text-secondary)">物理模型是运行时参与推理的原生组件——Evolution + Cognition + Decision 三元协同</p>
             </div>
           </div>
           <div style="display:grid;grid-template-columns:auto 1fr;gap:2vw;align-items:start;padding:2.2vh 0;border-top:1px solid var(--border-subtle)">
             <div style="font-family:var(--sans);font-weight:200;font-size:min(3.6vw,6vh);line-height:.9">02</div>
             <div>
-              <h3 style="font-weight:400;font-size:max(18px,1.4vw);line-height:1.2;margin-bottom:.6vh">架构 · PNIE Runtime Engine</h3>
-              <p style="font-size:max(16px,.86vw);line-height:1.5;color:var(--text-secondary)">四类 Runtime 围绕 USS 持续协同运行——状态驱动，耦合 O(N²)→O(N)——物理模型与神经网络平等运行，非主从关系</p>
+              <h3 style="font-weight:400;font-size:max(20px,1.5vw);line-height:1.2;margin-bottom:.6vh">架构 · PNIE Runtime Engine</h3>
+              <p style="font-size:max(18px,1vw);line-height:1.5;color:var(--text-secondary)">四类 Runtime 围绕 USS 持续协同——状态驱动，耦合 O(N²)→O(N)</p>
             </div>
           </div>
           <div style="display:grid;grid-template-columns:auto 1fr;gap:2vw;align-items:start;padding:2.2vh 0;border-top:1px solid var(--border-subtle);border-bottom:2px solid var(--accent)">
             <div style="font-family:var(--sans);font-weight:200;font-size:min(3.6vw,6vh);line-height:.9;color:var(--accent)">03</div>
             <div>
-              <h3 style="font-weight:400;font-size:max(18px,1.4vw);line-height:1.2;color:var(--accent);margin-bottom:.6vh">方法 · Behavior Intent 规划</h3>
-              <p style="font-size:max(16px,.86vw);line-height:1.5;color:var(--text-secondary)">候选生成→Physics-First 约束筛选→多维综合评估→最优确认。长期演进：Physics-guided World Model</p>
+              <h3 style="font-weight:400;font-size:max(20px,1.5vw);line-height:1.2;color:var(--accent);margin-bottom:.6vh">方法 · Behavior Intent 规划</h3>
+              <p style="font-size:max(18px,1vw);line-height:1.5;color:var(--text-secondary)">候选→Physics-First筛选→多维评估→最优确认。长期：Physics-guided WM</p>
             </div>
           </div>
         </div>
-        <div data-anim="foot" class="t-meta" style="color:var(--text-helper);text-align:right">→ 完 · END</div>
+        <div data-anim="foot" class="t-meta" style="color:var(--text-helper);text-align:right;font-size:max(14px,.78vw)">→ 完 · END</div>
       </div>
     </div>
   </div>
