@@ -1,0 +1,3167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PSIOS · 原生物理空间智能操作系统</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&family=Noto+Sans+SC:wght@200;300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* ============ 主题色(默认: 🔵 克莱因蓝 IKB) ============
+       切换主题: 从 references/themes-swiss.md 复制对应的 :root 块
+       整体替换标有"主题色"注释的所有变量,其他散落的 var() 引用无需逐处改 */
+    --paper:#fafaf8;          /* 主底色: 高级灰白 */
+    --paper-rgb:250,250,248;
+    --ink:#0a0a0a;            /* 文字主色: 近黑 */
+    --ink-rgb:10,10,10;
+    --grey-1:#f0f0ee;         /* 浅灰底 */
+    --grey-2:#d4d4d2;         /* 中灰(分割线) */
+    --grey-3:#737373;         /* 暗灰(辅助文字) */
+    --accent:#E87D50;         /* 高亮色: 低饱和安全橙 */
+    --accent-rgb:232,125,80;
+    --accent-on:#ffffff;      /* accent 上的反色文字 */
+    --accent-bright:#EA9570;  /* 暗底高亮: 橙色提亮版 */
+
+    /* ============ Carbon 文本角色 token (role-based,代替 opacity) ============
+       亮底:  primary 主文 / secondary 次文 / helper 辅助 / placeholder 占位
+       暗底:  inverse 自动反向 */
+    --text-primary:#0a0a0a;        /* = ink, 100% */
+    --text-secondary:#525252;      /* gray 70 */
+    --text-helper:#737373;         /* gray 60 */
+    --text-placeholder:#a3a3a3;    /* gray 40 */
+    --text-on-color:#ffffff;       /* accent/dark 反色 */
+    --border-subtle:#e0e0e0;       /* gray 20, 极细分隔 */
+    --border-strong:#a3a3a3;       /* gray 40, 强分隔 */
+
+    /* ============ 字体(跨主题固定) ============ */
+    --sans:"Inter","Helvetica Neue","Helvetica","Arial","Segoe UI Variable","Segoe UI",system-ui,-apple-system,sans-serif;
+    --sans-zh:"PingFang SC","Hiragino Sans GB","Source Han Sans SC","Noto Sans SC","Microsoft YaHei UI","Microsoft YaHei","微软雅黑",sans-serif;
+    --mono:"JetBrains Mono","IBM Plex Mono","SF Mono","Cascadia Code","Consolas","Courier New",ui-monospace,monospace;
+
+    /* ============ Carbon 2x Grid 间距模数 (基础 8px) ============
+       参考: https://carbondesignsystem.com/elements/2x-grid/overview/
+       任何 padding/gap/margin 优先用这套 token,确保 8px 基线对齐 */
+    --sp-3:8px;     /* 02 token */
+    --sp-4:12px;    /* 03 */
+    --sp-5:16px;    /* 04 */
+    --sp-6:24px;    /* 05 */
+    --sp-7:32px;    /* 06 */
+    --sp-8:40px;    /* 07 */
+    --sp-9:48px;    /* 08 */
+    --sp-10:64px;   /* 09 */
+    --sp-11:80px;   /* 10 */
+    --sp-12:96px;   /* 11 */
+    --sp-13:160px;  /* 12 */
+
+    /* ============ Carbon Motion tokens ============
+       https://carbondesignsystem.com/guidelines/motion/overview/
+       两套体系:productive (功能) 短 + 锐 / expressive (叙事) 长 + 软 */
+    --ease-prod:cubic-bezier(.2,0,.38,.9);          /* productive standard */
+    --ease-exp:cubic-bezier(.4,.14,.3,1);            /* expressive standard */
+    --ease-entry-prod:cubic-bezier(0,0,.38,.9);     /* productive entrance */
+    --ease-entry-exp:cubic-bezier(0,0,.3,1);         /* expressive entrance */
+    --dur-fast-1:.07s;   /* 70ms */
+    --dur-fast-2:.11s;   /* 110ms */
+    --dur-mod-1:.15s;    /* 150ms */
+    --dur-mod-2:.24s;    /* 240ms */
+    --dur-slow-1:.4s;    /* 400ms */
+    --dur-slow-2:.7s;    /* 700ms */
+
+    /* 底部分页组件安全区: 主内容最低处不要进入这条区域 */
+    --nav-safe-bottom:8vh;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{
+    width:100%;height:100%;overflow:hidden;
+    background:var(--paper);color:var(--ink);
+    font-family:var(--sans),var(--sans-zh);
+    font-feature-settings:"ss01","cv11";
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility
+  }
+
+  /* ============ WebGL 网格背景 ============ */
+  canvas.bg{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block;opacity:.55;mix-blend-mode:multiply;pointer-events:none}
+  body.dark-bg canvas.bg{mix-blend-mode:screen;opacity:.42}
+  body.low-power canvas.bg,
+  body.low-power canvas.ascii-bg{display:none!important}
+
+  /* ============ Deck 容器 + 翻页 ============ */
+  #deck{position:fixed;inset:0;width:10000vw;height:100vh;display:flex;flex-wrap:nowrap;transition:transform .9s cubic-bezier(.77,0,.175,1);z-index:10;will-change:transform}
+  .slide{
+    width:100vw;height:100vh;flex:0 0 100vw;
+    position:relative;
+    padding:5.5vh 5vw 7vh 5vw;
+    display:flex;flex-direction:column;
+    overflow:hidden;
+    background:var(--paper);color:var(--ink);
+  }
+  .slide.grey{background:var(--grey-1)}
+  .slide.dark{background:var(--ink);color:var(--paper)}
+  .slide.dark .grey-only{display:none}
+  .slide.accent{background:var(--accent);color:var(--accent-on)}
+  .slide.accent .accent-block{background:var(--accent-on);color:var(--accent)}
+
+  /* Hero 页透出网格背景多一点 */
+  .slide.hero{background:transparent}
+  .slide.hero.grey{background:rgba(var(--paper-rgb),.86);backdrop-filter:blur(1px)}
+  .slide.hero.dark{background:rgba(var(--ink-rgb),.92);color:var(--paper)}
+
+  /* ============ 装饰: 极细分隔线 + 点阵矩阵 ============ */
+  .rule{width:100%;height:1px;background:currentColor;opacity:.18;margin:0}
+  .rule.thick{height:2px;opacity:.85}
+  .rule.accent{background:var(--accent);opacity:1;height:2px}
+  .rule.v{width:1px;height:100%;margin:0}
+
+  /* 点阵矩阵 (dot matrix) - 用 radial-gradient */
+  .dots{
+    background-image:radial-gradient(currentColor 1px, transparent 1px);
+    background-size:12px 12px;
+    background-position:0 0;
+    opacity:.18;
+  }
+  .dots-fine{
+    background-image:radial-gradient(currentColor 0.8px, transparent 0.8px);
+    background-size:8px 8px;
+    opacity:.14;
+  }
+  .dots-bold{
+    background-image:radial-gradient(currentColor 1.4px, transparent 1.4px);
+    background-size:18px 18px;
+    opacity:.22;
+  }
+
+  /* ============ Chrome (顶部 meta) + Foot (底部) ============ */
+  .chrome{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    font-family:var(--mono);
+    font-size:14px;letter-spacing:.16em;text-transform:uppercase;
+    opacity:.7;margin-bottom:auto
+  }
+  .chrome .l,.chrome .r{display:flex;gap:1.6em;align-items:center}
+  .chrome .sep{width:24px;height:1px;background:currentColor;opacity:.5}
+
+  .foot{
+    margin-top:auto;
+    display:flex;justify-content:space-between;align-items:flex-end;
+    font-family:var(--mono);
+    font-size:14px;letter-spacing:.14em;text-transform:uppercase;
+    opacity:.55;
+    padding-top:2vh;
+    border-top:1px solid currentColor;
+    border-color:rgba(127,127,127,.25)
+  }
+  .foot .nb{font-family:var(--sans);font-weight:600;letter-spacing:.04em}
+
+  /* ============ Tag / Kicker / Meta 标签 ============ */
+  .kicker{
+    font-family:var(--mono);
+    font-size:14px;letter-spacing:.24em;text-transform:uppercase;
+    opacity:.65;margin-bottom:2.4vh;
+    display:inline-flex;align-items:center;gap:.8em
+  }
+  .kicker::before{
+    content:"";width:24px;height:1px;background:currentColor;opacity:.6
+  }
+  .kicker.no-line::before{display:none}
+  .kicker.accent{color:var(--accent);opacity:1;font-weight:600}
+
+  .tag{
+    display:inline-block;
+    font-family:var(--mono);
+    font-size:14px;letter-spacing:.18em;text-transform:uppercase;
+    padding:5px 10px;border:1px solid currentColor;opacity:.85
+  }
+  .tag.solid{background:currentColor;color:var(--paper);border-color:transparent}
+  .tag.accent{background:var(--accent);color:var(--accent-on);border-color:transparent;opacity:1}
+
+  /* ============ 标题层级 (无衬线 · 极轻字重 · 极致字号对比) ============ */
+  .h-hero{
+    font-family:var(--sans),var(--sans-zh);
+    font-weight:200;
+    font-size:11vw;
+    line-height:.92;
+    letter-spacing:-.04em;
+  }
+  .h-hero-zh{
+    font-family:var(--sans),var(--sans-zh);
+    font-weight:200;
+    font-size:8.4vw;
+    line-height:.96;
+    letter-spacing:-.025em;
+  }
+  .h-xl{
+    font-family:var(--sans),var(--sans-zh);
+    font-weight:200;
+    font-size:6vw;
+    line-height:1;
+    letter-spacing:-.03em;
+  }
+  .h-xl-zh{
+    font-family:var(--sans),var(--sans-zh);
+    font-weight:200;
+    font-size:5vw;
+    line-height:1.05;
+    letter-spacing:-.025em;
+  }
+  .h-md{
+    font-family:var(--sans),var(--sans-zh);
+    font-weight:300;
+    font-size:2.6vw;
+    line-height:1.18;
+    letter-spacing:-.015em;
+  }
+  .h-sub{
+    font-family:var(--sans),var(--sans-zh);
+    font-weight:400;
+    font-size:2.2vw;
+    line-height:1.3;
+    letter-spacing:-.01em;
+    opacity:.7;
+  }
+
+  /* ============ 正文 / 引语 / 元数据 ============ */
+  .lead{
+    font-family:var(--sans),var(--sans-zh);
+    font-weight:400;
+    font-size:1.55vw;
+    line-height:1.4;
+    letter-spacing:-.005em;
+    opacity:.86;
+  }
+  .body{
+    font-family:var(--sans),var(--sans-zh);
+    font-weight:400;
+    font-size:max(18px,1.08vw);
+    line-height:1.6;
+    letter-spacing:0;
+    opacity:.78;
+  }
+  .body-sm{
+    font-family:var(--sans),var(--sans-zh);
+    font-weight:400;
+    font-size:max(16px,.92vw);
+    line-height:1.55;
+    opacity:.7;
+  }
+  .meta{
+    font-family:var(--mono);
+    font-size:max(14px,.82vw);
+    letter-spacing:.18em;text-transform:uppercase;
+    opacity:.6;
+  }
+  .meta-row{
+    display:flex;gap:1.4em;align-items:baseline;flex-wrap:wrap;
+    font-family:var(--mono);
+    font-size:max(14px,.88vw);letter-spacing:.16em;text-transform:uppercase;
+    opacity:.65;
+  }
+  .meta-row span:not(.dot){display:inline-block}
+  .meta-row .dot{
+    display:inline-block;width:4px;height:4px;border-radius:50%;
+    background:currentColor;opacity:.5;vertical-align:middle
+  }
+
+  /* ============ KPI Hero (视觉英雄数据) ============ */
+  .kpi-hero{
+    font-family:var(--sans);
+    font-weight:800;
+    font-size:22vw;
+    line-height:.82;
+    letter-spacing:-.05em;
+    font-feature-settings:"tnum","ss01";
+  }
+  .kpi-hero .unit{
+    font-family:var(--sans),var(--sans-zh);
+    font-weight:500;
+    font-size:.18em;
+    letter-spacing:0;
+    opacity:.5;
+    margin-left:.12em;
+    vertical-align:.5em;
+  }
+  .kpi-hero.accent{color:var(--accent)}
+  .kpi-big{
+    font-family:var(--sans);
+    font-weight:800;
+    font-size:11vw;
+    line-height:.85;
+    letter-spacing:-.04em;
+    font-feature-settings:"tnum"
+  }
+  .kpi-mid{
+    font-family:var(--sans);
+    font-weight:700;
+    font-size:6vw;
+    line-height:.88;
+    letter-spacing:-.03em;
+    font-feature-settings:"tnum"
+  }
+
+  /* ============ Stat Card (数据卡片 · 极简) ============ */
+  .stat-card{
+    display:flex;flex-direction:column;
+    gap:.6vh;align-items:flex-start;
+    padding-top:1.6vh;
+    border-top:2px solid currentColor;
+  }
+  .stat-card.thin{border-top-width:1px;border-color:rgba(127,127,127,.4)}
+  .stat-card.accent-top{border-top-color:var(--accent);border-top-width:3px}
+  .stat-card .stat-label{
+    font-family:var(--mono);
+    font-size:max(14px,.82vw);
+    letter-spacing:.24em;text-transform:uppercase;
+    opacity:.6;
+  }
+  .stat-card .stat-nb{
+    font-family:var(--sans);
+    font-weight:800;
+    font-size:5.6vw;
+    line-height:.88;
+    letter-spacing:-.035em;
+    font-feature-settings:"tnum";
+    margin-top:.4vh;
+  }
+  .stat-card .stat-nb .stat-unit{
+    font-family:var(--sans),var(--sans-zh);
+    font-weight:500;
+    font-size:.32em;
+    letter-spacing:0;
+    opacity:.6;
+    margin-left:.14em;
+    vertical-align:.4em;
+  }
+  .stat-card .stat-note{
+    font-family:var(--sans),var(--sans-zh);
+    font-weight:400;
+    font-size:max(16px,.98vw);
+    line-height:1.5;
+    opacity:.7;
+    margin-top:.6vh;
+  }
+  .grid-4 .stat-card .stat-nb{font-size:4.6vw}
+  .grid-3 .stat-card .stat-nb{font-size:6.4vw}
+  .grid-6 .stat-card .stat-nb{font-size:4vw}
+
+  /* ============ Accent Block (高亮色块包裹内容) ============ */
+  .accent-block{
+    background:var(--accent);color:var(--accent-on);
+    padding:2.4vh 2vw;
+  }
+  .accent-block.tight{padding:1.4vh 1.4vw}
+  .accent-block .h-md,.accent-block .h-xl,.accent-block .kpi-mid{color:var(--accent-on)}
+
+  .ink-block{
+    background:var(--ink);color:var(--paper);
+    padding:2.4vh 2vw
+  }
+  .grey-block{
+    background:var(--grey-1);
+    padding:2.4vh 2vw
+  }
+
+  /* 高亮文字 (mark 风格) */
+  .mark{
+    background:var(--accent);color:var(--accent-on);
+    padding:0 .2em;
+    box-decoration-break:clone;
+    -webkit-box-decoration-break:clone;
+  }
+  .mark.ink{background:var(--ink);color:var(--paper)}
+  .underline-accent{
+    background-image:linear-gradient(to bottom, transparent 70%, var(--accent) 70%, var(--accent) 96%, transparent 96%);
+    padding:0 .05em
+  }
+
+  /* ============ Pipeline / Step ============ */
+  .pipeline-section{margin-top:3.2vh;padding-top:2.2vh;border-top:1px solid rgba(127,127,127,.3)}
+  .pipeline-section:first-of-type{border-top:0;padding-top:0;margin-top:2.4vh}
+  .pipeline-label{
+    font-family:var(--mono);
+    font-size:max(14px,.84vw);
+    letter-spacing:.24em;text-transform:uppercase;
+    opacity:.6;margin-bottom:1.8vh;
+  }
+  .pipeline{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:1vw;
+  }
+  .pipeline[data-cols="3"]{grid-template-columns:repeat(3,1fr)}
+  .pipeline[data-cols="4"]{grid-template-columns:repeat(4,1fr)}
+  .pipeline[data-cols="6"]{grid-template-columns:repeat(6,1fr)}
+  .step{
+    display:flex;flex-direction:column;gap:.6vh;
+    padding-top:1.2vh;
+    border-top:2px solid currentColor;
+  }
+  .step.accent-top{border-top-color:var(--accent);border-top-width:3px}
+  .step-nb{
+    font-family:var(--mono);
+    font-weight:500;
+    font-size:max(14px,1vw);
+    opacity:.5;letter-spacing:.04em
+  }
+  .step-title{
+    font-family:var(--sans),var(--sans-zh);
+    font-weight:700;
+    font-size:1.4vw;
+    letter-spacing:-.01em;
+    line-height:1.2;
+  }
+  .step-desc{
+    font-family:var(--sans),var(--sans-zh);
+    font-weight:400;
+    font-size:max(16px,.94vw);
+    line-height:1.45;
+    opacity:.7;
+  }
+
+  /* ============ 网格系统 (模块化网格) ============ */
+  .frame{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+  .frame.grid-2-7-5,
+  .frame.grid-2-6-6,
+  .frame.grid-2-8-4,
+  .frame.grid-2-4-8,
+  .frame.grid-3-3,
+  .frame.grid-12,
+  .frame.grid-6,
+  .frame.grid-4,
+  .frame.grid-3{display:grid}
+
+  /* 12 列模块化网格 (瑞士风核心) */
+  .grid-12{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    gap:2vh 1.2vw;
+    align-items:start;
+  }
+  .span-2{grid-column:span 2}
+  .span-3{grid-column:span 3}
+  .span-4{grid-column:span 4}
+  .span-5{grid-column:span 5}
+  .span-6{grid-column:span 6}
+  .span-7{grid-column:span 7}
+  .span-8{grid-column:span 8}
+  .span-9{grid-column:span 9}
+  .span-12{grid-column:span 12}
+
+  /* 经典分栏 */
+  .grid-2-7-5{display:grid;grid-template-columns:7fr 5fr;gap:3vw 4vh;align-items:start}
+  .grid-2-6-6{display:grid;grid-template-columns:1fr 1fr;gap:3vw 4vh;align-items:start}
+  .grid-2-8-4{display:grid;grid-template-columns:8fr 4fr;gap:3vw 4vh;align-items:start}
+  .grid-2-4-8{display:grid;grid-template-columns:4fr 8fr;gap:3vw 4vh;align-items:start}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:3vw 4vh;align-items:start}
+  .grid-3-3{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:minmax(0,1fr);gap:2.4vh 2vw}
+  .grid-4{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);gap:3vh 3vw;flex:1;align-content:center}
+  .grid-6{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:3vh 2.4vw;flex:1;align-content:center}
+
+  /* 工具类 */
+  .col{display:flex;flex-direction:column;gap:2vh}
+  .row{display:flex;align-items:center;gap:2vw}
+  .fill{flex:1}
+  .center{align-items:center;justify-content:center;text-align:center}
+  .right{text-align:right;justify-self:end}
+  .top{align-self:start}
+  .bottom{align-self:end}
+  .va-center{align-self:center}
+  .nowrap{white-space:nowrap}
+
+  /* 非对称定位 */
+  .pos-absolute{position:absolute}
+  .bottom-left{position:absolute;left:5vw;bottom:8vh;max-width:50vw}
+  .bottom-right{position:absolute;right:5vw;bottom:8vh;max-width:50vw;text-align:right}
+  .top-right{position:absolute;right:5vw;top:5.5vh;text-align:right}
+  .top-left{position:absolute;left:5vw;top:5.5vh}
+
+  /* ============ Callout (引用框 · 极简) ============ */
+  .callout{
+    padding:2vh 2vw;
+    border-left:3px solid var(--accent);
+    font-family:var(--sans),var(--sans-zh);
+    font-size:max(14px,1vw);
+    line-height:1.55;
+    opacity:.9;
+  }
+  .callout.ink{border-left-color:currentColor}
+  .callout .cite,.callout .callout-src{
+    display:block;margin-top:1.2vh;
+    font-family:var(--mono);
+    font-size:14px;letter-spacing:.16em;text-transform:uppercase;
+    opacity:.6;
+  }
+
+  /* ============ Icons (Lucide via CDN) ============ */
+  .ico{width:1em;height:1em;display:inline-block;vertical-align:-.12em;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+  .ico-lg,.ico-md,.ico-sm{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+  .ico-lg{width:2.4vw;height:2.4vw;stroke-width:1.4;display:inline-block}
+  .ico-md{width:1.6vw;height:1.6vw;stroke-width:1.6;display:inline-block;vertical-align:-.4em}
+  .ico-sm{width:1vw;height:1vw;stroke-width:1.8;display:inline-block;vertical-align:-.15em;opacity:.7}
+
+  /* ============ 几何小图标 (装饰) ============ */
+  .geo-dot{width:.7vw;height:.7vw;border-radius:50%;background:var(--accent);display:inline-block;vertical-align:middle}
+  .geo-square{width:.7vw;height:.7vw;background:var(--accent);display:inline-block;vertical-align:middle}
+  .geo-line{width:2vw;height:2px;background:var(--accent);display:inline-block;vertical-align:middle}
+  .geo-circle-o{width:.9vw;height:.9vw;border:2px solid currentColor;border-radius:50%;display:inline-block;vertical-align:middle}
+
+  /* ============ 图片 frame-img ============ */
+  .frame-img{overflow:hidden;position:relative;background:var(--paper);box-sizing:border-box;width:100%}
+  .slide.dark .frame-img{background:rgba(255,255,255,.06)}
+  .frame-img > img{width:100%;height:100%;object-fit:cover;object-position:center center;display:block}
+  .frame-img.fit-contain > img{object-fit:contain;object-position:center center}
+  .frame-img.pos-top > img{object-position:top center}
+  .frame-img.pos-face > img{object-position:center 35%}
+  .frame-img.r-16x9{aspect-ratio:16/9;max-height:64vh}
+  .frame-img.r-21x9{aspect-ratio:21/9;max-height:54vh}
+  .frame-img.r-16x10{aspect-ratio:16/10;max-height:56vh}
+  .frame-img.r-4x3{aspect-ratio:4/3;max-height:56vh}
+  .frame-img.r-3x2{aspect-ratio:3/2;max-height:46vh}
+  .frame-img.r-3x4{aspect-ratio:3/4;max-height:60vh}
+  .frame-img.r-1x1{aspect-ratio:1/1;max-height:50vh}
+  .frame-img.h-16{height:16vh}
+  .frame-img.h-18{height:18vh}
+  .frame-img.h-22{height:22vh}
+  .frame-img.h-26{height:26vh}
+  .frame-img.h-28{height:28vh}
+  .frame-img.h-32{height:32vh}
+  .frame-img.swiss-lined{border-top:2px solid var(--accent)}
+  .frame-img.swiss-keyline{border:0}
+
+  /* P22 Image Hero: 下半屏内容区必须和图片拉开距离,不要贴在图下沿 */
+  .image-hero-body{
+    display:grid;grid-template-columns:6fr 6fr;gap:3vw;
+    padding:6.6vh 5vw 4.4vh;flex:1;align-content:start
+  }
+  .image-hero-stats{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:2vw;align-items:start
+  }
+  .img-cap{
+    display:block;margin-top:.8vh;
+    font-family:var(--mono);
+    font-size:max(14px,.82vw);
+    letter-spacing:.2em;text-transform:uppercase;
+    opacity:.6;
+  }
+  figure.frame-img,figure.tile{margin:0;display:flex;flex-direction:column;min-width:0}
+  figure.tile > .frame-img{flex:0 0 auto}
+
+  /* 瑞士风图文混排: 只用直角、发丝线、单一 accent；图像容器不加圆角/阴影 */
+  .swiss-img-split{display:grid;grid-template-columns:5fr 7fr;gap:3vw;align-items:start;flex:1;min-height:0}
+  .swiss-img-split.reverse{grid-template-columns:7fr 5fr}
+  .swiss-img-split.align-bottom{align-items:end}
+  .swiss-img-split.align-bottom .swiss-img-copy{align-self:end}
+  .swiss-img-split.align-image-bottom{align-items:end;padding-bottom:var(--nav-safe-bottom)}
+  .swiss-img-split.align-image-bottom .swiss-img-copy{align-self:end}
+  .swiss-img-split.align-image-bottom figure.tile{align-self:end;position:relative}
+  .swiss-img-split.align-image-bottom figure.tile > .swiss-img-caption{
+    position:absolute;left:0;right:0;top:calc(100% + var(--sp-4));margin-top:0
+  }
+  .nav-safe-bottom{padding-bottom:var(--nav-safe-bottom)}
+  .nav-safe-bottom-tight{padding-bottom:calc(var(--nav-safe-bottom) * .65)}
+  .swiss-img-copy{display:flex;flex-direction:column;gap:var(--sp-6);min-width:0}
+  .swiss-img-copy .rule{margin:0}
+  .swiss-img-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-5);align-items:start;margin-top:var(--sp-7)}
+  .swiss-img-grid.two{grid-template-columns:repeat(2,1fr)}
+  .swiss-img-grid.tight{margin-top:0}
+  .swiss-img-caption{
+    display:flex;justify-content:space-between;gap:var(--sp-5);
+    margin-top:var(--sp-4);
+    font-family:var(--mono);font-size:max(14px,.74vw);
+    letter-spacing:.16em;text-transform:uppercase;color:var(--text-helper);
+    border-top:1px solid var(--border-subtle);padding-top:var(--sp-4)
+  }
+  .swiss-img-caption strong{
+    font-family:var(--sans),var(--sans-zh);font-size:max(16px,.9vw);
+    font-weight:600;letter-spacing:0;text-transform:none;color:var(--text-primary)
+  }
+
+  /* ============ Bar Chart (扁平几何图表) ============ */
+  .bar-chart{display:flex;flex-direction:column;gap:1.4vh}
+  .bar-row{display:grid;grid-template-columns:8em 1fr 4em;gap:1.4vw;align-items:center}
+  .bar-row .bar-label{font-family:var(--mono);font-size:max(14px,.84vw);letter-spacing:.14em;text-transform:uppercase;opacity:.7}
+  .bar-row .bar-track{height:14px;background:rgba(127,127,127,.18);position:relative}
+  .bar-row .bar-fill{height:100%;background:var(--accent);position:absolute;left:0;top:0}
+  .bar-row .bar-fill.ink{background:currentColor}
+  .bar-row .bar-value{font-family:var(--sans);font-weight:700;font-size:max(16px,1.05vw);text-align:right;font-feature-settings:"tnum"}
+
+  /* ============ 导航 ============ */
+  /* 底部分页导航: 仅保留方块本身,无背景无描边 */
+  #nav{position:fixed;left:50%;bottom:2vh;transform:translateX(-50%);z-index:30;display:flex;gap:10px;padding:0;background:transparent;border:0}
+  #nav .dot{width:6px;height:6px;background:rgba(0,0,0,.28);cursor:pointer;transition:all .25s ease;border:0;padding:0;border-radius:0}
+  #nav .dot:hover{background:rgba(0,0,0,.55)}
+  #nav .dot.active{background:var(--accent);width:18px}
+  body.dark-bg #nav .dot{background:rgba(255,255,255,.32)}
+  body.dark-bg #nav .dot.active{background:var(--accent)}
+
+  #hint{position:fixed;bottom:2.4vh;right:2.5vw;z-index:30;font-family:var(--mono);font-size:14px;letter-spacing:.14em;text-transform:uppercase;opacity:.4;color:var(--ink-tint, currentColor)}
+  body.dark-bg #hint{color:var(--paper);opacity:.4}
+  body.low-power #hint{color:var(--accent);opacity:.72}
+  body.dark-bg.low-power #hint{color:var(--paper);opacity:.72}
+
+  /* ESC 索引页: 动画元素强制可见 (覆盖 motion-ready 的 opacity:0) */
+  #overview [data-anim]{opacity:1!important;transform:none!important}
+  #overview .slide *{animation:none!important;transition:none!important}
+
+  /* 统一卡片样式 token: card-fill (默认灰底 · 中性) + card-ink (反转高对比) + card-accent (单一焦点) */
+  .card-fill{background:#f5f5f4;border:0;color:var(--text-primary)}
+  .card-ink{background:var(--ink);border:0;color:var(--paper)}
+  .card-ink .t-meta,.card-ink .t-cat{color:rgba(255,255,255,.6)}
+  .card-accent{background:var(--accent);border:0;color:var(--accent-on)}
+  .card-accent .t-meta,.card-accent .t-cat{color:var(--accent-on)}
+
+  /* ============ 动效 (与原模板一致) ============ */
+  [data-anim]{opacity:1}
+  body.motion-ready [data-anim]{opacity:0}
+  body.motion-ready [data-anim="left"]{transform:translateX(-24px)}
+  body.motion-ready [data-anim="right"]{transform:translateX(24px)}
+  body.motion-ready [data-anim="line"]{opacity:0;transform:translateY(10px)}
+  body.motion-ready [data-animate="pipeline"] [data-anim]{opacity:.15}
+  body.low-power #deck{transition:none!important}
+  body.low-power *,
+  body.low-power *::before,
+  body.low-power *::after{animation:none!important;transition:none!important}
+  body.low-power.motion-ready [data-anim],
+  body.low-power [data-anim]{opacity:1!important;transform:none!important}
+
+  /* ============================================================
+     ↓↓↓ V2 EXTENSIONS · Canvas Mode + 参考图新类
+     验证效果后沉淀回 template-swiss.html
+     ============================================================ */
+
+  /* Windows 适配:雅黑没有 ExtraLight 200,中文大字号字重补偿 */
+  body.is-win .name-mega,
+  body.is-win .num-mega,
+  body.is-win .kpi-thin,
+  body.is-win .tl-node .multi{
+    font-weight:300;letter-spacing:-.02em;
+  }
+  body.is-win [style*="font-weight:200"]{font-weight:300 !important}
+
+  /* 全屏铺满模式 · 关闭 WebGL · 卡片即页面 */
+  body.canvas-mode{background:var(--paper)}
+  body.canvas-mode canvas.bg{display:none !important}
+  body.canvas-mode .slide{background:var(--paper);padding:0;align-items:stretch;justify-content:stretch}
+  body.canvas-mode .slide.hero{background:var(--paper)}
+
+  .canvas-card{
+    width:100vw;
+    height:100vh;
+    background:var(--paper);color:var(--ink);
+    padding:5.6vh 5vw 4.4vh;
+    display:flex;flex-direction:column;
+    position:relative;overflow:hidden;
+    box-shadow:none;
+    border-radius:0;
+  }
+  .slide.dark .canvas-card{background:var(--ink);color:var(--paper)}
+  .slide.accent .canvas-card{background:var(--accent);color:var(--accent-on)}
+  .slide.grey .canvas-card{background:var(--grey-1);color:var(--ink)}
+  .slide.split .canvas-card{padding:0;flex-direction:row}
+
+  /* ============ ASCII 点阵呼吸场 · IKB 封面/封底专用 ============
+     用法:在 .canvas-card(或 split .half.b-accent)内首位插入 <canvas class="ascii-bg" aria-hidden="true">.
+     动画由本文件底部的 ASCII IIFE 自动启动,所有 canvas.ascii-bg 都会被扫到.
+     其他内容靠 .canvas-card > *:not(.ascii-bg){z-index:1} 自动浮在上层. */
+  canvas.ascii-bg{
+    position:absolute;inset:0;width:100%;height:100%;
+    pointer-events:none;z-index:0;
+    mix-blend-mode:screen;opacity:.92;
+  }
+  .canvas-card > *:not(.ascii-bg){position:relative;z-index:1}
+  .slide.accent .canvas-card .chrome-min{color:rgba(255,255,255,.62)}
+  .slide.accent .canvas-card .t-meta{color:rgba(255,255,255,.7)}
+  .split-half > .half.b-accent .chrome-min{color:rgba(255,255,255,.62)}
+
+  /* 编号目录页 · 超大数字 + 国家名风格 — 越大越细 */
+  .num-mega{
+    font-family:var(--sans);font-weight:200;
+    font-size:9vw;line-height:1;letter-spacing:-.04em;
+    font-feature-settings:"tnum"
+  }
+  .num-mega.thin{font-weight:200}
+  .name-mega{
+    font-family:var(--sans);font-weight:200;
+    font-size:9vw;line-height:1;letter-spacing:-.035em;
+  }
+  .name-mega.muted{color:var(--grey-3)}
+
+  /* 细体超大 KPI — 字号越大权重越低 */
+  .kpi-thin{
+    font-family:var(--sans);font-weight:200;
+    font-size:14vw;line-height:.92;letter-spacing:-.045em;
+    font-feature-settings:"tnum"
+  }
+  .kpi-thin .unit{font-size:.3em;font-weight:300;opacity:.55;margin-left:.15em;vertical-align:.6em}
+  .kpi-thin.accent{color:var(--accent)}
+  .kpi-thin-sm{
+    font-family:var(--sans);font-weight:250;
+    font-size:5.6vw;line-height:1.04;letter-spacing:-.03em;
+    font-feature-settings:"tnum"
+  }
+  .kpi-thin-sm .unit{font-size:.3em;font-weight:300;opacity:.55;margin-left:.12em;vertical-align:.45em}
+
+  /* 4 列细线 KPI 行 — 顶部一根 hairline,内部不再加竖线 */
+  /* 4 列 KPI: 用纵向分割线建立网格感 (Carbon 2x grid 模数) */
+  .kpi-row-4{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:0;padding-top:2.4vh;
+    border-top:1px solid var(--grey-2)
+  }
+  .kpi-row-4 > .kpi-cell{
+    padding:1.6vh 1.6vw 0;
+    border-left:1px solid var(--grey-2)
+  }
+  .kpi-row-4 > .kpi-cell:first-child{padding-left:0;border-left:none}
+  .kpi-cell .lbl{font-family:var(--mono);font-size:max(14px,.78vw);letter-spacing:.18em;text-transform:uppercase;opacity:.55;margin-bottom:1.2vh}
+  .kpi-cell .nb{font-family:var(--sans);font-weight:250;font-size:3.2vw;line-height:1;letter-spacing:-.025em;font-feature-settings:"tnum"}
+  .kpi-cell .nb .unit{font-size:.32em;font-weight:300;opacity:.6;margin-left:.1em;vertical-align:.4em}
+  .kpi-cell .note{font-family:var(--sans),var(--sans-zh);font-size:max(16px,.92vw);line-height:1.5;opacity:.7;margin-top:1.2vh}
+
+  /* 时间线轴 — 通用 axis token, 横纵共享
+     axis 列 = 24px 固定宽,dot 直径 8px,绝对居中在 axis 列中线 (12px)
+     虚线绝对定位 left:12px,与 dot 中心严格对齐 */
+  .timeline-v{
+    --tl-axis-w:24px;        /* axis 列固定宽度 */
+    --tl-dot:8px;            /* 圆点直径 */
+    position:relative;margin-top:var(--sp-7)
+  }
+  .timeline-v::before{
+    content:"";position:absolute;
+    left:calc(var(--tl-axis-w) / 2);
+    transform:translateX(-50%);
+    top:var(--sp-5);bottom:var(--sp-5);
+    width:1px;
+    background:repeating-linear-gradient(to bottom,currentColor 0 4px,transparent 4px 8px);
+    opacity:.35;pointer-events:none;z-index:0
+  }
+  .tl-node{
+    position:relative;
+    display:grid;
+    grid-template-columns:var(--tl-axis-w) minmax(0,7em) minmax(0,7.6em) 1fr;
+    gap:0 var(--sp-5);
+    align-items:center;
+    padding:var(--sp-7) 0
+  }
+  /* 进度点: 纯色实心圆,无背景无描边,精确居中在 axis 列中线 */
+  .tl-node .dot{
+    width:var(--tl-dot);height:var(--tl-dot);
+    border-radius:50%;
+    background:currentColor;
+    justify-self:center;
+    z-index:1
+  }
+  .tl-node.accent .dot{background:var(--accent)}
+  .tl-node .yr{
+    font-family:var(--mono);font-weight:500;
+    font-size:max(14px,1vw);letter-spacing:.04em
+  }
+  .tl-node .multi{
+    font-family:var(--sans);font-weight:200;
+    font-size:clamp(28px,2.8vw,56px);
+    line-height:.95;letter-spacing:-.025em;
+    white-space:nowrap;
+    overflow:hidden;
+    min-width:0
+  }
+  .tl-node .multi .unit{
+    font-size:.36em;font-weight:300;opacity:.6;
+    margin-left:.2em;
+    vertical-align:.42em;
+    letter-spacing:0
+  }
+  .tl-node.accent .multi{color:var(--accent)}
+  .tl-node .desc{
+    font-family:var(--sans),var(--sans-zh);
+    font-size:max(16px,.94vw);line-height:1.55;opacity:.78;
+    min-width:0
+  }
+
+  /* 横向时间线 (.timeline-h) — 与 .timeline-v 共享 axis token, 视觉语言一致 */
+  .timeline-h{
+    --tl-axis-w:8px;
+    --tl-dot:8px;
+    position:relative;
+    flex:1;
+    display:flex;align-items:center
+  }
+  .timeline-h::before{
+    content:"";position:absolute;
+    top:50%;left:5%;right:5%;height:1px;
+    transform:translateY(-50%);
+    background:repeating-linear-gradient(to right,currentColor 0 4px,transparent 4px 8px);
+    opacity:.35;pointer-events:none;z-index:0
+  }
+  .timeline-h .tl-row{
+    position:relative;width:100%;
+    display:grid;grid-template-columns:repeat(5,1fr);
+    align-items:center
+  }
+  .timeline-h .th-node{
+    position:relative;display:flex;justify-content:center
+  }
+  /* 横向 dot: 8px 纯色实心,无描边无阴影 (与 P2 保持一致) */
+  .timeline-h .th-node .dot{
+    width:var(--tl-dot);height:var(--tl-dot);
+    border-radius:50%;
+    background:var(--ink);
+    z-index:1;position:relative
+  }
+  .timeline-h .th-node.accent .dot{background:var(--accent)}
+  .timeline-h .th-node .label{
+    position:absolute;left:50%;transform:translateX(-50%);
+    width:13vw;text-align:center;
+    display:flex;flex-direction:column;gap:.4vh
+  }
+  .timeline-h .th-node.up .label{bottom:calc(50% + 22px)}
+  .timeline-h .th-node.down .label{top:calc(50% + 22px)}
+  .timeline-h .th-node .yr{
+    font-family:var(--mono);font-size:max(14px,.78vw);letter-spacing:.05em;
+    color:var(--text-helper);font-weight:500
+  }
+  .timeline-h .th-node.accent .yr{color:var(--accent)}
+  .timeline-h .th-node .name{
+    font-family:var(--sans);font-size:max(16px,1.05vw);font-weight:400;
+    color:var(--text-primary);line-height:1.2;letter-spacing:-.005em
+  }
+  .timeline-h .th-node.accent .name{color:var(--accent)}
+  .timeline-h .th-node .desc{
+    font-family:var(--sans),var(--sans-zh);font-size:max(14px,.84vw);
+    color:var(--text-secondary);font-weight:400;line-height:1.4
+  }
+
+  /* 几何图示 (参考图 5) — SVG-friendly 容器 */
+  .geo-icon{width:5vw;height:5vw;display:block;margin-bottom:2.2vh;color:var(--ink);flex-shrink:0}
+  .slide.dark .geo-icon{color:var(--paper)}
+  .geo-icon svg{width:100%;height:100%;overflow:visible}
+  .geo-icon .stroke{fill:none;stroke:currentColor;stroke-width:1.4}
+  .geo-icon .stroke-accent{fill:none;stroke:var(--accent);stroke-width:1.4}
+  .geo-icon .fill-accent{fill:var(--accent)}
+
+  /* 卡片网格 (参考图 1 卡片漂浮) — 在 canvas-card 内部再分卡 */
+  .sub-grid-3-2{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:1.4vh 1.4vw;flex:1;align-content:stretch;margin-top:3vh}
+  .sub-card{
+    background:var(--grey-1);
+    padding:2.4vh 1.6vw 2vh;
+    display:flex;flex-direction:column;
+    position:relative;border-radius:3px;
+    min-height:0
+  }
+  .slide.dark .sub-card{background:rgba(255,255,255,.06)}
+  .sub-card.accent{background:var(--accent);color:var(--accent-on)}
+  .sub-card.ink{background:var(--ink);color:var(--paper)}
+  .sub-card .nb-corner{
+    position:absolute;top:1.6vh;right:1.4vw;
+    font-family:var(--mono);font-size:max(14px,.8vw);
+    letter-spacing:.16em;opacity:.55
+  }
+  .sub-card .ttl{font-family:var(--sans),var(--sans-zh);font-weight:500;font-size:max(17px,1.5vw);line-height:1.2;letter-spacing:-.015em;margin-bottom:1vh}
+  .sub-card .desc{font-family:var(--sans),var(--sans-zh);font-size:max(16px,.94vw);line-height:1.55;opacity:.78;margin-top:auto}
+  .sub-card .lucide{width:2.4vw;height:2.4vw;stroke-width:1.4;color:currentColor;margin-bottom:1.6vh;flex-shrink:0}
+  .sub-card.accent .lucide{color:var(--accent-on)}
+
+  /* 三层架构纯色块拼图 (参考图 4 + 6) — 横排等高色块 */
+  .stack-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6vw;flex:1;margin-top:6vh;align-items:stretch}
+  .stack-block{
+    display:flex;flex-direction:column;
+    padding:3.2vh 1.8vw 2.4vh;
+    position:relative;
+    min-height:0
+  }
+  .stack-block.b-accent{background:var(--accent);color:var(--accent-on)}
+  .stack-block.b-grey{background:var(--grey-1);color:var(--ink)}
+  .stack-block.b-ink{background:var(--ink);color:var(--paper)}
+  .stack-block .layer-nb{font-family:var(--mono);font-size:max(14px,.84vw);letter-spacing:.18em;opacity:.65;margin-bottom:auto}
+  .stack-block .layer-icon{margin-bottom:1.6vh}
+  .stack-block .layer-icon svg{width:3vw;height:3vw}
+  .stack-block .layer-icon .stroke{fill:none;stroke:currentColor;stroke-width:1.6}
+  .stack-block .layer-ttl{font-family:var(--sans),var(--sans-zh);font-weight:400;font-size:max(17px,2vw);line-height:1.1;margin-top:1vh;letter-spacing:-.02em}
+  .stack-block .layer-desc{font-family:var(--sans),var(--sans-zh);font-weight:400;font-size:max(16px,.94vw);line-height:1.55;opacity:.88;margin-top:1.4vh}
+  .stack-block .lucide{width:2.6vw;height:2.6vw;stroke-width:1.4;margin-bottom:1.6vh;flex-shrink:0}
+  .stack-block .layer-tag{font-family:var(--mono);font-size:max(14px,.74vw);letter-spacing:.16em;text-transform:uppercase;opacity:.7;margin-top:1.6vh;border-top:1px solid currentColor;padding-top:1vh}
+
+  /* 不等高柱状 KPI 塔 (参考图 6) */
+  .bar-towers{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:1.2vw;flex:1;align-items:end;margin-top:auto
+  }
+  .bar-tower{
+    display:flex;flex-direction:column;justify-content:flex-end;
+    min-height:0;height:100%
+  }
+  .bar-tower .cap{
+    background:var(--grey-1);
+    height:5.6vh;
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:.4vh
+  }
+  .bar-tower .cap svg{width:1.6vw;height:1.6vw;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .bar-tower .body-block{
+    flex:0 1 auto;
+    padding:2vh 1.2vw 2vh;
+    display:flex;flex-direction:column;justify-content:flex-end;
+    min-height:18vh
+  }
+  .bar-tower .body-block.h-1{min-height:22vh}
+  .bar-tower .body-block.h-2{min-height:30vh}
+  .bar-tower .body-block.h-3{min-height:38vh}
+  .bar-tower .body-block.h-4{min-height:46vh}
+  /* 默认所有 KPI 塔统一为浅描边卡 — 不抢戏;只有 .b-accent 突出为 IKB */
+  .bar-tower .body-block{background:var(--paper);color:var(--ink);border:1px solid var(--grey-2)}
+  .bar-tower .body-block.b-accent{background:var(--accent);color:var(--accent-on);border-color:var(--accent)}
+  .bar-tower .lbl{font-family:var(--mono);font-size:max(14px,.82vw);letter-spacing:.16em;text-transform:uppercase;opacity:.65;margin-bottom:1vh}
+  .bar-tower .nb{font-family:var(--sans);font-weight:250;font-size:max(20px,2.8vw);line-height:1;letter-spacing:-.03em;font-feature-settings:"tnum"}
+  .bar-tower .body-block.b-accent .nb{font-weight:300}
+  .bar-tower .nb .unit{font-size:.36em;font-weight:300;opacity:.7;margin-left:.08em;vertical-align:.4em}
+  .bar-tower .sub{font-family:var(--sans),var(--sans-zh);font-size:max(16px,.92vw);opacity:.75;margin-top:1.2vh;line-height:1.5}
+  .bar-tower .cap{background:var(--grey-1);color:var(--ink)}
+  .bar-tower .lucide{width:1.6vw;height:1.6vw;stroke-width:1.4}
+
+  /* ============ Carbon Productive Type Tokens ============
+     用于 PPT 中的"productive 时刻": 列表、表格行、说明文、章节标签
+     固定 px 字号,密集紧凑;与 vw-based 的 Expressive 巨字形成双极对比 */
+
+  /* category label / eyebrow / section tag — small, bold, uppercase */
+  .t-cat{
+    font-family:var(--mono);
+    font-size:14px;font-weight:600;
+    letter-spacing:.15em;text-transform:uppercase;
+    color:var(--text-helper);line-height:1.3
+  }
+  .t-cat.accent{color:var(--accent)}
+  .t-cat.on-dark{color:rgba(255,255,255,.78)}
+
+  /* page chrome / breadcrumb / running header — extra-small mono */
+  .t-meta{
+    font-family:var(--mono);
+    font-size:14px;font-weight:500;
+    letter-spacing:.14em;text-transform:uppercase;
+    color:var(--text-helper);line-height:1.45
+  }
+
+  /* helper / caption — secondary text */
+  .t-helper{
+    font-family:var(--sans),var(--sans-zh);
+    font-size:14px;font-weight:400;
+    color:var(--text-helper);line-height:1.5;
+    letter-spacing:.005em
+  }
+
+  /* body small — list items, table rows, captions */
+  .t-body-sm{
+    font-family:var(--sans),var(--sans-zh);
+    font-size:16px;font-weight:400;
+    color:var(--text-secondary);line-height:1.55;
+    letter-spacing:0
+  }
+
+  /* body — paragraphs, descriptions */
+  .t-body{
+    font-family:var(--sans),var(--sans-zh);
+    font-size:18px;font-weight:400;
+    color:var(--text-primary);line-height:1.5;
+    letter-spacing:-.005em
+  }
+
+  /* body emphasis — 强调正文 */
+  .t-body-emp{
+    font-family:var(--sans),var(--sans-zh);
+    font-size:18px;font-weight:600;       /* SemiBold per Carbon */
+    color:var(--text-primary);line-height:1.5;
+    letter-spacing:-.005em
+  }
+
+  /* productive heading — section title within slide */
+  .t-h-prod{
+    font-family:var(--sans),var(--sans-zh);
+    font-size:22px;font-weight:600;
+    color:var(--text-primary);line-height:1.4;
+    letter-spacing:-.01em
+  }
+
+  /* dark background variants */
+  .slide.dark .t-cat,.slide.dark .t-meta,.slide.dark .t-helper{color:rgba(255,255,255,.62)}
+  .slide.dark .t-body-sm{color:rgba(255,255,255,.78)}
+  .slide.dark .t-body,.slide.dark .t-body-emp,.slide.dark .t-h-prod{color:var(--paper)}
+  .split-half .half.b-ink .t-cat,.split-half .half.b-ink .t-meta,.split-half .half.b-ink .t-helper{color:rgba(255,255,255,.62)}
+  .split-half .half.b-ink .t-body-sm{color:rgba(255,255,255,.78)}
+  .split-half .half.b-ink .t-body,.split-half .half.b-ink .t-body-emp,.split-half .half.b-ink .t-h-prod{color:var(--paper)}
+
+  /* 斜杠点阵装饰 (参考图 6 左下) */
+  .hatch{
+    background-image:repeating-linear-gradient(135deg,currentColor 0 1px,transparent 1px 8px);
+    opacity:.55
+  }
+
+  /* ========== V3: 高级点阵装饰 — 圆点 / × 号 / 圆圈 ========== */
+  /* 实心圆点矩阵 — 用于大面积装饰 */
+  .dot-mat{
+    --d:14px;
+    background-image:radial-gradient(currentColor 1.4px,transparent 1.6px);
+    background-size:var(--d) var(--d);
+    background-position:0 0;
+    opacity:.5
+  }
+  .dot-mat.lg{--d:22px}
+  .dot-mat.xl{--d:34px}
+  .dot-mat.dense{--d:9px;opacity:.62}
+
+  /* 描边圆圈矩阵 — 工业感 */
+  .ring-mat{
+    --d:18px;
+    background-image:
+      radial-gradient(circle at 50% 50%,transparent 2px,currentColor 2px,currentColor 2.6px,transparent 2.7px);
+    background-size:var(--d) var(--d);
+    opacity:.55
+  }
+  .ring-mat.lg{--d:28px}
+
+  /* × 号矩阵 — SVG mask 实现真正的 × 网格平铺 */
+  .cross-mat{
+    --d:22px;
+    background-color:currentColor;
+    -webkit-mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'><g stroke='black' stroke-width='1.4' stroke-linecap='round' fill='none'><line x1='8' y1='8' x2='14' y2='14'/><line x1='14' y1='8' x2='8' y2='14'/></g></svg>");
+            mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'><g stroke='black' stroke-width='1.4' stroke-linecap='round' fill='none'><line x1='8' y1='8' x2='14' y2='14'/><line x1='14' y1='8' x2='8' y2='14'/></g></svg>");
+    -webkit-mask-size:var(--d) var(--d);
+            mask-size:var(--d) var(--d);
+    -webkit-mask-repeat:repeat;mask-repeat:repeat;
+    opacity:.42
+  }
+  .cross-mat.lg{--d:32px}
+
+  /* ========== V3: 几何水平柱状图 ========== */
+  /* 横向柱图: 标签列 + 柱体列 + 数值列 — 严格瑞士网格 */
+  .h-bar-chart{
+    display:grid;
+    grid-template-columns:11em minmax(0,1fr) 8em;
+    gap:1.6vh 1.6vw;
+    align-items:center;
+    margin-top:2.4vh;
+    font-feature-settings:"tnum"
+  }
+  .h-bar-chart .row-lbl{
+    font-family:var(--sans),var(--sans-zh);
+    font-weight:500;
+    font-size:max(14px,1vw);
+    letter-spacing:-.005em;
+    text-align:left
+  }
+  .h-bar-chart .row-track{
+    height:3.2vh;
+    background:var(--grey-1);
+    position:relative;
+    overflow:hidden
+  }
+  .h-bar-chart .row-fill{
+    height:100%;
+    background:var(--ink);
+    transition:width 1s cubic-bezier(.5,0,.2,1)
+  }
+  .h-bar-chart .row-fill.accent{background:var(--accent)}
+  .h-bar-chart .row-fill.grey{background:var(--grey-3)}
+  .h-bar-chart .row-val{
+    font-family:var(--sans);font-weight:250;
+    font-size:max(16px,1.5vw);
+    letter-spacing:-.02em;
+    line-height:1
+  }
+  .h-bar-chart .row-val .unit{
+    font-size:.5em;opacity:.55;font-weight:300;
+    margin-left:.15em;letter-spacing:.04em
+  }
+
+  /* 垂直柱图: 用于 KPI 对比页(章节 P8) */
+  .v-bar-chart{
+    display:grid;
+    grid-template-columns:repeat(var(--cols,4),1fr);
+    align-items:end;
+    gap:1.4vw;
+    height:50vh;
+    margin-top:3vh
+  }
+  .v-bar-chart .col{display:flex;flex-direction:column;gap:1.4vh;align-items:stretch;height:100%}
+  .v-bar-chart .col-bar{
+    flex:1 1 auto;
+    background:var(--grey-1);
+    border-top:2px solid var(--ink);
+    position:relative;
+    display:flex;align-items:flex-start;justify-content:center;
+    padding-top:1vh
+  }
+  .v-bar-chart .col-bar.accent{background:var(--accent);border-top-color:var(--accent);color:var(--accent-on)}
+  .v-bar-chart .col-bar.ink{background:var(--ink);color:var(--paper);border-top-color:var(--ink)}
+  .v-bar-chart .col-bar .v{
+    font-family:var(--sans);font-weight:250;
+    font-size:max(18px,1.6vw);letter-spacing:-.02em
+  }
+  .v-bar-chart .col-lbl{
+    font-family:var(--mono);font-size:max(14px,.78vw);
+    letter-spacing:.14em;text-transform:uppercase;opacity:.6;
+    text-align:center;flex:0 0 auto
+  }
+
+  /* 对仗对比双栏 (章节 P9) */
+  .duo-compare{
+    display:grid;grid-template-columns:1fr 1px 1fr;
+    gap:0 3.4vw;
+    flex:1;align-items:stretch;margin-top:8vh
+  }
+  .duo-compare .vrule{background:var(--grey-2);width:1px;align-self:stretch}
+  .duo-compare .col{display:flex;flex-direction:column;gap:1.6vh;padding:0 .4vw}
+  .duo-compare .col-tag{
+    font-family:var(--mono);font-size:max(14px,.78vw);
+    letter-spacing:.16em;text-transform:uppercase;
+    color:var(--grey-3);
+    display:flex;align-items:center;gap:.6vw
+  }
+  .duo-compare .col-tag .num{
+    font-weight:600;color:var(--ink);
+    border:1px solid var(--ink);
+    padding:.2em .6em;font-size:.92em
+  }
+  .duo-compare .col.accent .col-tag .num{color:var(--accent);border-color:var(--accent)}
+  .duo-compare .col-ttl{
+    font-family:var(--sans),var(--sans-zh);font-weight:200;
+    font-size:3.6vw;line-height:1;letter-spacing:-.03em
+  }
+  .duo-compare .col.accent .col-ttl{color:var(--accent)}
+  .duo-compare .col-desc{
+    font-family:var(--sans),var(--sans-zh);
+    font-size:max(16px,1.04vw);line-height:1.55;opacity:.78;
+    max-width:30vw
+  }
+  .duo-compare .col-list{
+    list-style:none;display:flex;flex-direction:column;gap:1vh;
+    margin-top:auto;padding-top:2vh;border-top:1px solid var(--grey-2)
+  }
+  .duo-compare .col-list li{
+    font-family:var(--sans),var(--sans-zh);
+    font-size:max(16px,.94vw);line-height:1.5;
+    padding-left:1.4em;position:relative
+  }
+  .duo-compare .col-list li::before{
+    content:"";position:absolute;left:0;top:.6em;
+    width:.5em;height:1px;background:currentColor;opacity:.55
+  }
+  .duo-compare .col.accent .col-list li::before{background:var(--accent);opacity:1}
+
+  /* 半屏 statement (参考图 7) */
+  .split-half{display:grid;grid-template-columns:1fr 1fr;gap:0;flex:1;align-items:stretch}
+  .split-half > .half{padding:5vh 3.4vw;display:flex;flex-direction:column;min-width:0}
+  .split-half > .half.r-border{border-left:1px solid rgba(127,127,127,.22)}
+  .split-half > .half.b-grey{background:var(--grey-1)}
+  .split-half > .half.b-accent{background:var(--accent);color:var(--accent-on)}
+  .split-half > .half.b-ink{background:var(--ink);color:var(--paper)}
+
+  /* 极简页眉 — t-meta 风格 (Carbon productive label-01) */
+  .canvas-card .chrome-min{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    font-family:var(--mono);font-size:14px;font-weight:500;
+    letter-spacing:.14em;text-transform:uppercase;
+    color:var(--text-helper);
+    flex:0 0 auto;
+    margin-bottom:var(--sp-9);   /* 48px */
+  }
+  .canvas-card .chrome-min.tight{margin-bottom:var(--sp-7)}   /* 32px */
+  .canvas-card .chrome-min .l, .canvas-card .chrome-min .r{
+    max-width:48vw;line-height:1.5
+  }
+  .slide.dark .canvas-card .chrome-min,.split-half .half.b-ink .canvas-card .chrome-min{color:rgba(255,255,255,.62)}
+
+  /* 响应式降级 */
+  @media (max-width:900px){
+    .h-hero{font-size:16vw}
+    .h-hero-zh{font-size:13vw}
+    .h-xl{font-size:9vw}
+    .h-xl-zh{font-size:8vw}
+    .kpi-hero{font-size:32vw}
+    .kpi-big{font-size:16vw}
+    .pipeline{grid-template-columns:repeat(2,1fr)}
+    .grid-2-7-5,.grid-2-6-6,.grid-2-8-4,.grid-2-4-8{grid-template-columns:1fr}
+    .grid-12{grid-template-columns:repeat(6,1fr)}
+  }
+</style>
+</head>
+<body class="canvas-mode">
+<script>
+  // Windows 平台标记 — 雅黑没有 ExtraLight,需要字重补偿
+  if(/Win/i.test(navigator.platform || navigator.userAgentData?.platform || '')){
+    document.body.classList.add('is-win');
+  }
+  (function(){
+    const KEY = 'guizang-ppt-low-power';
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const stored = localStorage.getItem(KEY);
+    window.__lowPowerMode = stored === '1' || (stored === null && reduced);
+    function updateHint(){
+      const hint = document.getElementById('hint');
+      if(hint) hint.textContent = `← → 翻页 · B ${window.__lowPowerMode ? '动态' : '静态'} · ESC 索引`;
+    }
+    window.__setLowPowerMode = function(on, opts={}){
+      window.__lowPowerMode = !!on;
+      document.body.classList.toggle('low-power', window.__lowPowerMode);
+      if(opts.persist !== false) localStorage.setItem(KEY, window.__lowPowerMode ? '1' : '0');
+      if(window.__lowPowerMode && document.getAnimations){
+        document.getAnimations().forEach(a=>a.cancel());
+      }
+      updateHint();
+      dispatchEvent(new CustomEvent('swiss-low-power-change', {detail:{on:window.__lowPowerMode}}));
+      if(window.__playSlide) window.__playSlide(window.__currentSlideIndex || 0);
+    };
+    document.body.classList.toggle('low-power', window.__lowPowerMode);
+    addEventListener('DOMContentLoaded', updateHint, {once:true});
+  })();
+</script>
+
+<canvas id="bg-grid" class="bg"></canvas>
+<div id="hint">← → 翻页 · B 静态 · ESC 索引</div>
+
+<div id="deck">
+
+<!-- ======================================================================
+     S01 · Cover
+     对应演讲稿：开场 · PSIOS 是什么
+     ====================================================================== -->
+<section class="slide accent" data-animate="hero" data-layout="S01">
+  <div class="canvas-card">
+    <canvas class="ascii-bg" aria-hidden="true"></canvas>
+    <div class="chrome-min">
+      <div class="l">PSIOS · Physics-Native Space Intelligence Operating System</div>
+      <div class="r">01 / 23</div>
+    </div>
+    <div style="flex:1;padding:0;display:grid;grid-template-rows:auto 1fr auto;gap:2.6vh">
+      <div data-anim="kicker" class="t-meta" style="color:rgba(255,255,255,.78);letter-spacing:.22em">PHYSICS-NATIVE INTELLIGENCE · 原生物理智能</div>
+      <h1 data-anim="title" style="align-self:center;font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.8vw,10.2vh);line-height:.94;letter-spacing:-.025em;color:#fff">原生物理空间<br>智能<span style="font-style:italic;font-weight:300">操作系统</span></h1>
+      <div data-anim="bottom" style="display:grid;grid-template-rows:auto auto;gap:1.6vh;border-top:1px solid rgba(255,255,255,.22);padding-top:2vh">
+        <div data-anim="lead" class="lead" style="max-width:56ch;color:rgba(255,255,255,.86);font-weight:300">将轨道动力学作为智能系统的原生运行时组件——物理模型与神经网络共同参与持续推理，而非彼此替代</div>
+        <div style="display:flex;justify-content:space-between;align-items:end">
+          <div class="t-meta" style="color:rgba(255,255,255,.6)">PSIOS · 2026.07</div>
+          <div class="t-meta" style="color:rgba(255,255,255,.6)">→ 键盘 / 滚轮翻页 · B 低功耗</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S02 · 问题提出
+     对应演讲稿：一、开场 —— 地面自动驾驶能搬到太空吗？
+     ====================================================================== -->
+<section class="slide split" data-animate="split-statement" data-layout="S03">
+  <div class="canvas-card">
+    <div class="split-half">
+      <div class="half b-accent" style="padding:5.6vh 3.6vw 4.4vh;justify-content:center;gap:3vh">
+        <div class="chrome-min" style="margin-bottom:0"><div class="l">02 / 23</div><div class="r">HOOK</div></div>
+        <div data-anim="manifesto" style="display:flex;flex-direction:column;gap:2.2vh">
+          <div class="t-meta" style="color:rgba(255,255,255,.78);letter-spacing:.22em">GROUND AUTONOMOUS DRIVING</div>
+          <h2 style="font-family:var(--sans),var(--sans-zh);font-size:min(4.2vw,7.5vh);line-height:1.05;font-weight:200;color:#fff">经验驱动的<br><span style="font-style:italic;font-weight:300">开放世界</span></h2>
+          <div style="font-size:max(16px,1vw);line-height:1.75;color:rgba(255,255,255,.82);font-weight:300;max-width:34ch">行人不可预测。前车可能突然变道。道路施工、大雾、暴雨——这些都没有统一的数学模型可以精确描述。所以自动驾驶必须依赖海量数据来学习隐含模式。<span style="font-weight:500">它学的是"世界本身"。</span></div>
+        </div>
+      </div>
+      <div class="half" style="padding:5.6vh 3.6vw 4.4vh;justify-content:center;gap:3vh">
+        <div class="chrome-min" style="margin-bottom:0"><div class="l"></div><div class="r">vs</div></div>
+        <div data-anim="rules" style="display:flex;flex-direction:column;gap:2.2vh">
+          <h2 style="font-family:var(--sans),var(--sans-zh);font-size:min(4.2vw,7.5vh);line-height:1.05;font-weight:200;color:var(--ink)">物理驱动的<br><span style="font-style:italic;font-weight:300">确定性世界</span></h2>
+          <div style="font-size:max(16px,1vw);line-height:1.75;color:var(--text-secondary);font-weight:400;max-width:34ch">轨道运动严格遵循经典力学——两体动力学方程、J2 摄动、大气阻力、太阳辐射压——这些都是经过 <span style="color:var(--accent);font-weight:500">几十年工程验证的确定性方程</span>。轨道传播的误差主要来源于参数精度，而不是环境本身的不确定性。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S03 · 核心洞察：Physics Unknown vs Physics Beyond
+     对应演讲稿：Physics Unknown → Physics Beyond
+     ====================================================================== -->
+<section class="slide light" data-animate="duo-mirror" data-layout="S08">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">03 / 23 · 核心洞察</div><div class="r">KEY INSIGHT</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:3vh">
+      <div style="display:flex;flex-direction:column;gap:.8vh">
+        <div class="t-cat">两种自动驾驶面对的是两种完全不同的世界</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em">Physics Unknown → Physics Beyond</h2>
+        <p style="font-size:max(18px,1vw);line-height:1.7;color:var(--text-secondary)">地面自动驾驶学习的是 Physics Unknown（未知的物理）——它要用数据替代物理。太空自动驾驶学习的是 Physics Beyond（物理之外的语义和不确定性）——它要在已有物理模型的基础上扩展认知。<span style="color:var(--accent);font-weight:500">AI 不应该是物理模型的替代者，而应该是物理模型的扩展者。</span></p>
+      </div>
+      <div class="duo-compare" style="flex:1">
+        <div class="duo-half" style="justify-content:flex-start;gap:2vh">
+          <div class="t-cat" style="color:var(--text-placeholder)">地面自动驾驶 · GROUND</div>
+          <h3 style="font-weight:200;font-size:min(2.6vw,4.6vh);letter-spacing:-.02em">Physics <span style="color:var(--accent);font-style:italic;font-weight:300">Unknown</span></h3>
+          <div style="font-size:max(16px,.94vw);line-height:1.7;color:var(--text-secondary)">
+            <p style="margin-bottom:.8vh">学习对象：世界本身——行人、驾驶员、环境全都不可预测</p>
+            <p style="margin-bottom:.8vh">AI 角色：物理规律的<span style="color:var(--text-placeholder)">替代者</span>——大规模数据驱动</p>
+            <p style="margin-bottom:.8vh">环境特征：高度不确定，无统一数学模型</p>
+            <p style="color:var(--text-helper);font-size:max(13px,.78vw)">代表：Tesla FSD · Waymo · Apollo</p>
+          </div>
+        </div>
+        <span class="vrule"></span>
+        <div class="duo-half" style="justify-content:flex-start;gap:2vh">
+          <div class="t-cat">太空自动驾驶 · SPACE</div>
+          <h3 style="font-weight:200;font-size:min(2.6vw,4.6vh);letter-spacing:-.02em">Physics <span style="color:var(--accent);font-style:italic;font-weight:300">Beyond</span></h3>
+          <div style="font-size:max(16px,.94vw);line-height:1.7;color:var(--text-secondary)">
+            <p style="margin-bottom:.8vh">学习对象：物理<span style="color:var(--accent);font-weight:500">之外</span>的语义——任务意图、风险评估、多目标决策</p>
+            <p style="margin-bottom:.8vh">AI 角色：物理模型的<span style="color:var(--accent);font-weight:500">扩展者</span>——已知规律→物理，未知→AI</p>
+            <p style="margin-bottom:.8vh">环境特征：确定性动力学 + Safety-Critical 强约束</p>
+            <p style="color:var(--text-helper);font-size:max(13px,.78vw)">约束：推进剂/电源/热控/通信严格受限</p>
+          </div>
+        </div>
+      </div>
+      <div style="border-top:2px solid var(--accent);padding-top:2vh;display:flex;align-items:center;gap:2vw">
+        <div style="font-size:max(18px,1.1vw);color:var(--accent);font-weight:500;flex:1">AI 没有必要重新学习已被物理规律准确描述的世界。真正需要智能学习的是那些动力学模型无法覆盖的部分。</div>
+        <div class="t-meta" style="color:var(--text-helper)">→ PSIOS 的核心哲学</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S04 · 两条路线的困境
+     对应演讲稿：模型驱动 vs 数据驱动
+     ====================================================================== -->
+<section class="slide light" data-animate="grid-reveal" data-layout="S19">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">04 / 23 · 现状诊断</div><div class="r">CRISIS</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.4vh">
+      <div style="display:flex;flex-direction:column;gap:.8vh">
+        <div class="t-cat">当前航天智能研究的两条技术路线——完全割裂</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em">模型驱动 vs 数据驱动</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.5vw;flex:1">
+        <div class="card-fill" style="padding:2.2vh 1.4vw;border-top:3px solid var(--text-secondary);display:flex;flex-direction:column;gap:1vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(3vw,5vh);line-height:.9">01</div>
+          <h3 style="font-weight:400;font-size:max(18px,1.1vw);line-height:1.2">模型驱动方法</h3>
+          <p style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)">完全建立在轨道动力学基础上，通过最优控制、MPC（模型预测控制）、轨迹优化完成自主导航。优势：可解释、可靠、工程验证充分。问题：缺乏学习能力，遇到未知环境就手足无措。</p>
+        </div>
+        <div class="card-fill" style="padding:2.2vh 1.4vw;border-top:3px solid var(--text-secondary);display:flex;flex-direction:column;gap:1vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(3vw,5vh);line-height:.9">02</div>
+          <h3 style="font-weight:400;font-size:max(18px,1.1vw);line-height:1.2">数据驱动方法</h3>
+          <p style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)">用神经网络、强化学习直接学轨迹规划和控制策略。<span style="color:var(--accent);font-weight:500">两个致命问题：</span>(1) 神经网络花大量算力去拟合解析公式就能精确计算的东西；(2) 纯神经网络是黑箱，没法做 Safety-Critical 的安全验证。</p>
+        </div>
+        <div class="card-accent" style="padding:2.2vh 1.4vw;display:flex;flex-direction:column;gap:1vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(3vw,5vh);line-height:.9;color:#fff">03</div>
+          <h3 style="font-weight:500;font-size:max(18px,1.1vw);line-height:1.2;color:#fff">核心瓶颈：割裂</h3>
+          <p style="font-size:max(16px,.94vw);line-height:1.6;color:rgba(255,255,255,.85)">模型驱动强调物理规律却缺乏学习能力，数据驱动强调学习能力却忽略了物理规律。两者本应解决不同层次的问题，但目前彼此独立、互不融合。整个领域卡在这两条路线之间的鸿沟里。</p>
+        </div>
+        <div class="card-fill" style="padding:2.2vh 1.4vw;border-top:3px solid var(--accent);display:flex;flex-direction:column;gap:1vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(3vw,5vh);line-height:.9;color:var(--accent)">04</div>
+          <h3 style="font-weight:400;font-size:max(18px,1.1vw);line-height:1.2;color:var(--accent)">不要选边站</h3>
+          <p style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)">未来的方向不应是"选模型驱动还是数据驱动"。我们需要重新定义物理模型和神经网络之间的关系——物理负责演化，神经网络负责认知，二者深度融合而非彼此替代。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S05 · Physics-Native Intelligence 范式定义
+     对应演讲稿：二、什么是 Physics-Native Intelligence
+     ====================================================================== -->
+<section class="slide dark" data-animate="manifesto" data-layout="S12">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">05 / 23 · 范式定义</div><div class="r">PHYSICS-NATIVE</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:3vh">
+      <div style="display:flex;flex-direction:column;gap:1.4vh">
+        <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em">不是 Physics-Informed Learning · 不是把约束加进 loss 函数</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-size:min(4vw,7vh);line-height:1.05;letter-spacing:-.02em;font-weight:200;color:#fff">物理规律不是智能系统的<span style="color:var(--accent-bright);font-style:italic;font-weight:300">外部约束</span><br>而是智能产生过程的<span style="color:var(--accent-bright);font-style:italic;font-weight:300">内部组成部分</span></h2>
+        <div style="font-size:max(16px,.94vw);line-height:1.7;color:rgba(255,255,255,.7);font-weight:300;max-width:60ch;margin-top:1vh">Physics-Informed Learning 把物理规律放在损失函数里——训练时约束网络，训练完物理就退出了。Physics-Native Intelligence 不同：物理模型始终作为运行时组件持续参与整个智能循环。神经网络不覆盖物理模型，而是在物理模型的确定性基础上学习未知知识。最终的智能行为，来自物理推理和数据推理的<span style="color:var(--accent-bright);font-weight:400">持续协同</span>。</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.2vw">
+        <div class="card-fill" style="padding:2vh 1.5vw;background:rgba(255,255,255,.06);border-top:3px solid var(--accent-bright);display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent-bright);letter-spacing:.15em">Evolution · 物理模型</div>
+          <p style="font-size:max(16px,.88vw);line-height:1.5;color:rgba(255,255,255,.65)">负责描述世界如何演化。轨道未来十分钟什么样？可达域在哪？还剩多少推进剂？——基于动力学方程精确计算，不依赖数据学习。</p>
+        </div>
+        <div class="card-fill" style="padding:2vh 1.5vw;background:rgba(255,255,255,.06);border-top:3px solid var(--accent-bright);display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent-bright);letter-spacing:.15em">Cognition · 神经网络</div>
+          <p style="font-size:max(16px,.88vw);line-height:1.5;color:rgba(255,255,255,.65)">负责理解世界意味着什么。目标是否在主动接近？有没有碰撞风险？当前通信窗口还能用多久？——这些信息无法从动力学方程中直接获得。</p>
+        </div>
+        <div class="card-fill" style="padding:2vh 1.5vw;background:rgba(255,255,255,.06);border-top:3px solid var(--accent-bright);display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent-bright);letter-spacing:.15em">Decision · 智能决策</div>
+          <p style="font-size:max(16px,.88vw);line-height:1.5;color:rgba(255,255,255,.65)">负责确定下一步做什么。在物理约束和认知信息的基础上，生成候选行为、评估优劣、选择最优方案。三者共同参与推理，不是 Physics + AI 的简单叠加。</p>
+        </div>
+      </div>
+      <div class="ink-banner-full" style="margin:auto -5vw -4.4vh;padding:2.4vh 5vw;background:var(--accent);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:max(16px,.94vw);color:#fff;font-weight:400">智能不是一次计算结果，而是一种持续运行的能力</div>
+        <div style="font-size:max(14px,.82vw);color:rgba(255,255,255,.78)">Evolution · Cognition · Decision</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S06 · Physics-Informed vs Physics-Native 五点对比
+     对应演讲稿：二、什么是 Physics-Native Intelligence
+     ====================================================================== -->
+<section class="slide light" data-animate="duo-mirror" data-layout="S08">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">06 / 23 · 范式对比</div><div class="r">PiL vs PNI</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.5vh">
+      <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em">Physics-Informed / Physics-Native</h2>
+      <div class="duo-compare" style="flex:1">
+        <div class="duo-half" style="gap:1.5vh;justify-content:flex-start">
+          <div class="t-cat">Physics-Informed Learning</div>
+          <div style="font-size:max(16px,.94vw);line-height:1.7;color:var(--text-secondary)">
+            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--text-placeholder)">物理位置</span><br>出现在损失函数、正则项、网络结构设计中</p>
+            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--text-placeholder)">物理角色</span><br>训练阶段的约束条件——训练完成即退出</p>
+            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--text-placeholder)">网络学什么</span><br>动力学 + 未知因素——目标是做更准的预测器</p>
+            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--text-placeholder)">系统架构</span><br>AI 为主，物理为辅——神经网络是核心</p>
+            <p style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--text-placeholder)">根本差异</span><br>物理 = 外部约束</p>
+          </div>
+        </div>
+        <span class="vrule"></span>
+        <div class="duo-half" style="gap:1.5vh;justify-content:flex-start">
+          <div class="t-cat" style="color:var(--accent)">Physics-Native Intelligence</div>
+          <div style="font-size:max(16px,.94vw);line-height:1.7;color:var(--text-secondary)">
+            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">物理位置</span><br>体现在系统运行时的持续组件中</p>
+            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">物理角色</span><br>运行时持续参与推理——从不退出</p>
+            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">网络学什么</span><br>仅学物理之外的未知因素——语义、意图、风险</p>
+            <p style="margin-bottom:1vh"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">系统架构</span><br>物理为基，AI 增强——二者平等协同</p>
+            <p style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">根本差异</span><br>物理 = 内部组成部分</p>
+          </div>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--border-subtle);padding-top:1.5vh;font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500">本质区别：</span>Physics-Informed 把物理当作"训练时的老师"——教你一次，然后离开。Physics-Native 把物理当作"永远的同事"——始终在场，和你一起推理。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S07 · 四项基本原则
+     对应演讲稿：二、四项基本原则
+     ====================================================================== -->
+<section class="slide light" data-animate="grid-reveal" data-layout="S19">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">07 / 23 · 设计原则</div><div class="r">PRINCIPLES</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.4vh">
+      <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em">贯穿 PNIE 全部模块设计的四项基本原则</h2>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.5vw;flex:1">
+        <div class="card-accent" style="padding:2.2vh 1.2vw;display:flex;flex-direction:column;gap:1vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.6vw,4.6vh);line-height:.9;color:#fff">01</div>
+          <h3 style="font-weight:500;font-size:max(18px,1vw);line-height:1.2;color:#fff">Physics First<br>物理优先</h3>
+          <p style="font-size:max(16px,.88vw);line-height:1.5;color:rgba(255,255,255,.85)">所有状态演化必须遵循客观物理规律。任何学习算法不能突破动力学约束。物理模型在所有推理环节中处于最高优先级——它首先确定"什么是可能的"，然后神经网络再在可能空间中寻找"什么是最优的"。</p>
+        </div>
+        <div class="card-fill" style="padding:2.2vh 1.2vw;display:flex;flex-direction:column;gap:1vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.6vw,4.6vh);line-height:.9">02</div>
+          <h3 style="font-weight:400;font-size:max(18px,1vw);line-height:1.2">职责分离</h3>
+          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">物理模型负责世界演化（How the world changes），神经网络负责环境认知（What the world means）。神经网络不应该学习已由物理定律描述的内容——这是避免重复学习的关键。</p>
+        </div>
+        <div class="card-fill" style="padding:2.2vh 1.2vw;display:flex;flex-direction:column;gap:1vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.6vw,4.6vh);line-height:.9">03</div>
+          <h3 style="font-weight:400;font-size:max(18px,1vw);line-height:1.2">持续推理</h3>
+          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">智能不是一次计算结果，而是持续运行的能力。系统在整个任务生命周期内持续进行状态传播、环境认知、策略优化和行为验证——不会因为某次推理结束而停止。</p>
+        </div>
+        <div class="card-fill" style="padding:2.2vh 1.2vw;display:flex;flex-direction:column;gap:1vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.6vw,4.6vh);line-height:.9">04</div>
+          <h3 style="font-weight:400;font-size:max(18px,1vw);line-height:1.2">可扩展</h3>
+          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">系统能不断增加新的智能能力（新任务类型、新感知模态、新控制策略），而无需改变底层运行机制。新能力以插件形式加入——以能力单元而非功能模块组织。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S08 · 为什么叫操作系统？
+     对应演讲稿：二、为什么叫操作系统
+     ====================================================================== -->
+<section class="slide dark" data-animate="grid-reveal" data-layout="S17">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">08 / 23 · 系统定位</div><div class="r">WHY OS</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.4vh">
+      <div style="display:flex;flex-direction:column;gap:.6vh">
+        <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em">PSIOS = 操作系统，而不是框架。PNIE = PSIOS 的内核。</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em;color:#fff">为什么称为"操作系统"？</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1vw;flex:1">
+        <div class="card-fill" style="padding:1.8vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">资源管理</div>
+          <div style="font-size:max(13px,.72vw);color:rgba(255,255,255,.5)">传统：CPU/内存<br>PSIOS：推进剂/电源/通信</div>
+        </div>
+        <div class="card-fill" style="padding:1.8vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">进程调度</div>
+          <div style="font-size:max(13px,.72vw);color:rgba(255,255,255,.5)">传统：管理进程<br>PSIOS：管理 Runtime</div>
+        </div>
+        <div class="card-fill" style="padding:1.8vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">安全机制</div>
+          <div style="font-size:max(13px,.72vw);color:rgba(255,255,255,.5)">传统：用户态/内核态<br>PSIOS：Physics-First</div>
+        </div>
+        <div class="card-fill" style="padding:1.8vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">驱动层</div>
+          <div style="font-size:max(13px,.72vw);color:rgba(255,255,255,.5)">传统：硬件驱动<br>PSIOS：GNC 接口</div>
+        </div>
+        <div class="card-fill" style="padding:1.8vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">文件系统</div>
+          <div style="font-size:max(13px,.72vw);color:rgba(255,255,255,.5)">传统：数据持久化<br>PSIOS：USS 状态持久化</div>
+        </div>
+        <div class="card-fill" style="padding:1.8vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">持续运行</div>
+          <div style="font-size:max(13px,.72vw);color:rgba(255,255,255,.5)">传统：OS 不关机<br>PSIOS：引擎永不停</div>
+        </div>
+      </div>
+      <div style="padding:2vh 1.5vw;background:rgba(232,125,80,.12);border-left:3px solid var(--accent);display:flex;gap:3vw;align-items:flex-start">
+        <div style="font-size:max(16px,.94vw);line-height:1.6;color:rgba(255,255,255,.8);flex:1"><span style="color:#fff;font-weight:500">PNIE（Physics-Native Intelligence Engine）= PSIOS 的内核。</span>它负责管理所有 Runtime 的生命周期、维护 USS、调度能力执行，以及保证物理安全性。PNIE 之于 PSIOS，相当于 <span style="color:var(--accent-bright);font-weight:500">Linux Kernel 之于 Linux Distribution</span>。PSIOS 还包括：任务接口层、遥测遥信子系统、人机交互终端、以及地面端的数字孪生仿真环境。</div>
+        <div style="font-size:max(14px,.78vw);line-height:1.4;color:rgba(255,255,255,.45);max-width:18ch">PNIE 位于任务系统与 GNC 之间：上层提目标，下层执行控制，PNIE 转化任务为满足物理约束的自主行为序列</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S09 · PNIE Runtime 架构 & 为什么用 Runtime
+     对应演讲稿：三、PNIE 总体架构
+     ====================================================================== -->
+<section class="slide light" data-animate="system-diagram" data-layout="S17">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">09 / 23 · 架构创新</div><div class="r">RUNTIME</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.4vh">
+      <div style="display:flex;flex-direction:column;gap:.6vh">
+        <div class="t-cat">传统航天软件按功能划分模块 → N 个模块产生 N² 条通信路径。PNIE 采用完全不同的组织方式。</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em">从 Module 到 Runtime · 状态驱动架构</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2vw;flex:1">
+        <div style="display:flex;flex-direction:column;gap:1.4vh;justify-content:center">
+          <div class="card-fill" style="padding:1.8vh 1.5vw">
+            <div style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">传统模块的局限</div>
+            <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary);margin-top:.4vh">Module 是"输入→计算→输出→结束"的一次性函数。增加一个自主交会能力，可能要同时修改轨道、规划、控制三个模块的接口。模块间点对点耦合形成 N² 条通信路径，系统复杂度随功能数量爆炸式增长。</p>
+          </div>
+          <div class="card-fill" style="padding:1.8vh 1.5vw;border-left:3px solid var(--accent)">
+            <div style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">Runtime 的核心属性</div>
+            <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary);margin-top:.4vh"><span style="color:var(--accent);font-weight:500">持续性</span>——不是算完就退出的函数，任务期间永不停止。<span style="color:var(--accent);font-weight:500">独立状态</span>——每种 Runtime 维护自己的状态空间。<span style="color:var(--accent);font-weight:500">松耦合</span>——彼此不直接调用，通过 USS 共享信息。<span style="color:var(--accent);font-weight:500">异步</span>——轨道传播每秒更新，认知推理十秒一次，行为规划事件驱动，各自独立节拍。</p>
+          </div>
+          <div class="card-fill" style="padding:1.8vh 1.5vw">
+            <div style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">每个 Runtime 的四项基本属性</div>
+            <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary);margin-top:.4vh"><span style="font-weight:500">State</span>——维护自身负责的信息集合，持续存在并演化。<span style="font-weight:500">Behavior</span>——根据当前状态执行计算。<span style="font-weight:500">Interface</span>——通过 USS 读写，不直访其他 Runtime。<span style="font-weight:500">Lifecycle</span>——系统启动到任务结束，持续运行。</p>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2vw;align-content:center">
+          <div class="card-accent" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.6vh;align-items:center;text-align:center">
+            <div style="font-weight:200;font-size:min(1.8vw,3.2vh);color:#fff">Physics</div>
+            <div style="font-size:max(14px,.78vw);color:rgba(255,255,255,.8)">世界如何演化？</div>
+            <div style="font-size:max(13px,.7vw);color:rgba(255,255,255,.55);line-height:1.3">轨道·姿态·约束·可达域·物理验证</div>
+          </div>
+          <div class="card-fill" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.6vh;align-items:center;text-align:center">
+            <div style="font-weight:200;font-size:min(1.8vw,3.2vh);color:var(--text-primary)">Neural</div>
+            <div style="font-size:max(14px,.78vw);color:var(--text-secondary)">世界意味着什么？</div>
+            <div style="font-size:max(13px,.7vw);color:var(--text-helper);line-height:1.3">意图·风险·语义·持续学习</div>
+          </div>
+          <div class="card-fill" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.6vh;align-items:center;text-align:center">
+            <div style="font-weight:200;font-size:min(1.8vw,3.2vh);color:var(--text-primary)">Behavior</div>
+            <div style="font-size:max(14px,.78vw);color:var(--text-secondary)">下一步做什么？</div>
+            <div style="font-size:max(13px,.7vw);color:var(--text-helper);line-height:1.3">行为生成·Graph·Capability</div>
+          </div>
+          <div class="card-fill" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.6vh;align-items:center;text-align:center">
+            <div style="font-weight:200;font-size:min(1.8vw,3.2vh);color:var(--text-primary)">Memory</div>
+            <div style="font-size:max(14px,.78vw);color:var(--text-secondary)">过去教会什么？</div>
+            <div style="font-size:max(13px,.7vw);color:var(--text-helper);line-height:1.3">历史·档案·策略·检索</div>
+          </div>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--border-subtle);padding-top:1.4vh;display:flex;gap:3vw">
+        <div style="font-size:max(15px,.88vw);color:var(--text-secondary);flex:1">所有 Runtime 都只与 USS 耦合，整个系统的耦合度从 <span style="color:var(--accent);font-weight:500">O(N²) 降至 O(N)</span>。计算需求：Physics RT 在 ARM M7 即可运行；Neural RT 需 NPU/低功耗 GPU；Behavior 和 Memory RT 计算量极低。星载平台如 Xilinx Versal、NVIDIA Jetson Orin Rad-Hard 版本已足够支持。</div>
+        <div style="font-size:max(14px,.78vw);color:var(--text-helper);max-width:16ch">相比纯神经网络方案大幅降低计算需求</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S10 · Physics Runtime 五大职责
+     对应演讲稿：四、Physics Runtime
+     ====================================================================== -->
+<section class="slide dark" data-animate="grid-reveal" data-layout="S13">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">10 / 23 · Physics Runtime</div><div class="r">DIGITAL PHYSICS LAYER</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.2vh">
+      <div style="display:flex;flex-direction:column;gap:.5vh">
+        <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em">从根上改变：轨道传播从"被调用的算法"变为"持续的运行时"</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em;color:#fff">Physics Runtime · 五大职责</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.4vw;flex:1">
+        <div style="display:flex;flex-direction:column;gap:1.1vh">
+          <div class="card-fill" style="padding:1.6vh 1.3vw;background:rgba(255,255,255,.06)">
+            <span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent-bright)">01 动力学传播</span>
+            <p style="font-size:max(15px,.82vw);line-height:1.5;color:rgba(255,255,255,.6);margin-top:.3vh">两体模型→含J2/J3摄动模型→高精度数值积分→姿态动力学。不限制传播模型实现，但要求所有结果具有<span style="color:var(--accent-bright)">统一数据接口</span>——保证未来更换算法时对外表现一致。</p>
+          </div>
+          <div class="card-fill" style="padding:1.6vh 1.3vw;background:rgba(255,255,255,.06)">
+            <span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent-bright)">02 约束维护</span>
+            <p style="font-size:max(15px,.82vw);line-height:1.5;color:rgba(255,255,255,.6);margin-top:.3vh">推进剂/推力/通信可见性/热控/姿态机动/电源——<span style="color:var(--accent-bright)">六类约束持续维护</span>。传统系统分散在多个模块中计算，PNIE 中由 Physics Runtime 统一管理，其他 Runtime 直接从 USS 读取。</p>
+          </div>
+          <div class="card-fill" style="padding:1.6vh 1.3vw;background:rgba(255,255,255,.06)">
+            <span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent-bright)">03 可达域分析</span>
+            <p style="font-size:max(15px,.82vw);line-height:1.5;color:rgba(255,255,255,.6);margin-top:.3vh">系统不仅要知"现在在哪"，更要知道"未来能去哪"。实时计算可到达轨道集合、最小燃料轨迹、最小时间轨迹、安全轨迹空间。</p>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1.1vh">
+          <div class="card-fill" style="padding:1.6vh 1.3vw;background:rgba(255,255,255,.06)">
+            <span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent-bright)">04 资源演化</span>
+            <p style="font-size:max(15px,.82vw);line-height:1.5;color:rgba(255,255,255,.6);margin-top:.3vh">推进剂消耗/电池SoC/太阳输入/热平衡/执行机构寿命——这些物理量有明确数学规律，由 Physics Runtime 统一演化。</p>
+          </div>
+          <div class="card-fill" style="padding:1.6vh 1.3vw;background:rgba(232,125,80,.13);border-left:3px solid var(--accent)">
+            <span style="font-family:var(--mono);font-size:max(14px,.72vw);color:var(--accent)">05 · SAFETY GUARDIAN</span>
+            <p style="font-size:max(15px,.84vw);line-height:1.5;color:rgba(255,255,255,.6);margin-top:.3vh">所有候选行为必须通过<span style="color:#fff;font-weight:500">四项验证</span>才可进入 GNC 执行：动力学一致性 → 工程约束 → 安全边界 → 资源可行性。Physics Runtime 是整个 PNIE 的安全守护角色——这是它最关键的职责。</p>
+          </div>
+          <div style="border-top:1px solid rgba(255,255,255,.1);padding-top:1.2vh">
+            <p style="font-size:max(14px,.78vw);color:rgba(255,255,255,.45)"><span style="color:var(--accent-bright);font-weight:500">边界：</span>Physics Runtime 不学习、不预测任务语义、不输出行为策略。Neural Runtime 不负责轨道传播、不维护资源状态、不修改动力学模型。两者仅通过 USS 共享状态——这是 PNIE 中最重要的一条线。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S11 · Neural Runtime：认知建模
+     对应演讲稿：五、Neural Runtime
+     ====================================================================== -->
+<section class="slide light" data-animate="grid-reveal" data-layout="S13">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">11 / 23 · Neural Runtime</div><div class="r">COGNITIVE LAYER</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.2vh">
+      <div style="display:flex;flex-direction:column;gap:.5vh">
+        <div class="t-cat">PNIE 与传统 AI for Aerospace 最大的区别所在</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em">从"状态预测"到"认知建模"</h2>
+        <p style="font-size:max(18px,1vw);line-height:1.7;color:var(--text-secondary)">传统 AI 让神经网络去学动力学、学轨迹、学控制策略——前提假设是神经网络是环境的替代者。但在航天领域，<span style="color:var(--accent);font-weight:500">这个假设是错的</span>。轨道动力学已有成熟解析模型，不需要重新学习。真正需要的，是理解物理状态背后的语义。</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.4vw;flex:1">
+        <div class="card-fill" style="padding:1.8vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">01 环境认知</div>
+          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">识别空间碎片密集区域、分析目标航天器运行状态、判断通信链路是否稳定。在物理状态之上形成<span style="color:var(--accent);font-weight:500">结构化空间态势理解</span>。</p>
+        </div>
+        <div class="card-fill" style="padding:1.8vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">02 目标理解</div>
+          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">两颗卫星完全相同相对状态：一颗在执行交会，另一颗在规避碰撞。从动力学角度完全一样，但从任务语义角度<span style="color:var(--accent);font-weight:500">完全不同</span>。仅靠位置和速度无法区分——这就是 Neural Runtime 存在的意义。</p>
+        </div>
+        <div class="card-fill" style="padding:1.8vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">03 风险推理</div>
+          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">碰撞风险/资源风险/任务冲突/通信中断——这些属于<span style="color:var(--accent);font-weight:500">高层语义风险</span>，无法通过动力学方程直接计算，需要通过认知推理形成评估。</p>
+        </div>
+        <div class="card-accent" style="padding:1.8vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:rgba(255,255,255,.7)">04 持续学习</div>
+          <p style="font-size:max(16px,.88vw);line-height:1.5;color:rgba(255,255,255,.85)">不采用"地面训练+星上部署"的固定模式。更新来自三方面：<span style="font-weight:500">任务反馈</span>——当前策略有效吗？<span style="font-weight:500">环境变化</span>——出现新的碎片区域？<span style="font-weight:500">多智能体协同</span>——其他航天器分享经验。仅更新认知模型，不改变动力学模型。</p>
+        </div>
+      </div>
+      <div style="border-top:2px solid var(--accent);padding-top:1.6vh;display:flex;gap:3vw">
+        <div style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary);flex:1"><span style="color:var(--accent);font-weight:500">关键区别：</span>Neural Runtime 不学动力学、不预测轨迹、不输出控制量——这些分别由 Physics Runtime、Planner、GNC 负责。它的输出是 <span style="color:var(--accent);font-weight:500">Cognitive Information</span>（认知信息）。传统 AI for Aerospace 的神经网络是"物理替代者"——PNIE 的 Neural Runtime 是"物理增强者"。</div>
+        <div style="font-size:max(14px,.82vw);line-height:1.5;color:var(--text-helper);max-width:20ch"><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">示例</span><br>Physics RT："目标未来十分钟位置 X,Y,Z。"<br>Neural RT："目标正在主动接近，交会意图明确，风险低——建议继续当前策略。"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S12 · Memory Runtime
+     对应演讲稿：六、Memory Runtime
+     ====================================================================== -->
+<section class="slide light" data-animate="grid-reveal" data-layout="S19">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">12 / 23 · Memory Runtime</div><div class="r">LONG-TERM KNOWLEDGE</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.2vh">
+      <div style="display:flex;flex-direction:column;gap:.5vh">
+        <div class="t-cat">Neural Runtime 的 Experience Context = 工作记忆 · Memory Runtime = 长期记忆</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em">让系统"越飞越聪明"</h2>
+        <p style="font-size:max(18px,1vw);line-height:1.7;color:var(--text-secondary)">Neural Runtime 虽然具备经验学习能力，但它主要关注<span style="color:var(--accent);font-weight:500">当前任务周期内</span>的认知推理。Memory Runtime 解决的是不同层次的问题——<span style="color:var(--accent);font-weight:500">跨越多个任务、多个轨道周期的长期知识积累和复用</span>。</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.5vw;flex:1">
+        <div class="card-fill" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">任务历史</div>
+          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">每个已完成任务的完整轨迹、关键决策点、执行结果。结构化时序数据，任务结束时写入。</p>
+        </div>
+        <div class="card-fill" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">目标档案</div>
+          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">已知目标的轨道特征、历史行为模式、交互记录。如："这个轨道高度上的 GEO 卫星，90% 保持位置保持行为"。</p>
+        </div>
+        <div class="card-fill" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">策略知识</div>
+          <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary)">不同场景下各种策略的有效性评价——知识图谱存储。策略执行后增量更新评分。</p>
+        </div>
+        <div class="card-accent" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:rgba(255,255,255,.7)">经验检索</div>
+          <p style="font-size:max(16px,.88vw);line-height:1.5;color:rgba(255,255,255,.85)">向量嵌入+相似度搜索——给定当前状态，检索历史上最相似场景。结构化查询——"500km SSO 过去30天多少次碎片近距离交会？" 结果以结构化上下文注入 USS。</p>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--border-subtle);padding-top:1.4vh;font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500">持续积累、从不删除</span>（除非知识被证伪）。任务结束后经验写入——下次遇到类似特征的卫星，系统不用重新判断，直接检索即可识别。这是 PNIE 实现"越飞越聪明"的核心机制。而所有这些分散的知识要能被有效检索——就需要一个统一的状态中枢。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S13 · USS & USR 统一状态空间
+     对应演讲稿：七、USS 和 USR
+     ====================================================================== -->
+<section class="slide dark" data-animate="system-diagram" data-layout="S17">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">13 / 23 · 状态中枢</div><div class="r">USS & USR</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.2vh">
+      <div style="display:flex;flex-direction:column;gap:.5vh">
+        <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em">USS 定义抽象状态空间 · USR 实现运行时管理 · 耦合 O(N²)→O(N)</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em;color:#fff">统一状态空间 · 四类状态的动态耦合</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.2vw;flex:1">
+        <div class="card-fill" style="padding:1.8vh 1.1vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">Physical State</div>
+          <p style="font-size:max(16px,.86vw);line-height:1.5;color:rgba(255,255,255,.75)">轨道·姿态·引力场·大气·辐射压·约束 · <span style="color:var(--accent-bright);font-weight:500">Physics RT</span></p>
+        </div>
+        <div class="card-fill" style="padding:1.8vh 1.1vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">Cognitive State</div>
+          <p style="font-size:max(16px,.86vw);line-height:1.5;color:rgba(255,255,255,.75)">态势·意图·风险·经验上下文 · <span style="color:var(--accent-bright);font-weight:500">Neural+Memory RT</span></p>
+        </div>
+        <div class="card-fill" style="padding:1.8vh 1.1vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">Mission State</div>
+          <p style="font-size:max(16px,.86vw);line-height:1.5;color:rgba(255,255,255,.75)">目标·当前行为·进度·优先级 · <span style="color:var(--accent-bright);font-weight:500">Behavior RT</span></p>
+        </div>
+        <div class="card-fill" style="padding:1.8vh 1.1vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">Resource State</div>
+          <p style="font-size:max(16px,.86vw);line-height:1.5;color:rgba(255,255,255,.75)">推进剂·电源·热控·通信 · <span style="color:var(--accent-bright);font-weight:500">Physics RT</span></p>
+        </div>
+      </div>
+      <div style="padding:2vh 1.5vw;background:rgba(232,125,80,.12);border-left:3px solid var(--accent);display:flex;flex-direction:column;gap:1vh">
+        <p style="font-size:max(16px,.94vw);line-height:1.6;color:rgba(255,255,255,.8)"><span style="font-weight:500;color:#fff">动态耦合：</span>Physical State → Resource State（轨道机动→推进剂减少）→ Cognitive State → Mission State（识别风险→调整优先级）→ Physical State（新轨迹）→ Resource State → Mission State（推进剂不足→限制行为）——这不是四个独立数据库，而是一个持续耦合演化的有机整体。</p>
+        <p style="font-size:max(16px,.94vw);line-height:1.6;color:rgba(255,255,255,.8)"><span style="font-weight:500;color:#fff">USR 五项原则：</span>①Single Source of Truth——所有 Runtime 只能访问 USR；②状态共享而非模块通信——Behavior RT 不直接调用 Physics RT，只从 USR 读；③异步运行——不同频率不要求同步；④状态可追溯——来源/时间/可信度全记录；⑤统一 Read/Write API。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S14 · Behavior Runtime：行为生成机制
+     对应演讲稿：八、Behavior Runtime
+     ====================================================================== -->
+<section class="slide light" data-animate="grid-reveal" data-layout="S13">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">14 / 23 · Behavior Runtime</div><div class="r">DECISION ENGINE</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2vh">
+      <div style="display:flex;flex-direction:column;gap:.4vh">
+        <div class="t-cat">Behavior Runtime 输出行为，不是控制指令——那是 GNC 的职责</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em">行为生成 · 四阶段循环</h2>
+        <div style="font-size:max(16px,.94vw);line-height:1.7;color:var(--text-secondary)">行为是一种<span style="color:var(--accent);font-weight:500">高于控制、低于任务</span>的智能表达：任务="对目标卫星完成补给"→行为="接近→对准→对接→补给→撤离"→轨迹="3次机动到达对接点"→控制="推力器1,50%,120秒"。Behavior Runtime 定位在行为层——它是连接高层任务目标和底层控制系统的唯一桥梁。</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.2vw;flex:1">
+        <div class="card-accent" style="padding:1.8vh 1.1vw;display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(13px,.68vw);color:rgba(255,255,255,.7)">01</div>
+          <div style="font-weight:500;font-size:max(18px,.95vw);color:#fff">状态感知</div>
+          <div style="font-size:max(15px,.8vw);line-height:1.4;color:rgba(255,255,255,.8)">从 USS 读取完整状态：我在哪？目标在做什么？现在什么阶段？还剩多少推进剂？</div>
+        </div>
+        <div class="card-fill" style="padding:1.8vh 1.1vw;display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(13px,.68vw);color:var(--accent)">02</div>
+          <div style="font-weight:400;font-size:max(18px,.95vw)">行为推理</div>
+          <div style="font-size:max(15px,.8vw);line-height:1.4;color:var(--text-secondary)">最重要目标？有风险吗？资源够吗？需要切换吗？→输出新行为状态（如"轨道保持"→"主动接近"）。</div>
+        </div>
+        <div class="card-fill" style="padding:1.8vh 1.1vw;display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(13px,.68vw);color:var(--accent)">03</div>
+          <div style="font-weight:400;font-size:max(18px,.95vw)">能力选择</div>
+          <div style="font-size:max(15px,.8vw);line-height:1.4;color:var(--text-secondary)">从 Capability Library 选能力。如"自主接近"→Navigation Capability。不关心内部实现——EKF 还是粒子滤波。</div>
+        </div>
+        <div class="card-fill" style="padding:1.8vh 1.1vw;display:flex;flex-direction:column;gap:.6vh">
+          <div style="font-family:var(--mono);font-size:max(13px,.68vw);color:var(--accent)">04</div>
+          <div style="font-weight:400;font-size:max(18px,.95vw)">行为反馈</div>
+          <div style="font-size:max(15px,.8vw);line-height:1.4;color:var(--text-secondary)">Capability 执行后，结果写回 USS。下一周期重新评估——<span style="color:var(--accent);font-weight:500">四个阶段永不停止</span>。</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5vw;border-top:1px solid var(--border-subtle);padding-top:1.6vh">
+        <div><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">战略行为</span><br><span style="font-size:max(15px,.82vw);color:var(--text-secondary)">数小时~数天：完成任务</span></div>
+        <div><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">战术行为</span><br><span style="font-size:max(15px,.82vw);color:var(--text-secondary)">数分钟~数小时：接近/对接/传输</span></div>
+        <div><span style="font-family:var(--mono);font-size:max(13px,.7vw);color:var(--accent)">执行行为</span><br><span style="font-size:max(15px,.82vw);color:var(--text-secondary)">秒~分钟：调用+监测</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S15 · Behavior Graph
+     对应演讲稿：九、Behavior Graph
+     ====================================================================== -->
+<section class="slide light" data-animate="grid-reveal" data-layout="S17">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">15 / 23 · 行为组织</div><div class="r">BEHAVIOR GRAPH</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2vh">
+      <div style="display:flex;flex-direction:column;gap:.4vh">
+        <div class="t-cat">不是有限状态机，不是预定义脚本——是 USS 上的行为组织模型</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em">Behavior Graph · 行为节点 + 迁移</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2vw;flex:1">
+        <div style="display:flex;flex-direction:column;gap:1.2vh">
+          <div class="card-fill" style="padding:1.8vh 1.4vw">
+            <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">Behavior Node · 行为节点</div>
+            <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary);margin-top:.6vh">每个节点是有明确语义的行为状态，包含六个字段：<span style="font-weight:500">Name</span>——行为名称；<span style="font-weight:500">Goal</span>——行为目标（连续参数）；<span style="font-weight:500">Activation Condition</span>——激活条件；<span style="font-weight:500">Completion Condition</span>——完成条件；<span style="font-weight:500">Recommended Capability</span>——推荐能力；<span style="font-weight:500">Safety Constraint</span>——安全约束。</p>
+            <p style="font-size:max(15px,.82vw);line-height:1.5;color:var(--text-helper);margin-top:.6vh">例："自主接近"节点——目标距离<200m；激活条件=目标已识别 AND 窗口可用；完成条件=距离<200m AND 速度匹配；推荐 Navigation Capability；安全约束=距离≥50m, 速度≤1m/s。</p>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1.2vh">
+          <div class="card-fill" style="padding:1.8vh 1.4vw">
+            <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">Behavior Transition · 五维联合判断</div>
+            <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary);margin-top:.6vh">迁移条件由 USS 的五个维度联合决定——不是"距离<100m 就进入下一阶段"的单一阈值。①<span style="font-weight:500">物理状态</span>满足下一阶段动力学条件？②<span style="font-weight:500">认知状态</span>确认环境安全？③<span style="font-weight:500">任务状态</span>进入新阶段？④<span style="font-weight:500">资源状态</span>支持执行？⑤<span style="font-weight:500">历史经验</span>有无负面信号？<span style="color:var(--accent);font-weight:500">五个维度全部满足才触发迁移。</span></p>
+          </div>
+          <div class="card-accent" style="padding:1.8vh 1.4vw">
+            <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:rgba(255,255,255,.7)">持续运行 · 不绑定任何一次规划</div>
+            <p style="font-size:max(16px,.88vw);line-height:1.5;color:rgba(255,255,255,.85);margin-top:.6vh">获取USS→评估当前节点→判断迁移条件→如果满足→切换到下一节点→调用推荐Capability→等待下一周期。如果途中 Neural Runtime 检测到目标异常机动，系统可以从"自主接近"立即切回"安全撤离"。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S16 · Co-Reasoning：五阶段循环
+     对应演讲稿：九、Co-Reasoning
+     ====================================================================== -->
+<section class="slide light" data-animate="timeline-walk" data-layout="S11">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">16 / 23 · 协同推理</div><div class="r">CO-REASONING</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.4vh">
+      <div style="display:flex;flex-direction:column;gap:.5vh">
+        <div class="t-cat">Co-Reasoning = 行为推理的精细化展开。四阶段→拆分为"物理→认知→规划"三步，变成五阶段。</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em">Physics–Neural Co-Reasoning · 五阶段闭环</h2>
+        <p style="font-size:max(16px,.94vw);line-height:1.7;color:var(--text-secondary)">Physics Runtime 回答<span style="color:var(--accent);font-weight:500">"如果什么都不改变，世界将如何演化？"</span>Neural Runtime 回答<span style="color:var(--accent);font-weight:500">"这种演化对当前任务意味着什么？"</span>Behavior Runtime 综合两类预测，在物理约束下完成决策。</p>
+      </div>
+      <div class="timeline-h" style="flex:1;align-content:center">
+        <span class="tl-h-axis"></span>
+        <div class="tl-h-node"><span class="num">01</span><span class="dot"></span><span class="lbl">状态获取<br><small style="font-weight:400">USS读取</small></span></div>
+        <div class="tl-h-node"><span class="num">02</span><span class="dot"></span><span class="lbl">物理预测<br><small style="font-weight:400">确定性·可解释</small></span></div>
+        <div class="tl-h-node"><span class="num">03</span><span class="dot"></span><span class="lbl">认知推理<br><small style="font-weight:400">概率性·学习获取</small></span></div>
+        <div class="tl-h-node"><span class="num">04</span><span class="dot"></span><span class="lbl">行为规划<br><small style="font-weight:400">候选+筛选+评估</small></span></div>
+        <div class="tl-h-node"><span class="num">05</span><span class="dot"></span><span class="lbl">状态更新<br><small style="font-weight:400">写回USS</small></span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5vw;border-top:1px solid var(--border-subtle);padding-top:1.6vh">
+        <div style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(14px,.7vw)">双预测机制</span><br><span style="font-weight:500">物理预测</span>：确定性的——轨道演化、可达域、能耗，源于动力学方程，完全可解释。<span style="font-weight:500">认知预测</span>：概率性的——意图概率、风险分数、置信区间，源于学习和经验。Behavior Runtime 在两套预测共同作用下形成行为——不单独依赖任何一方。</div>
+        <div style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(14px,.7vw)">Physics-First 规划</span><br>ΔV 超过推进剂能力？→直接剔除。违反安全距离？→直接剔除。无法形成交会窗口？→不进入后续规划。大量不合理方案在规划早期即被物理模型排除——神经网络只需关注物理模型无法描述的不确定因素。</div>
+        <div style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(14px,.7vw)">三类一致性约束</span><br><span style="font-weight:500">物理一致性</span>——硬约束，违反即拒绝。<span style="font-weight:500">任务一致性</span>——技术可行但偏离目标的不采纳。<span style="font-weight:500">认知一致性</span>——Neural 判断异常机动风险时，不能继续输出接近行为。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S17 · Behavior Planning vs Trajectory Planning
+     对应演讲稿：十、行为规划与轨迹规划
+     ====================================================================== -->
+<section class="slide dark" data-animate="duo-mirror" data-layout="S08">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">17 / 23 · 规划层次</div><div class="r">PLANNING</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.4vh">
+      <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em;color:#fff">行为规划 (What) / 轨迹规划 (How)</h2>
+      <div class="duo-compare" style="flex:1">
+        <div class="duo-half" style="gap:2vh;justify-content:flex-start">
+          <div class="t-cat" style="color:rgba(255,255,255,.5)">Behavior Planning</div>
+          <h3 style="font-weight:300;font-size:max(20px,1.2vw);color:#fff">行为规划 · "做什么"</h3>
+          <div style="font-size:max(16px,.94vw);line-height:1.7;color:rgba(255,255,255,.65)">
+            <p style="margin-bottom:1vh">复杂航天任务通常不存在唯一正确答案。目标不可观测时——可等待、可调整轨道、可重新规划。行为规划需要生成<span style="color:var(--accent-bright)">多个候选方案</span>综合评估。</p>
+            <p style="margin-bottom:1vh"><span style="color:rgba(255,255,255,.5);font-family:var(--mono);font-size:max(13px,.7vw)">回答：</span>保持轨道/主动接近/等待窗口/避碰？</p>
+            <p><span style="color:rgba(255,255,255,.5);font-family:var(--mono);font-size:max(13px,.7vw)">输出：</span>Behavior Intent</p>
+          </div>
+        </div>
+        <span class="vrule" style="opacity:.3"></span>
+        <div class="duo-half" style="gap:2vh;justify-content:flex-start">
+          <div class="t-cat" style="color:var(--accent-bright)">Trajectory Planning</div>
+          <h3 style="font-weight:300;font-size:max(20px,1.2vw);color:#fff">轨迹规划 · "怎么做"</h3>
+          <div style="font-size:max(16px,.94vw);line-height:1.7;color:rgba(255,255,255,.65)">
+            <p style="margin-bottom:1vh">在行为已确定后，将 Behavior Intent 转化为具体满足动力学约束的轨迹和<span style="color:var(--accent-bright)">控制指令</span>。</p>
+            <p style="margin-bottom:1vh"><span style="color:rgba(255,255,255,.5);font-family:var(--mono);font-size:max(13px,.7vw)">回答：</span>最优接近轨迹的参数？</p>
+            <p><span style="color:rgba(255,255,255,.5);font-family:var(--mono);font-size:max(13px,.7vw)">输出：</span>ΔV 序列 · 推进剂预算 · 控制指令</p>
+          </div>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,.15);padding-top:1.6vh">
+        <p style="font-size:max(16px,.94vw);line-height:1.6;color:rgba(255,255,255,.5)">分层思想与人类驾驶一致——先决定变道（行为），再打方向盘（控制）。PNIE 在行为规划层加入 <span style="color:var(--accent-bright);font-weight:500">Physics-First 筛选</span>：候选行为在生成阶段就由物理模型约束搜索空间。行为生成与能力执行分离——Behavior Runtime 不关心接近是用 EKF（扩展卡尔曼滤波）还是粒子滤波实现的。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S18 · Behavior Intent + 模型分析
+     对应演讲稿：十、行为建模与模型选型
+     ====================================================================== -->
+<section class="slide light" data-animate="grid-reveal" data-layout="S19">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">18 / 23 · 行为建模 + 模型选型</div><div class="r">MODELING</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.2vh">
+      <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.6vw,8.2vh);line-height:1.05;letter-spacing:-.02em">Behavior Intent + 模型适用性</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5vw;flex:1">
+        <div style="display:flex;flex-direction:column;gap:1.4vh">
+          <div class="card-fill" style="padding:1.6vh 1.2vw;border-top:2px solid var(--accent)">
+            <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent)">三种常见表示均不适合</div>
+            <p style="font-size:max(16px,.88vw);line-height:1.5;color:var(--text-secondary);margin-top:.6vh"><span style="font-weight:500">控制量</span>——属于 GNC 职责，不应是 Behavior Planner 的输出。<span style="font-weight:500">轨迹</span>——由动力学决定，不需要神经网络重新学习。<span style="font-weight:500">行为标签</span>——离散标签无法描述连续参数（距离/时间窗口/推进剂预算）。</p>
+          </div>
+          <div class="card-accent" style="padding:1.6vh 1.2vw">
+            <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:rgba(255,255,255,.7)">Behavior Intent · 统一参数化表示</div>
+            <p style="font-size:max(16px,.88vw);line-height:1.5;color:rgba(255,255,255,.85);margin-top:.6vh">六个参数：<span style="font-weight:500">Type</span>（行为类型）+ <span style="font-weight:500">Goal</span>（目标/距离等连续参数）+ <span style="font-weight:500">Constraint</span>（安全距离/速度上限等硬约束）+ <span style="font-weight:500">TimeWindow</span>（最早/最晚开始时间）+ <span style="font-weight:500">RiskPreference</span>（conservative/balanced/aggressive）+ <span style="font-weight:500">Budget</span>（ΔV/推进剂配额）。描述行为目标，非实现路径——彻底解耦行为层与控制层。</p>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.8vh">
+          <div class="card-fill" style="padding:1.4vh 1.1vw;font-size:max(15px,.82vw);line-height:1.4;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(13px,.68vw)">✓ Transformer</span>——第一代 Generator。上下文建模强、成熟高效。局限：不适合多模态不确定性。</div>
+          <div class="card-fill" style="padding:1.4vh 1.1vw;font-size:max(15px,.82vw);line-height:1.4;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(13px,.68vw)">≈ Diffusion</span>——一对多生成。局限：多步去噪（10-100步），实时性不足。<span style="color:var(--accent)">离线候选+在线微调。</span></div>
+          <div class="card-fill" style="padding:1.4vh 1.1vw;font-size:max(15px,.82vw);line-height:1.4;color:var(--text-secondary)"><span style="font-weight:500;font-family:var(--mono);font-size:max(13px,.68vw)">✗ RL</span>——学长期收益但奖励函数设计困难（安全/燃料/时间难统一量化），策略黑箱。<span style="color:var(--text-placeholder)">辅助优化，不作主决策器。</span></div>
+          <div class="card-fill" style="padding:1.4vh 1.1vw;font-size:max(15px,.82vw);line-height:1.4;color:var(--text-secondary)"><span style="font-weight:500;font-family:var(--mono);font-size:max(13px,.68vw)">✗ World Model(Dreamer)</span>——动力学全由NN学，忽略已知规律。<span style="color:var(--text-placeholder)">需要 Physics-guided 改造。</span></div>
+          <div style="border-top:2px solid var(--accent);padding-top:1.2vh;font-size:max(15px,.84vw);line-height:1.5;color:var(--accent);font-weight:500">长期目标：$s_{t+1} = f_{physics} + f_{neural}(c_t)$ · 物理为基+残差学习</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S19 · Physics-guided World Model
+     对应演讲稿：十、Physics-guided World Model
+     ====================================================================== -->
+<section class="slide dark" data-animate="manifesto" data-layout="S12">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">19 / 23 · 长期路线</div><div class="r">PGWM</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:3vh">
+      <div style="display:flex;flex-direction:column;gap:1.2vh">
+        <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em">BEYOND DREAMER · BEYOND MUZERO</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-size:min(4vw,7vh);line-height:1.05;letter-spacing:-.02em;font-weight:200;color:#fff">$s_{t+1} = f_{physics}(s_t, a_t) + f_{neural}(s_t, a_t, c_t)$</h2>
+        <div style="font-size:max(16px,.94vw);line-height:1.7;color:rgba(255,255,255,.7);font-weight:300;max-width:54ch;margin-top:.6vh">传统 World Model 的状态转移完全由神经网络学习——对航天任务而言大量动力学已有解析模型。Physics-guided World Model 将转移拆分为两部分：<span style="color:#fff;font-weight:500">物理模型负责确定性演化</span>（$f_{physics}$），<span style="color:var(--accent-bright);font-weight:500">神经网络仅补偿模型残差和未知语义</span>（$f_{neural}$）。$c_t$ 为 Neural Runtime 提供的环境认知上下文。</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.2vw">
+        <div class="card-fill" style="padding:1.6vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.4vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">可解释</div>
+          <div style="font-size:max(14px,.76vw);color:rgba(255,255,255,.5)">物理部分可追溯至动力学方程</div>
+        </div>
+        <div class="card-fill" style="padding:1.6vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.4vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">低数据需求</div>
+          <div style="font-size:max(14px,.76vw);color:rgba(255,255,255,.5)">仅学残差——比纯黑盒WM降低数个量级</div>
+        </div>
+        <div class="card-fill" style="padding:1.6vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.4vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">安全保证</div>
+          <div style="font-size:max(14px,.76vw);color:rgba(255,255,255,.5)">Physics RT 硬约束——不可产生非法预测</div>
+        </div>
+        <div class="card-fill" style="padding:1.6vh 1vw;background:rgba(255,255,255,.06);text-align:center;display:flex;flex-direction:column;gap:.4vh">
+          <div style="font-family:var(--mono);font-size:max(14px,.7vw);color:var(--accent-bright)">物理外推</div>
+          <div style="font-size:max(14px,.76vw);color:rgba(255,255,255,.5)">动力学提供泛化边界——不需训练覆盖</div>
+        </div>
+      </div>
+      <div class="ink-banner-full" style="margin:auto -5vw -4.4vh;padding:2.4vh 5vw;background:var(--accent);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:max(16px,.94vw);color:#fff;font-weight:400">不是"让神经网络学物理"，而是"利用物理，增强学习"——第一代：Transformer + Physics RT 分层实现</div>
+        <div style="font-size:max(14px,.78vw);color:rgba(255,255,255,.78)">可扩展原则的最终目标</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S20 · 场景演练 自主交会全流程
+     对应演讲稿：十一、场景演练
+     ====================================================================== -->
+<section class="slide light" data-animate="timeline-walk" data-layout="S11">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">20 / 23 · 场景演练</div><div class="r">WALKTHROUGH</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.4vh">
+      <div style="display:flex;flex-direction:column;gap:.4vh">
+        <div class="t-cat">A: 500km SSO · B: 同轨前方 50km · 推进剂 2kg · 最小安全距离 100m · 接近速度 ≤ 2m/s · 通信窗口 T+8min 起 10min</div>
+        <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.2vw,9.2vh);line-height:1.05;letter-spacing:-.02em">自主交会补给 · 3 小时全流程</h2>
+      </div>
+      <div class="timeline-h" style="flex:1;align-content:center">
+        <span class="tl-h-axis"></span>
+        <div class="tl-h-node"><span class="num">01</span><span class="dot"><small style="font-weight:400">T=1800s</small></span><span class="lbl">轨道转移<br><small style="font-weight:400">Hohmann ΔV 12m/s</small></span></div>
+        <div class="tl-h-node"><span class="num">02</span><span class="dot"><small style="font-weight:400">T=3600s</small></span><span class="lbl">自主接近<br><small style="font-weight:400">50km→500m</small></span></div>
+        <div class="tl-h-node"><span class="num">03</span><span class="dot"><small style="font-weight:400">★关键转折</small></span><span class="lbl">异常检测<br><small style="font-weight:400">B 漂移 0.05m/s</small></span></div>
+        <div class="tl-h-node"><span class="num">04</span><span class="dot"><small style="font-weight:400"></small></span><span class="lbl">候选评估<br><small style="font-weight:400">3 Intent 评分</small></span></div>
+        <div class="tl-h-node"><span class="num">05</span><span class="dot"><small style="font-weight:400">T=5400s</small></span><span class="lbl">继续接近<br><small style="font-weight:400">漂移消失</small></span></div>
+        <div class="tl-h-node"><span class="num">06</span><span class="dot"><small style="font-weight:400"></small></span><span class="lbl">对接补给<br><small style="font-weight:400">执行</small></span></div>
+        <div class="tl-h-node"><span class="num">07</span><span class="dot"><small style="font-weight:400">T=10800s</small></span><span class="lbl">经验写入<br><small style="font-weight:400">Memory RT</small></span></div>
+      </div>
+      <div style="border-top:1px solid var(--border-subtle);padding-top:1.8vh;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5vw">
+        <div style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(14px,.7vw)">T=0→1800s 初始阶段</span><br>USS 初始化——Physics：Δr=50km — Cognitive：Intent(B)="station-keeping" 85% — Mission：rendezvous_and_refuel — Resource：propellant=2kg, power=95%。Physics RT 可达域分析：2kg → ΔV=18m/s。Hohmann 转移 ΔV=12m/s，四项验证通过。GNC 执行机动。</div>
+        <div style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(14px,.7vw)">T=3600s · 系统转折点</span><br>B 出现微小漂移 Δv≈0.05m/s。Neural RT 意图置信度 85%→60%，"unknown_maneuver" 升至 30%。<span style="color:var(--accent);font-weight:500">认知一致性检查触发——当前行为"自主接近"需要重新评估。</span>Behavior Planner 生成三个候选 Intent：Hold（分6.0）、Approach（分6.3）、Retreat（分6.3）→选择 Approach + 高度监测。</div>
+        <div style="font-size:max(16px,.94vw);line-height:1.6;color:var(--text-secondary)"><span style="color:var(--accent);font-weight:500;font-family:var(--mono);font-size:max(14px,.7vw)">T=5400→10800s · 收尾</span><br>B 漂移消失——原为正常热控推力器脉冲，周期约 1h。置信度回升至 90%。任务完成。Memory RT 写入：成功案例×1，B 档案更新——周期性推力器脉冲行为确认。下次遇到类似轨道特征的卫星，系统<span style="color:var(--accent);font-weight:500">不用重新评估三十多分钟，直接检索识别</span>。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S21 · 核心特征总结
+     对应演讲稿：十一、关键观察
+     ====================================================================== -->
+<section class="slide dark" data-animate="grid-reveal" data-layout="S19">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">21 / 23 · 关键特征</div><div class="r">FEATURES</div></div>
+    <div style="flex:1;padding:0;display:flex;flex-direction:column;gap:2.2vh">
+      <div class="t-meta" style="color:var(--accent-bright);letter-spacing:.22em">场景演练验证的 PNIE 五大核心特征</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1.2vw;flex:1">
+        <div class="card-accent" style="padding:2vh 1.2vw;display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.4vw,4vh);color:#fff">01</div>
+          <div style="font-weight:500;font-size:max(18px,1vw);color:#fff">持续推理</div>
+          <div style="font-size:max(16px,.84vw);line-height:1.4;color:rgba(255,255,255,.8)">三小时内从未停止。每个决策周期都在重新评估状态。</div>
+        </div>
+        <div class="card-fill" style="padding:2vh 1.2vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.4vw,4vh);color:var(--accent-bright)">02</div>
+          <div style="font-weight:400;font-size:max(18px,1vw);color:#fff">Physics First</div>
+          <div style="font-size:max(16px,.84vw);line-height:1.4;color:rgba(255,255,255,.65)">B只要有一点轨道变化，Physics RT 立即更新物理事实。物理模型是最先响应的组件。</div>
+        </div>
+        <div class="card-fill" style="padding:2vh 1.2vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.4vw,4vh);color:var(--accent-bright)">03</div>
+          <div style="font-weight:400;font-size:max(18px,1vw);color:#fff">认知驱动</div>
+          <div style="font-size:max(16px,.84vw);line-height:1.4;color:rgba(255,255,255,.65)">Neural RT 检测异常 → 触发重新评估 → 3个候选综合评分 → 非盲目继续接近。</div>
+        </div>
+        <div class="card-fill" style="padding:2vh 1.2vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.4vw,4vh);color:var(--accent-bright)">04</div>
+          <div style="font-weight:400;font-size:max(18px,1vw);color:#fff">松耦合</div>
+          <div style="font-size:max(16px,.84vw);line-height:1.4;color:rgba(255,255,255,.65)">Neural 更新模型、Memory 更新档案——都不影响 Physics 的轨道传播。</div>
+        </div>
+        <div class="card-fill" style="padding:2vh 1.2vw;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.8vh">
+          <div style="font-family:var(--sans);font-weight:200;font-size:min(2.4vw,4vh);color:var(--accent-bright)">05</div>
+          <div style="font-weight:400;font-size:max(18px,1vw);color:#fff">经验积累</div>
+          <div style="font-size:max(16px,.84vw);line-height:1.4;color:rgba(255,255,255,.65)">任务结束后 B 的新特征被永久记录——下次可快速识别，不需重新评估。</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,.15);padding-top:1.4vh;font-size:max(16px,.94vw);line-height:1.6;color:rgba(255,255,255,.6)">对比：传统 AI Agent 是 Observation→Reasoning→Action 三阶段。<span style="color:var(--accent-bright);font-weight:500">PNIE 是 O→Physical→Cognitive→Planning→Execution→State Update——多了一个独立的物理推理层。</span>LLM Agent 的物理约束靠 prompt 实现——PNIE 的物理约束靠 Physics Runtime 硬保证。PNIE 是面向<span style="color:var(--accent-bright);font-weight:500">物理世界</span>的 Agent，不是面向文本世界的 Agent。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S22 · 核心论断
+     对应演讲稿：总结
+     ====================================================================== -->
+<section class="slide dark" data-animate="statement-rise" data-layout="S09">
+  <div class="canvas-card">
+    <div class="chrome-min"><div class="l">22 / 23 · 核心论断</div><div class="r">THESIS</div></div>
+    <div style="flex:1;padding:0;display:flex;align-items:center;justify-content:center;position:relative">
+      <span class="dot-mat" style="position:absolute;right:3vw;bottom:4vh;width:18vw;height:18vw"></span>
+      <span class="cross-mat" style="position:absolute;left:2vw;top:3vh;width:16vw;height:16vw"></span>
+      <div style="text-align:center;z-index:1">
+        <h1 class="h-statement" style="font-size:min(4.8vw,8.5vh)">未来真正的空间具身智能<br>不应仅依赖越来越大的神经网络<br>也不能完全依赖传统物理模型<br><br><span style="color:var(--accent-bright);font-style:italic;font-weight:300;font-size:min(5.2vw,9.2vh)">而应建立在二者<br>深度融合之上</span></h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     S23 · Closing: 三大贡献 + 展望
+     对应演讲稿：十二、总结与展望
+     ====================================================================== -->
+<section class="slide split" data-animate="split-statement" data-layout="S10">
+  <div class="canvas-card">
+    <div class="split-half">
+      <div class="half b-accent" style="padding:5.6vh 3.6vw 4.4vh;justify-content:space-between;position:relative;overflow:hidden">
+        <canvas class="ascii-bg" aria-hidden="true"></canvas>
+        <div class="chrome-min" style="margin-bottom:0;position:relative;z-index:1"><div class="l">23 / 23</div><div class="r">CLOSING</div></div>
+        <div data-anim="manifesto" style="display:flex;flex-direction:column;gap:2vh;position:relative;z-index:1">
+          <div class="t-meta" style="color:rgba(255,255,255,.78);letter-spacing:.22em;margin-bottom:1.6vh">从单星任务迈向空间智能生态</div>
+          <h2 style="font-family:var(--sans),var(--sans-zh);font-size:min(5.8vw,10.2vh);line-height:.94;letter-spacing:-.025em;font-weight:200;color:#fff">从自动控制<br>迈向<span style="font-style:italic;font-weight:300">自主智能</span></h2>
+          <div style="font-size:max(14px,.94vw);line-height:1.6;color:rgba(255,255,255,.82);font-weight:400;max-width:30ch;margin-top:1.2vh">PNIE 不是一种算法，而是一种新的空间自主智能体系结构。近期（1-2年）：数字孪生原型验证。中期（3-5年）：Physics-guided World Model。长期（5-10年）：多航天器分布式智能网络 —— 从一颗卫星的自动驾驶，演进为整个空间基础设施的自主运行。</div>
+        </div>
+        <div data-anim="signature" style="display:flex;justify-content:space-between;align-items:end;border-top:1px solid rgba(255,255,255,.22);padding-top:2vh;position:relative;z-index:1">
+          <div class="t-meta" style="color:rgba(255,255,255,.62)">PSIOS · 2026.07</div>
+          <div class="t-meta" style="color:rgba(255,255,255,.62)">感谢聆听</div>
+        </div>
+      </div>
+      <div class="half" style="padding:5.6vh 3.6vw 4.4vh;justify-content:space-between">
+        <div class="chrome-min"><div class="l">CORE CONTRIBUTIONS</div><div class="r">03</div></div>
+        <div data-anim="rules" style="display:flex;flex-direction:column;gap:0">
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:2vw;align-items:start;padding:2.2vh 0;border-top:1px solid var(--border-subtle)">
+            <div style="font-family:var(--sans);font-weight:200;font-size:min(3.6vw,6vh);line-height:.9">01</div>
+            <div>
+              <h3 style="font-weight:400;font-size:max(18px,1.4vw);line-height:1.2;margin-bottom:.6vh">范式 · Physics-Native Intelligence</h3>
+              <p style="font-size:max(16px,.86vw);line-height:1.5;color:var(--text-secondary)">物理模型不是训练约束，而是运行时持续参与推理的原生组件——Evolution + Cognition + Decision 三元协同</p>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:2vw;align-items:start;padding:2.2vh 0;border-top:1px solid var(--border-subtle)">
+            <div style="font-family:var(--sans);font-weight:200;font-size:min(3.6vw,6vh);line-height:.9">02</div>
+            <div>
+              <h3 style="font-weight:400;font-size:max(18px,1.4vw);line-height:1.2;margin-bottom:.6vh">架构 · PNIE Runtime Engine</h3>
+              <p style="font-size:max(16px,.86vw);line-height:1.5;color:var(--text-secondary)">四类 Runtime 围绕 USS 持续协同运行——状态驱动，耦合 O(N²)→O(N)——物理模型与神经网络平等运行，非主从关系</p>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:2vw;align-items:start;padding:2.2vh 0;border-top:1px solid var(--border-subtle);border-bottom:2px solid var(--accent)">
+            <div style="font-family:var(--sans);font-weight:200;font-size:min(3.6vw,6vh);line-height:.9;color:var(--accent)">03</div>
+            <div>
+              <h3 style="font-weight:400;font-size:max(18px,1.4vw);line-height:1.2;color:var(--accent);margin-bottom:.6vh">方法 · Behavior Intent 规划</h3>
+              <p style="font-size:max(16px,.86vw);line-height:1.5;color:var(--text-secondary)">候选生成→Physics-First 约束筛选→多维综合评估→最优确认。长期演进：Physics-guided World Model</p>
+            </div>
+          </div>
+        </div>
+        <div data-anim="foot" class="t-meta" style="color:var(--text-helper);text-align:right">→ 完 · END</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+
+<div id="nav"></div>
+
+<script>
+/* =============== WebGL 网格背景 (瑞士风专用) ===============
+   极简移动网格 + 微弱点阵叠加,营造"工业感、精准感"
+   - 主网格: 缓慢漂移的细线网格
+   - 次级: 鼠标附近的极细点阵微扰
+   - 颜色: 跟随主题(浅底深线 / 深底亮线),配合 mix-blend-mode
+*/
+const VS = `attribute vec2 position;void main(){gl_Position=vec4(position,0.0,1.0);}`;
+
+const FS = `precision highp float;
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform vec2 u_mouse;
+uniform float u_dark; // 0 = light, 1 = dark
+uniform vec3 u_accent;
+
+float gridLine(vec2 uv, float spacing, float thickness){
+  vec2 g = abs(fract(uv / spacing) - 0.5);
+  float d = min(g.x, g.y);
+  return 1.0 - smoothstep(thickness - 0.005, thickness + 0.005, d);
+}
+
+float dot2(vec2 p){ return dot(p,p); }
+
+void main(){
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+  float aspect = u_resolution.x / u_resolution.y;
+  vec2 p = uv;
+  p.x *= aspect;
+
+  // 缓慢平移
+  vec2 drift = vec2(u_time * 0.008, u_time * 0.005);
+  vec2 gp = p + drift;
+
+  // 主细网格 (大间距)
+  float mainGrid = gridLine(gp, 0.12, 0.012);
+  // 次级网格 (更细更密)
+  float subGrid = gridLine(gp, 0.024, 0.04) * 0.4;
+
+  // 鼠标附近的强化
+  vec2 m = u_mouse;
+  m.x *= aspect;
+  float md = length(p - m);
+  float mInfluence = exp(-md * 4.0) * 0.5;
+
+  float gridStrength = (mainGrid + subGrid * 0.5) * (0.45 + mInfluence);
+
+  // 点阵 (作为基底)
+  vec2 dotGrid = fract(gp * 50.0) - 0.5;
+  float dotMask = 1.0 - smoothstep(0.05, 0.14, length(dotGrid));
+  // 用低频噪声调制点阵密度
+  float wave = sin(gp.x * 1.4 + u_time * 0.15) * cos(gp.y * 1.6 - u_time * 0.12);
+  dotMask *= smoothstep(-0.3, 0.6, wave) * 0.6;
+
+  // 颜色: 浅底用深线条,深底用浅线条;高亮处带 accent 痕迹
+  vec3 lineColor = mix(vec3(0.08), vec3(0.92), u_dark);
+  vec3 bgColor = mix(vec3(0.97, 0.97, 0.96), vec3(0.06, 0.06, 0.07), u_dark);
+
+  // accent 暗示 (鼠标附近偷渡一点 accent 色)
+  vec3 col = bgColor;
+  col = mix(col, lineColor, gridStrength * 0.55);
+  col = mix(col, lineColor, dotMask * 0.35);
+  col = mix(col, u_accent, mInfluence * 0.18);
+
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+const mouse={x:0.5,y:0.5};
+addEventListener('mousemove',e=>{mouse.x=e.clientX/innerWidth;mouse.y=1-e.clientY/innerHeight});
+
+function bootGL(canvasId, fsSrc){
+  const canvas=document.getElementById(canvasId);
+  const gl=canvas.getContext('webgl',{alpha:true,antialias:true,premultipliedAlpha:false});
+  if(!gl) return ()=>false;
+  const mk=(t,s)=>{const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);return sh};
+  const prog=gl.createProgram();
+  gl.attachShader(prog,mk(gl.VERTEX_SHADER,VS));
+  gl.attachShader(prog,mk(gl.FRAGMENT_SHADER,fsSrc));
+  gl.linkProgram(prog);gl.useProgram(prog);
+  const buf=gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
+  const pos=gl.getAttribLocation(prog,'position');
+  gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);
+  const lRes=gl.getUniformLocation(prog,'u_resolution');
+  const lT=gl.getUniformLocation(prog,'u_time');
+  const lM=gl.getUniformLocation(prog,'u_mouse');
+  const lD=gl.getUniformLocation(prog,'u_dark');
+  const lA=gl.getUniformLocation(prog,'u_accent');
+  const resize=()=>{
+    const d=Math.min(window.devicePixelRatio||1,2);
+    canvas.width=innerWidth*d;canvas.height=innerHeight*d;
+    gl.viewport(0,0,canvas.width,canvas.height);
+  };
+  addEventListener('resize',resize);resize();
+
+  // 读取 CSS 变量,把 accent 颜色塞进 shader
+  function readAccent(){
+    const cs = getComputedStyle(document.documentElement);
+    const hex = cs.getPropertyValue('--accent').trim() || '#002FA7';
+    const m = hex.match(/^#([0-9a-f]{6})$/i);
+    if(!m) return [0, 0.18, 0.65];
+    const n = parseInt(m[1], 16);
+    return [((n>>16)&255)/255, ((n>>8)&255)/255, (n&255)/255];
+  }
+  let accent = readAccent();
+  let dark = 0;
+
+  return (tSec, isDark)=>{
+    if(isDark !== undefined) dark = isDark ? 1 : 0;
+    accent = readAccent();
+    gl.uniform2f(lRes,canvas.width,canvas.height);
+    gl.uniform1f(lT,tSec);
+    gl.uniform2f(lM,mouse.x,mouse.y);
+    gl.uniform1f(lD,dark);
+    gl.uniform3f(lA,accent[0],accent[1],accent[2]);
+    gl.drawArrays(gl.TRIANGLES,0,6);
+    return true;
+  };
+}
+// canvas-mode / low-power: skip WebGL draw loop (no active RAF loop)
+let darkMode=false;
+let gridCtrl=null, gridRAF=0, gridT0=Date.now();
+function startGrid(){
+  if(document.body.classList.contains('canvas-mode') || window.__lowPowerMode || gridRAF) return;
+  if(!gridCtrl) gridCtrl = bootGL('bg-grid',FS);
+  if(!gridCtrl) return;
+  gridT0=Date.now();
+  function loop(){
+    if(window.__lowPowerMode){gridRAF=0;return;}
+    const t=(Date.now()-gridT0)/1000;
+    gridCtrl(t, darkMode);
+    gridRAF=requestAnimationFrame(loop);
+  }
+  gridRAF=requestAnimationFrame(loop);
+}
+function stopGrid(){
+  if(gridRAF) cancelAnimationFrame(gridRAF);
+  gridRAF=0;
+}
+if(document.body.classList.contains('canvas-mode')){
+  const c=document.getElementById('bg-grid');
+  if(c) c.remove();
+}else{
+  startGrid();
+}
+addEventListener('swiss-low-power-change', e=>{e.detail.on ? stopGrid() : startGrid();});
+
+// =============== 导航 ===============
+const deck=document.getElementById('deck');
+const slides=deck.querySelectorAll('.slide');
+const nav=document.getElementById('nav');
+let idx=0,total=slides.length,lock=false;
+
+deck.style.width=(total*100)+'vw';
+
+slides.forEach((s,i)=>{
+  const b=document.createElement('button');
+  b.className='dot';b.dataset.i=i;b.setAttribute('aria-label','Page '+(i+1));
+  b.onclick=()=>go(i);
+  nav.appendChild(b);
+});
+
+function go(n){
+  if(lock)return;
+  idx=Math.max(0,Math.min(total-1,n));
+  window.__currentSlideIndex = idx;
+  deck.style.transform=`translateX(${-idx*100}vw)`;
+  nav.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  const el=slides[idx];
+  const isDark = el.classList.contains('dark') || el.classList.contains('accent');
+  document.body.classList.toggle('dark-bg', isDark);
+  darkMode = isDark;
+  if(window.__playSlide) setTimeout(()=>window.__playSlide(idx), 450);
+  lock=true;setTimeout(()=>lock=false,700);
+}
+
+/* =============== ESC 索引视图 =============== */
+let overviewOn=false;
+const ov=document.createElement('div');
+ov.id='overview';
+ov.style.cssText='position:fixed;inset:0;z-index:100;background:rgba(250,250,248,.96);backdrop-filter:blur(12px);display:none;overflow-y:auto;padding:4vh 4vw';
+document.body.appendChild(ov);
+
+function buildOverview(){
+  ov.innerHTML='';
+  const grid=document.createElement('div');
+  grid.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:2vh 1.6vw;max-width:90vw;margin:0 auto';
+  slides.forEach((s,i)=>{
+    const card=document.createElement('div');
+    card.style.cssText='cursor:pointer;overflow:hidden;border:2px solid '+(i===idx?'var(--accent)':'rgba(0,0,0,.12)')+';transition:border-color .2s';
+    card.onmouseenter=()=>card.style.borderColor='rgba(0,0,0,.4)';
+    card.onmouseleave=()=>card.style.borderColor=i===idx?'var(--accent)':'rgba(0,0,0,.12)';
+    const wrap=document.createElement('div');
+    const isDark = s.classList.contains('dark') || s.classList.contains('accent');
+    wrap.style.cssText='width:100%;aspect-ratio:16/9;overflow:hidden;position:relative;pointer-events:none;background:'+(isDark?'var(--ink)':'var(--paper)');
+    const clone=s.cloneNode(true);
+    clone.style.cssText='width:100vw;height:100vh;transform:scale('+(1/4.5)+');transform-origin:top left;position:absolute;top:0;left:0;pointer-events:none';
+    wrap.appendChild(clone);
+    const label=document.createElement('div');
+    /* ESC 索引卡 label */
+  label.style.cssText='padding:6px 10px;font-family:var(--mono);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);opacity:.7';
+    label.textContent=(i+1)+' / '+total;
+    card.appendChild(wrap);
+    card.appendChild(label);
+    card.onclick=()=>{toggleOverview();go(i)};
+    grid.appendChild(card);
+  });
+  ov.appendChild(grid);
+}
+
+function toggleOverview(){
+  overviewOn=!overviewOn;
+  if(overviewOn){buildOverview();ov.style.display='block';}
+  else{ov.style.display='none';}
+}
+
+addEventListener('keydown',e=>{
+  if(e.key==='Escape'){e.preventDefault();toggleOverview();return;}
+  if(e.key && e.key.toLowerCase()==='b' && !e.metaKey && !e.ctrlKey && !e.altKey){
+    e.preventDefault();
+    window.__setLowPowerMode(!window.__lowPowerMode);
+    return;
+  }
+  if(overviewOn)return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '||e.key==='ArrowDown'){
+    if(window.__pipeAdvance && window.__pipeAdvance()) return;
+    go(idx+1);
+    return;
+  }
+  if(e.key==='ArrowLeft'||e.key==='PageUp'||e.key==='ArrowUp')go(idx-1);
+  if(e.key==='Home')go(0);
+  if(e.key==='End')go(total-1);
+});
+
+let wheelTO=null,wheelAcc=0;
+addEventListener('wheel',e=>{
+  wheelAcc+=e.deltaY+e.deltaX;
+  if(Math.abs(wheelAcc)>50){
+    if(wheelAcc>0 && window.__pipeAdvance && window.__pipeAdvance()){
+      wheelAcc=0;
+    }else{
+      go(idx+(wheelAcc>0?1:-1));wheelAcc=0;
+    }
+  }
+  clearTimeout(wheelTO);wheelTO=setTimeout(()=>wheelAcc=0,150);
+},{passive:true});
+
+let tx=0,ty=0;
+addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{
+  const dx=(e.changedTouches[0].clientX-tx);
+  const dy=(e.changedTouches[0].clientY-ty);
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)){
+    if(dx<0 && window.__pipeAdvance && window.__pipeAdvance()) return;
+    go(idx+(dx<0?1:-1));
+  }
+},{passive:true});
+
+const initialSlideParam = new URLSearchParams(location.search).get('slide');
+const initialSlide = initialSlideParam ? Number(initialSlideParam) - 1 : 0;
+go(Number.isFinite(initialSlide) ? initialSlide : 0);
+</script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>lucide.createIcons();</script>
+
+<!-- Motion One 动效引擎 (与原模板一致) -->
+<script type="module">
+let motion;
+try {
+  motion = await import('./assets/motion.min.js');
+} catch(e1) {
+  try {
+    motion = await import('https://cdn.jsdelivr.net/npm/motion@11.11.17/+esm');
+  } catch(e2) {
+    console.warn('[motion] local + CDN both failed, disabling animations', e1, e2);
+    document.querySelectorAll('[data-anim]').forEach(el=>{el.style.opacity='1';el.style.transform='none'});
+    document.querySelectorAll('[data-animate="pipeline"] [data-anim]').forEach(el=>el.style.opacity='1');
+  }
+}
+
+if(motion){
+  const { animate } = motion;
+  document.body.classList.add('motion-ready');
+
+  /* ============================================================
+     IBM Carbon Motion · 每个 recipe 服务一种表达
+     不是一刀切的 stagger,而是把动效绑在内容语义上
+     ============================================================ */
+  const EASE_PROD       = [.2, 0, .38, .9];
+  const EASE_ENTRY_EXP  = [0, 0, .3, 1];
+
+  const slides = [...document.querySelectorAll('.slide')];
+  let lastIdx = -1;
+
+  function resetAnims(slide){
+    slide.querySelectorAll('[data-anim]').forEach(el=>{
+      el.style.opacity='';
+      el.style.transform='';
+    });
+    /* 同时复位需要被 recipe 接管的元素 */
+    slide.querySelectorAll('.row-fill,.tl-node,.stack-block,.bar-tower,.sub-card,.col,.vrule,.kpi-cell')
+      .forEach(el=>{el.style.cssText = el.dataset._origCss || el.style.cssText;});
+  }
+
+  /* ---------- 通用工具 ---------- */
+  const fade = (el, opts={})=>animate(el,
+    {opacity:[0,1], y:[opts.y ?? 12, 0]},
+    {duration:opts.duration ?? .6, delay:opts.delay ?? 0,
+     easing:opts.easing ?? EASE_ENTRY_EXP});
+
+  /* ---------- recipe: hero · 封面索引 ----------
+     大编号一个个亮起 → 索引行最后落定 */
+  function rHero(slide, all){
+    const numRows = [...slide.querySelectorAll('.cover-row')];
+    const rest = all.filter(el=>!numRows.length || el !== numRows[0]);
+    /* 先入: chrome 240ms */
+    const chrome = slide.querySelector('.chrome-min');
+    if(chrome) animate(chrome, {opacity:[0,1]}, {duration:.24, easing:EASE_PROD});
+    /* 大编号 01/02/03 像点名一样依次亮 */
+    numRows.forEach((row, i)=>{
+      animate(row, {opacity:[0,1], x:[-12,0]},
+        {duration:.5, delay:.15 + i*.18, easing:EASE_ENTRY_EXP});
+    });
+    /* 索引底栏最后慢慢落定 */
+    const idx = slide.querySelector('[data-anim="line"]');
+    if(idx) fade(idx, {delay:.15 + numRows.length*.18 + .1, duration:.5, y:6});
+  }
+
+  /* ---------- recipe: progression · 1× → 10× → 1000× ----------
+     节点依次入场,每个节点的数字单独"递进生长"营造跃迁 */
+  function rProgression(slide, all){
+    const head = slide.querySelector('[data-anim="line"]');
+    if(head) fade(head, {duration:.6, y:10});
+
+    const nodes = [...slide.querySelectorAll('.tl-node')];
+    nodes.forEach((node, i)=>{
+      const base = .35 + i*.32;          /* 节点之间间隔大,营造时间感 */
+      /* 整个节点先轻微浮入 */
+      animate(node, {opacity:[0,1], y:[14, 0]},
+        {duration:.55, delay:base, easing:EASE_ENTRY_EXP});
+      /* 再让 multi(数字)从 .85 scale 弹到 1,延迟 100ms */
+      const multi = node.querySelector('.multi');
+      if(multi) animate(multi, {scale:[.92, 1], opacity:[0,1]},
+        {duration:.5, delay:base + .12, easing:EASE_ENTRY_EXP});
+    });
+
+    /* 底部 KPI 4 列最后落定,内部 60ms stagger */
+    const kpis = [...slide.querySelectorAll('.kpi-cell')];
+    kpis.forEach((cell, i)=>{
+      animate(cell, {opacity:[0,1], y:[8, 0]},
+        {duration:.4, delay:1.4 + i*.07, easing:EASE_PROD});
+    });
+  }
+
+  /* ---------- recipe: statement · 大宣言 ----------
+     左半屏标题逐行落下,右半屏 leaked 信息晚 600ms 进 */
+  function rStatement(slide, all){
+    const halves = [...slide.querySelectorAll('.half')];
+    if(halves.length === 2){
+      animate(halves[0], {opacity:[0,1], y:[18,0]},
+        {duration:.7, delay:0, easing:EASE_ENTRY_EXP});
+      animate(halves[1], {opacity:[0,1], y:[18,0]},
+        {duration:.7, delay:.6, easing:EASE_ENTRY_EXP});
+    } else {
+      /* P9 Index Card — 三行像盖章一样依次落 */
+      const head = slide.querySelector('[data-anim="line"]');
+      if(head) fade(head, {duration:.5, y:6});
+      const blocks = all.filter(el=>el !== head);
+      blocks.forEach((el, i)=>{
+        animate(el, {opacity:[0,1], y:[20,0]},
+          {duration:.55, delay:.25 + i*.18, easing:EASE_ENTRY_EXP});
+      });
+    }
+  }
+
+  /* ---------- recipe: grid-reveal · 五个定义 ----------
+     卡片按 nb-corner 序号 01→02→03→04→05→Σ 依次揭示 */
+  function rGridReveal(slide, all){
+    const head = slide.querySelector('[data-anim="line"]');
+    if(head) fade(head, {duration:.6, y:10});
+    const cards = [...slide.querySelectorAll('.sub-card')];
+    cards.forEach((card, i)=>{
+      animate(card, {opacity:[0,1], y:[20,0], scale:[.96, 1]},
+        {duration:.5, delay:.3 + i*.09, easing:EASE_ENTRY_EXP});
+    });
+  }
+
+  /* ---------- recipe: stack-build · 三层架构 ----------
+     中间 thin 先入 → 上层 fat skills 从顶推下 → 下层 application 从底推上 */
+  function rStackBuild(slide, all){
+    const head = slide.querySelector('[data-anim="line"]');
+    if(head) fade(head, {duration:.6, y:10});
+
+    const blocks = [...slide.querySelectorAll('.stack-block')];
+    /* 先入: 中间薄层(LAYER 02) */
+    if(blocks[1]) animate(blocks[1], {opacity:[0,1], scaleY:[.85, 1]},
+      {duration:.55, delay:.3, easing:EASE_ENTRY_EXP});
+    /* 上推下: LAYER 01 fat skills 从顶部 push down */
+    if(blocks[0]) animate(blocks[0], {opacity:[0,1], y:[-22, 0]},
+      {duration:.6, delay:.6, easing:EASE_ENTRY_EXP});
+    /* 下推上: LAYER 03 application 从底部 push up */
+    if(blocks[2]) animate(blocks[2], {opacity:[0,1], y:[22, 0]},
+      {duration:.6, delay:.6, easing:EASE_ENTRY_EXP});
+
+    const foot = slide.querySelector('.t-meta');
+    if(foot) animate(foot, {opacity:[0,1]}, {duration:.3, delay:1.3, easing:EASE_PROD});
+  }
+
+  /* ---------- recipe: measure-up · YC KPI 塔 ----------
+     塔从底部 scaleY 0→1 生长 + 数字最后弹入 */
+  function rMeasureUp(slide, all){
+    const head = slide.querySelector('[data-anim="line"]');
+    if(head) fade(head, {duration:.6, y:10});
+
+    const towers = [...slide.querySelectorAll('.bar-tower')];
+    towers.forEach((tower, i)=>{
+      const block = tower.querySelector('.body-block');
+      if(block){
+        block.style.transformOrigin = 'bottom center';
+        animate(block, {opacity:[0,1], scaleY:[.05, 1]},
+          {duration:.7, delay:.35 + i*.12, easing:EASE_ENTRY_EXP});
+      }
+      /* cap (顶部图标) 等柱体长好后弹入 */
+      const cap = tower.querySelector('.cap');
+      if(cap) animate(cap, {opacity:[0,1], y:[-8, 0]},
+        {duration:.4, delay:.85 + i*.12, easing:EASE_PROD});
+    });
+  }
+
+  /* ---------- recipe: bar-grow · 90% 价值分布 ----------
+     标题先入 → hairline 从中点向两侧 stroke draw → bar 依次 width 0→target → 数值 fade in */
+  function rBarGrow(slide, all){
+    const head = slide.querySelector('[data-anim="line"]');
+    if(head) fade(head, {duration:.6, y:10});
+
+    /* 中部 hairline:从 100% width 0 拉到 100% (transformOrigin: center) */
+    const midRow = slide.querySelector('[data-anim="up"]');
+    if(midRow){
+      const midLabel = midRow.querySelector('.t-cat');
+      const midLine = midRow.querySelector('div[style*="height:1px"]');
+      if(midLabel) animate(midLabel, {opacity:[0,1], x:[-8,0]},
+        {duration:.4, delay:.4, easing:EASE_PROD});
+      if(midLine){
+        midLine.style.transformOrigin = 'center';
+        animate(midLine, {opacity:[0,1], scaleX:[0, 1]},
+          {duration:.55, delay:.5, easing:EASE_ENTRY_EXP});
+      }
+    }
+
+    /* bar 行依次 width 增长 */
+    const fills = [...slide.querySelectorAll('.row-fill')];
+    const labels = [...slide.querySelectorAll('.row-lbl')];
+    const values = [...slide.querySelectorAll('.row-val')];
+    fills.forEach((fill, i)=>{
+      const target = fill.style.width;
+      fill.style.width = '0%';
+      if(labels[i]) animate(labels[i], {opacity:[0,1], x:[-12,0]},
+        {duration:.4, delay:.85 + i*.14, easing:EASE_PROD});
+      animate(fill, {width:['0%', target]},
+        {duration:.65, delay:.95 + i*.14, easing:EASE_ENTRY_EXP});
+      if(values[i]) animate(values[i], {opacity:[0,1]},
+        {duration:.3, delay:1.5 + i*.14, easing:EASE_PROD});
+    });
+  }
+
+  /* ---------- recipe: duo-mirror · Latent vs Deterministic ----------
+     左 80ms 入,vrule 从中心 scaleY 0→1,右 240ms 入 */
+  function rDuoMirror(slide, all){
+    const head = slide.querySelector('[data-anim="line"]');
+    if(head) fade(head, {duration:.6, y:10});
+
+    const cols = [...slide.querySelectorAll('.duo-compare .col')];
+    const vrule = slide.querySelector('.duo-compare .vrule');
+    if(cols[0]) animate(cols[0], {opacity:[0,1], x:[-24, 0]},
+      {duration:.65, delay:.4, easing:EASE_ENTRY_EXP});
+    if(vrule){
+      vrule.style.transformOrigin = 'center';
+      animate(vrule, {opacity:[0,1], scaleY:[0, 1]},
+        {duration:.55, delay:.55, easing:EASE_ENTRY_EXP});
+    }
+    if(cols[1]) animate(cols[1], {opacity:[0,1], x:[24, 0]},
+      {duration:.65, delay:.7, easing:EASE_ENTRY_EXP});
+
+    const foot = slide.querySelector('.t-meta');
+    if(foot) animate(foot, {opacity:[0,1]}, {duration:.3, delay:1.3, easing:EASE_PROD});
+  }
+
+  /* ---------- recipe: split-statement · 收尾 ----------
+     左黑半屏的 once / forever 错位入场;右白半屏 takeaway list 后跟 */
+  function rSplitStatement(slide, all){
+    const halves = [...slide.querySelectorAll('.half')];
+    /* 左黑半屏 — once 先入,forever 间隔 600ms */
+    if(halves[0]){
+      animate(halves[0], {opacity:[0,1]}, {duration:.4, easing:EASE_PROD});
+      const kpis = halves[0].querySelectorAll('.kpi-thin');
+      kpis.forEach((k, i)=>{
+        animate(k, {opacity:[0,1], y:[24,0]},
+          {duration:.7, delay:.25 + i*.55, easing:EASE_ENTRY_EXP});
+      });
+    }
+    /* 右白半屏 — list 三条依次入,在左侧 once 出现后开始 */
+    if(halves[1]){
+      animate(halves[1], {opacity:[0,1]}, {duration:.4, delay:.3, easing:EASE_PROD});
+      const items = halves[1].querySelectorAll('.takeaway-list li');
+      items.forEach((li, i)=>{
+        animate(li, {opacity:[0,1], x:[20, 0]},
+          {duration:.45, delay:1.0 + i*.12, easing:EASE_ENTRY_EXP});
+      });
+    }
+  }
+
+  /* ---------- recipe: timeline-walk · P11 横向 evolution ----------
+     标题先入 → 横轴虚线 scaleX 拉开(伪) → 5 个 dot 按年代依次 scale 入 → label 跟随 */
+  function rTimelineWalk(slide, all){
+    const head = slide.querySelector('[data-anim="line"]');
+    if(head) fade(head, {duration:.55, y:10});
+
+    const tl = slide.querySelector('.timeline-h');
+    if(tl) animate(tl, {opacity:[0,1]}, {duration:.4, delay:.35, easing:EASE_PROD});
+
+    const nodes = [...slide.querySelectorAll('.timeline-h .th-node')];
+    nodes.forEach((node, i)=>{
+      const base = .55 + i*.18;
+      const dot = node.querySelector('.dot');
+      const label = node.querySelector('.label');
+      if(dot){
+        dot.style.transformOrigin='center';
+        animate(dot, {opacity:[0,1], scale:[.2, 1]},
+          {duration:.45, delay:base, easing:EASE_ENTRY_EXP});
+      }
+      if(label){
+        const fromY = node.classList.contains('up') ? 8 : -8;
+        /* 保留 CSS 的水平居中 translateX(-50%),避免动效覆盖后 label 与 dot 错位 */
+        animate(label, {opacity:[0,1], transform:[`translate(-50%, ${fromY}px)`, 'translate(-50%, 0px)']},
+          {duration:.5, delay:base + .12, easing:EASE_ENTRY_EXP});
+      }
+    });
+
+    const foot = slide.querySelector('.t-meta');
+    if(foot) animate(foot, {opacity:[0,1]}, {duration:.3, delay:1.7, easing:EASE_PROD});
+  }
+
+  /* ---------- recipe: manifesto · P12 Form & Found ----------
+     副标先入 → 大字两段错峰落 → 底部 ink 通栏条从下推上 */
+  function rManifesto(slide, all){
+    const head = slide.querySelector('[data-anim="line"]');
+    if(head){
+      const cat = head.querySelector('.t-cat');
+      const title = head.querySelector('div:nth-child(2)');
+      if(cat) animate(cat, {opacity:[0,1], x:[-10,0]},
+        {duration:.4, delay:.1, easing:EASE_PROD});
+      if(title) animate(title, {opacity:[0,1], y:[26, 0]},
+        {duration:.85, delay:.3, easing:EASE_ENTRY_EXP});
+    }
+    /* 底部 ink 条从下推入 */
+    const foot = [...slide.querySelectorAll('[data-anim="up"]')];
+    foot.forEach((el, i)=>{
+      animate(el, {opacity:[0,1], y:[40, 0]},
+        {duration:.75, delay:.85 + i*.12, easing:EASE_ENTRY_EXP});
+    });
+  }
+
+  /* ---------- recipe: three-forces · P13 ----------
+     左 ink hero 先入 → 右 3 张卡按 1/2/3 依次从右滑入 + 每张大数字单独弹入 */
+  function rThreeForces(slide, all){
+    const head = slide.querySelector('[data-anim="line"]');
+    if(head) fade(head, {duration:.5, y:8});
+
+    const grid = slide.querySelector('[data-anim="up"]');
+    if(grid) animate(grid, {opacity:[0,1]}, {duration:.3, delay:.3, easing:EASE_PROD});
+
+    const heroBlock = grid?.querySelector(':scope > div:first-child');
+    if(heroBlock) animate(heroBlock, {opacity:[0,1], x:[-26, 0]},
+      {duration:.6, delay:.4, easing:EASE_ENTRY_EXP});
+
+    const cards = grid ? [...grid.querySelectorAll(':scope > div:nth-child(2) > .card-fill')] : [];
+    cards.forEach((card, i)=>{
+      const base = .6 + i*.18;
+      animate(card, {opacity:[0,1], x:[28, 0]},
+        {duration:.6, delay:base, easing:EASE_ENTRY_EXP});
+      const num = card.querySelector(':scope > div:first-child');
+      if(num) animate(num, {opacity:[0,1], scale:[.7, 1]},
+        {duration:.5, delay:base + .15, easing:EASE_ENTRY_EXP});
+    });
+  }
+
+  /* ---------- recipe: loop-form · P14 自学闭环 ----------
+     左 4 步像台阶依次入 → 右环图节点按时钟顺序入 → 中心 improves scale 入 */
+  function rLoopForm(slide, all){
+    const head = slide.querySelector('[data-anim="line"]');
+    if(head) fade(head, {duration:.55, y:10});
+
+    const grid = slide.querySelector('[data-anim="up"]');
+    if(grid) animate(grid, {opacity:[0,1]}, {duration:.3, delay:.35, easing:EASE_PROD});
+
+    /* 左侧 4 步台阶,每步从左滑入 */
+    const steps = grid ? [...grid.querySelectorAll(':scope > div:first-child > div')] : [];
+    steps.forEach((step, i)=>{
+      animate(step, {opacity:[0,1], x:[-18, 0]},
+        {duration:.5, delay:.5 + i*.14, easing:EASE_ENTRY_EXP});
+    });
+
+    /* 右侧 SVG 节点 (4 个 circle + label) 按 01→04 顺序入 */
+    const svg = grid?.querySelector('svg');
+    if(svg){
+      const ring = svg.querySelector('circle:first-of-type');
+      if(ring) animate(ring, {opacity:[0,.25]}, {duration:.5, delay:.6, easing:EASE_PROD});
+
+      const nodeCircles = [...svg.querySelectorAll('circle')].slice(1);
+      nodeCircles.forEach((c, i)=>{
+        c.style.transformOrigin = `${c.getAttribute('cx')}px ${c.getAttribute('cy')}px`;
+        animate(c, {opacity:[0,1], scale:[.4, 1]},
+          {duration:.45, delay:.7 + i*.16, easing:EASE_ENTRY_EXP});
+      });
+
+      const arrows = [...svg.querySelectorAll('path[marker-end]')];
+      arrows.forEach((p, i)=>{
+        animate(p, {opacity:[0,1]},
+          {duration:.4, delay:.85 + i*.16, easing:EASE_PROD});
+      });
+
+      const center = [...svg.querySelectorAll('text')].slice(-2);
+      center.forEach((t, i)=>{
+        animate(t, {opacity:[0,1], scale:[.7, 1]},
+          {duration:.5, delay:1.55 + i*.1, easing:EASE_ENTRY_EXP});
+      });
+    }
+  }
+
+  /* ---------- recipe: matrix-fill · P15 skill 矩阵 ----------
+     标题入 → 12 张卡按对角线波 (i+j) 扫入 → 底部 20,000 大数字最后 fade 入 */
+  function rMatrixFill(slide, all){
+    const head = slide.querySelector('[data-anim="line"]');
+    if(head) fade(head, {duration:.55, y:10});
+
+    const matrix = slide.querySelector('[data-anim="up"]');
+    if(!matrix) return;
+    animate(matrix, {opacity:[0,1]}, {duration:.3, delay:.35, easing:EASE_PROD});
+
+    const cards = [...matrix.children];
+    const cols = 6;
+    cards.forEach((card, i)=>{
+      const row = Math.floor(i/cols), col = i%cols;
+      const wave = (row + col) * .055;
+      animate(card, {opacity:[0,1], y:[14, 0], scale:[.92, 1]},
+        {duration:.42, delay:.5 + wave, easing:EASE_ENTRY_EXP});
+    });
+
+    /* 底部 20,000 区块 */
+    const foot = [...slide.querySelectorAll('[data-anim="up"]')][1];
+    if(foot){
+      animate(foot, {opacity:[0,1], y:[18, 0]},
+        {duration:.7, delay:1.4, easing:EASE_ENTRY_EXP});
+      const bigNum = foot.querySelector('div:nth-child(1) > div:nth-child(2)');
+      if(bigNum) animate(bigNum, {opacity:[0,1], scale:[.94, 1]},
+        {duration:.7, delay:1.55, easing:EASE_ENTRY_EXP});
+    }
+  }
+
+  /* ---------- recipe: field-notes · P16 散点观察 ----------
+     标题入 → 6 张卡按"散点"乱序延迟入,微小旋转复位 */
+  function rFieldNotes(slide, all){
+    const head = slide.querySelector('[data-anim="line"]');
+    if(head) fade(head, {duration:.55, y:10});
+
+    const grid = slide.querySelector('[data-anim="up"]');
+    if(!grid) return;
+    animate(grid, {opacity:[0,1]}, {duration:.3, delay:.35, easing:EASE_PROD});
+
+    /* 散点顺序: 用一个稍微打乱的索引数组,营造"乱中有序"感 */
+    const order = [0, 3, 1, 4, 2, 5];
+    const cards = [...grid.children];
+    order.forEach((idx, i)=>{
+      const card = cards[idx];
+      if(!card) return;
+      animate(card, {opacity:[0,1], y:[18, 0], rotate:[(idx%2?-.6:.6), 0]},
+        {duration:.55, delay:.5 + i*.11, easing:EASE_ENTRY_EXP});
+    });
+  }
+
+  /* ---------- recipe: system-diagram · P17 三圆系统图 ----------
+     标题入 → SVG 三组图依次入 + 中间同心圆从外向内 scale 入 → 下方注释列依次入 */
+  function rSystemDiagram(slide, all){
+    const head = slide.querySelector('[data-anim="line"]');
+    if(head) fade(head, {duration:.55, y:10});
+
+    const stage = slide.querySelector('[data-anim="up"]');
+    if(!stage) return;
+    animate(stage, {opacity:[0,1]}, {duration:.3, delay:.35, easing:EASE_PROD});
+
+    const svgs = [...stage.querySelectorAll('svg')];
+    svgs.forEach((svg, i)=>{
+      const base = .55 + i*.22;
+      const circles = [...svg.querySelectorAll('circle')];
+      /* 中间是同心圆: 从外圈到内圈依次 scale 入 */
+      if(circles.length > 1){
+        circles.forEach((c, j)=>{
+          c.style.transformOrigin = `${c.getAttribute('cx')}px ${c.getAttribute('cy')}px`;
+          animate(c, {opacity:[0,1], scale:[.4, 1]},
+            {duration:.5, delay:base + j*.13, easing:EASE_ENTRY_EXP});
+        });
+      } else if(circles[0]){
+        circles[0].style.transformOrigin = `${circles[0].getAttribute('cx')}px ${circles[0].getAttribute('cy')}px`;
+        animate(circles[0], {opacity:[0,1], scale:[.4, 1]},
+          {duration:.5, delay:base, easing:EASE_ENTRY_EXP});
+      }
+      const labels = [...svg.querySelectorAll('text')];
+      labels.forEach((t, j)=>{
+        animate(t, {opacity:[0,1]},
+          {duration:.4, delay:base + .25 + j*.06, easing:EASE_PROD});
+      });
+    });
+
+    /* 下方注释列 */
+    const cols = [...stage.querySelectorAll(':scope > div:last-child > div')];
+    cols.forEach((col, i)=>{
+      animate(col, {opacity:[0,1], y:[12, 0]},
+        {duration:.45, delay:1.3 + i*.1, easing:EASE_ENTRY_EXP});
+    });
+  }
+
+  /* ---------- recipe: why-now · P18 三列 + 巨大底数 ----------
+     标题入 → 三列文本入 → 三个底部巨数 01/02/03 错峰 scale 落定 */
+  function rWhyNow(slide, all){
+    const head = slide.querySelector('[data-anim="line"]');
+    if(head) fade(head, {duration:.55, y:10});
+
+    const grid = slide.querySelector('[data-anim="up"]');
+    if(!grid) return;
+    animate(grid, {opacity:[0,1]}, {duration:.3, delay:.35, easing:EASE_PROD});
+
+    const cols = [...grid.children];
+    cols.forEach((col, i)=>{
+      const base = .5 + i*.16;
+      const body = col.querySelector(':scope > div:not(:last-child)');
+      const big = col.querySelector(':scope > div:last-child');
+      if(body) animate(body, {opacity:[0,1], y:[14, 0]},
+        {duration:.55, delay:base, easing:EASE_ENTRY_EXP});
+      if(big) animate(big, {opacity:[0,1], scale:[.7, 1]},
+        {duration:.7, delay:base + .35, easing:EASE_ENTRY_EXP});
+    });
+  }
+
+  /* ---------- recipe: four-cards · P19 4 列卡片 ----------
+     顶部红线 scaleX 0→1 → 标题入 → 4 卡按 01-04 依次入 */
+  function rFourCards(slide, all){
+    /* 顶部红线 */
+    const topRule = slide.querySelector('[data-anim="line"] > div:first-child');
+    if(topRule){
+      topRule.style.transformOrigin = 'left center';
+      animate(topRule, {opacity:[0,1], scaleX:[0, 1]},
+        {duration:.5, delay:.1, easing:EASE_ENTRY_EXP});
+    }
+
+    const head = slide.querySelector('[data-anim="line"]');
+    if(head){
+      const title = head.querySelector(':scope > div:nth-child(2)');
+      if(title) animate(title, {opacity:[0,1], y:[14, 0]},
+        {duration:.55, delay:.4, easing:EASE_ENTRY_EXP});
+    }
+
+    const grid = slide.querySelector('[data-anim="up"]');
+    if(!grid) return;
+    animate(grid, {opacity:[0,1]}, {duration:.3, delay:.55, easing:EASE_PROD});
+
+    const cards = [...grid.children];
+    cards.forEach((card, i)=>{
+      animate(card, {opacity:[0,1], y:[18, 0]},
+        {duration:.55, delay:.7 + i*.13, easing:EASE_ENTRY_EXP});
+    });
+  }
+
+  /* ============ P20 · Stacked KPI Ledger · 4 行账单逐行点亮 + 行间发丝从左画 ============ */
+  function rStackedLedger(slide, all){
+    const ledger = slide.querySelector('[data-anim="ledger"]');
+    if(!ledger) return;
+    animate(ledger, {opacity:[0,1]}, {duration:.3, delay:.1, easing:EASE_PROD});
+
+    const rows = [...ledger.querySelectorAll('.ledger-row')];
+    rows.forEach((row, i)=>{
+      const base = .25 + i*.18;
+      const num   = row.querySelector('.ledger-num');
+      const label = row.querySelector('.ledger-label');
+      const icon  = row.querySelector('.ledger-icon');
+      if(num)   animate(num,   {opacity:[0,1], y:[20, 0]},   {duration:.7,  delay:base,        easing:EASE_ENTRY_EXP});
+      if(label) animate(label, {opacity:[0,1], x:[-12, 0]},  {duration:.55, delay:base + .12, easing:EASE_ENTRY_EXP});
+      if(icon)  animate(icon,  {opacity:[0,1], scale:[.6,1]},{duration:.55, delay:base + .22, easing:EASE_ENTRY_EXP});
+    });
+  }
+
+  /* ============ P21 · Tech Spec Sheet · 标题分行 / KPI 顶线画出 + count 风感 / 竖线弹起 / 底巨数 ============ */
+  function rTechSpec(slide, all){
+    const head = slide.querySelector('[data-anim="line"]');
+    if(head) fade(head, {duration:.5, y:8});
+
+    const main = slide.querySelector('[data-anim="up"]');
+    if(main){
+      animate(main, {opacity:[0,1]}, {duration:.3, delay:.25, easing:EASE_PROD});
+
+      /* 左大标题分行 */
+      const titleLines = main.querySelector(':scope > div:first-child > div:first-child');
+      if(titleLines){
+        animate(titleLines, {opacity:[0,1], y:[18, 0]}, {duration:.7, delay:.35, easing:EASE_ENTRY_EXP});
+      }
+      const titleNote = main.querySelector(':scope > div:first-child > div:nth-child(2)');
+      if(titleNote){
+        animate(titleNote, {opacity:[0,1], y:[10, 0]}, {duration:.5, delay:.95, easing:EASE_ENTRY_EXP});
+      }
+
+      /* 三 KPI · 顶线 scaleX + 数字 fade-up + 副文字 */
+      const kpis = [...main.querySelectorAll(':scope > div:not([data-anim]):not(:first-child)')];
+      kpis.forEach((kpi, i)=>{
+        const base = .55 + i*.18;
+        const topRule = kpi.querySelector(':scope > div:first-child');
+        if(topRule){
+          topRule.style.transformOrigin = 'left center';
+          animate(topRule, {scaleX:[0,1], opacity:[0,1]}, {duration:.5, delay:base, easing:EASE_ENTRY_EXP});
+        }
+        const num = kpi.querySelector('.kpi-num');
+        if(num) animate(num, {opacity:[0,1], y:[14, 0]}, {duration:.6, delay:base + .15, easing:EASE_ENTRY_EXP});
+        const otherKids = [...kpi.children].filter(el=>el !== topRule && el !== num);
+        otherKids.forEach((el, j)=>{
+          animate(el, {opacity:[0,1]}, {duration:.4, delay:base + .25 + j*.05, easing:EASE_PROD});
+        });
+      });
+
+    }
+
+    /* 底部 hero 区: 巨数 + goal + tags + 右下竖线 */
+    const hero = slide.querySelector('[data-anim="hero"]');
+    if(hero){
+      animate(hero, {opacity:[0,1]}, {duration:.3, delay:1.3, easing:EASE_PROD});
+      const bottomHero = hero.querySelector('.bottom-hero');
+      if(bottomHero) animate(bottomHero, {opacity:[0,1], y:[24, 0], scale:[.92, 1]}, {duration:.7, delay:1.4, easing:EASE_ENTRY_EXP});
+      const middle = hero.querySelector(':scope > div:nth-child(2)');
+      if(middle){
+        const kids = [...middle.children];
+        kids.forEach((el, i)=>{
+          if(el.style && el.style.background === 'var(--ink)'){
+            el.style.transformOrigin = 'left center';
+            animate(el, {scaleX:[0,1], opacity:[0,1]}, {duration:.5, delay:1.6 + i*.1, easing:EASE_ENTRY_EXP});
+          } else {
+            animate(el, {opacity:[0,1], y:[10, 0]}, {duration:.5, delay:1.55 + i*.1, easing:EASE_ENTRY_EXP});
+          }
+        });
+      }
+      /* 右下: 文字先入, 9 根竖线再从底部 scaleY 弹起 */
+      const right = hero.querySelector(':scope > div:nth-child(3)');
+      if(right){
+        const rightText = right.querySelector(':scope > div:last-child');
+        if(rightText) animate(rightText, {opacity:[0,1], y:[10, 0]}, {duration:.5, delay:1.85, easing:EASE_ENTRY_EXP});
+      }
+      const bars = slide.querySelectorAll('[data-anim="bars"] .vbar');
+      bars.forEach((bar, i)=>{
+        bar.style.transformOrigin = 'bottom';
+        animate(bar, {scaleY:[0,1], opacity:[0,1]}, {duration:.5, delay:2.0 + i*.04, easing:EASE_ENTRY_EXP});
+      });
+    }
+  }
+
+  /* ============ P22 · Image Hero · 图缓推 + 标题白块从左滑入 + 三 KPI 顶线画出 ============ */
+  function rImageHero(slide, all){
+    const img = slide.querySelector('[data-anim="img"] img');
+    if(img){
+      animate(img, {opacity:[0,1], scale:[1.06, 1]}, {duration:1.1, delay:.05, easing:EASE_ENTRY_EXP});
+    }
+
+    const titleBlock = slide.querySelector('[data-anim="title-block"]');
+    if(titleBlock){
+      titleBlock.style.transformOrigin = 'left center';
+      animate(titleBlock, {opacity:[0,1], scaleX:[0, 1]}, {duration:.7, delay:.45, easing:EASE_ENTRY_EXP});
+      const titleText = titleBlock.querySelector('div');
+      if(titleText) animate(titleText, {opacity:[0,1]}, {duration:.4, delay:.85, easing:EASE_PROD});
+    }
+
+    const kpiWrap = slide.querySelector('[data-anim="kpi"]');
+    if(kpiWrap){
+      animate(kpiWrap, {opacity:[0,1]}, {duration:.3, delay:.7, easing:EASE_PROD});
+
+      /* 段落 */
+      const para = kpiWrap.querySelector(':scope > div:first-child');
+      if(para) animate(para, {opacity:[0,1], y:[14, 0]}, {duration:.6, delay:.85, easing:EASE_ENTRY_EXP});
+
+      /* 三列 KPI · 顶线 scaleX + 数字升起 */
+      const cols = [...kpiWrap.querySelectorAll(':scope > div:nth-child(2) > div')];
+      cols.forEach((col, i)=>{
+        const base = 1.1 + i*.18;
+        const topRule = col.querySelector(':scope > div:first-child');
+        if(topRule){
+          topRule.style.transformOrigin = 'left center';
+          animate(topRule, {scaleX:[0,1], opacity:[0,1]}, {duration:.5, delay:base, easing:EASE_ENTRY_EXP});
+        }
+        const cat = col.querySelector('.t-meta');
+        if(cat) animate(cat, {opacity:[0,1]}, {duration:.4, delay:base + .15, easing:EASE_PROD});
+        const hero = col.querySelector('.kpi-hero');
+        if(hero) animate(hero, {opacity:[0,1], y:[18, 0]}, {duration:.7, delay:base + .25, easing:EASE_ENTRY_EXP});
+        const handled = new Set([topRule, cat, hero]);
+        [...col.children]
+          .filter(el => !handled.has(el))
+          .forEach((el, j)=>{
+            animate(el, {opacity:[0,1]}, {duration:.4, delay:base + .45 + j*.05, easing:EASE_PROD});
+          });
+      });
+    }
+  }
+
+  const RECIPES = {
+    'hero': rHero,
+    'progression': rProgression,
+    'statement': rStatement,
+    'grid-reveal': rGridReveal,
+    'stack-build': rStackBuild,
+    'measure-up': rMeasureUp,
+    'bar-grow': rBarGrow,
+    'duo-mirror': rDuoMirror,
+    'split-statement': rSplitStatement,
+    'timeline-walk': rTimelineWalk,
+    'manifesto': rManifesto,
+    'three-forces': rThreeForces,
+    'loop-form': rLoopForm,
+    'matrix-fill': rMatrixFill,
+    'field-notes': rFieldNotes,
+    'system-diagram': rSystemDiagram,
+    'why-now': rWhyNow,
+    'four-cards': rFourCards,
+    'stacked-ledger': rStackedLedger,
+    'tech-spec': rTechSpec,
+    'image-hero': rImageHero,
+  };
+
+  function revealStatic(slide){
+    resetAnims(slide);
+    document.getAnimations?.().forEach(a=>a.cancel());
+    slide.querySelectorAll('[data-anim],.row-fill,.tl-node,.stack-block,.bar-tower,.sub-card,.col,.vrule,.kpi-cell,.card-fill,.card-accent,.card-ink')
+      .forEach(el=>{
+        el.style.opacity='1';
+        el.style.transform='none';
+      });
+  }
+
+  function playSlide(i){
+    const slide = slides[i];
+    if(!slide) return;
+    lastIdx = i;
+
+    if(window.__lowPowerMode){
+      revealStatic(slide);
+      return;
+    }
+
+    resetAnims(slide);
+
+    /* 关键:[data-anim] 容器很多时候只是占位标记,真正的几何动画在子元素上.
+       默认强制 reveal 所有 [data-anim] 容器, recipe 想做块入场时用 motion 的 {opacity:[0,1]} 会自动覆盖 */
+    slide.querySelectorAll('[data-anim]').forEach(el=>{
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+
+    const all = [...slide.querySelectorAll('[data-anim]')];
+    const recipe = slide.dataset.animate;
+    const fn = RECIPES[recipe];
+    if(fn){ fn(slide, all); return; }
+
+    /* fallback: 平凡 fade */
+    if(all.length) animate(all, {opacity:[0,1], y:[12,0]},
+      {duration:.6, delay:i=>i*.08, easing:EASE_ENTRY_EXP});
+  }
+
+  window.__playSlide = playSlide;
+  window.__pipeAdvance = ()=>false;  /* 当前 deck 不用 pipeline recipe */
+
+  playSlide(window.__currentSlideIndex || 0);
+}
+</script>
+
+<script>
+/* ============== ASCII 点阵呼吸场 · IKB 封面/封底专用 ==============
+   sin/cos 二维噪声场驱动字符显隐,营造工业仪表板的"涌动呼吸"质感.
+   纯 canvas 2D, mix-blend-mode:screen 让字符在 IKB 底色上自然发亮.
+   用法:在需要呼吸场的容器(.canvas-card 或 split .half.b-accent)内首位插入
+        <canvas class="ascii-bg" aria-hidden="true">,本脚本会自动扫描并启动. */
+(function(){
+  const canvases = [...document.querySelectorAll('canvas.ascii-bg')];
+  if(!canvases.length) return;
+
+  const PALETTE = '   ...:::---+++***◦◦••▢▣';
+  const CELL = 16;
+  const FONT_SIZE = 13;
+
+  function setup(c){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = c.getBoundingClientRect();
+    if(rect.width < 4 || rect.height < 4) return false;
+    c.width = Math.round(rect.width * dpr);
+    c.height = Math.round(rect.height * dpr);
+    c.__dpr = dpr;
+    c.__w = rect.width;
+    c.__h = rect.height;
+    const ctx = c.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    const mono = (getComputedStyle(document.documentElement).getPropertyValue('--mono') || 'JetBrains Mono, monospace').trim();
+    ctx.font = `500 ${FONT_SIZE}px ${mono}`;
+    ctx.textBaseline = 'top';
+    c.__ctx = ctx;
+    return true;
+  }
+
+  function draw(c, t){
+    if(!c.__ctx) return;
+    const ctx = c.__ctx, w = c.__w, h = c.__h;
+    ctx.clearRect(0, 0, w, h);
+    const cols = Math.ceil(w / CELL);
+    const rows = Math.ceil(h / CELL);
+    for(let r=0; r<rows; r++){
+      for(let cc=0; cc<cols; cc++){
+        const n = (
+          Math.sin(cc * 0.18 + t) +
+          Math.sin(r * 0.24 - t * 0.7) +
+          Math.sin((cc + r) * 0.12 + t * 0.45) +
+          Math.sin(Math.hypot(cc - cols * 0.5, r - rows * 0.5) * 0.16 - t * 0.55)
+        ) / 4; // [-1, 1]
+        const v = (n + 1) / 2; // [0, 1]
+        if(v < 0.22) continue;
+        const idx = Math.min(PALETTE.length - 1, Math.floor(v * PALETTE.length));
+        const ch = PALETTE[idx];
+        if(ch === ' ') continue;
+        const alpha = 0.08 + (v - 0.22) * 0.55;
+        ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
+        ctx.fillText(ch, cc * CELL, r * CELL);
+      }
+    }
+  }
+
+  function resizeAll(){ canvases.forEach(setup); }
+  let pending = null;
+  window.addEventListener('resize', ()=>{
+    if(window.__lowPowerMode) return;
+    if(pending) cancelAnimationFrame(pending);
+    pending = requestAnimationFrame(resizeAll);
+  }, {passive:true});
+
+  let t0 = performance.now();
+  let frame = 0, asciiRAF = 0, running = false;
+  function tick(now){
+    if(!running || window.__lowPowerMode){running=false;asciiRAF=0;return;}
+    const t = (now - t0) / 1000 * 0.55;
+    frame++;
+    canvases.forEach(c=>{
+      // 离屏 slide 降帧:每 4 帧渲染一次,在屏 slide 每帧渲染
+      const slide = c.closest('.slide');
+      const rect = slide ? slide.getBoundingClientRect() : null;
+      const onscreen = rect && rect.right > 0 && rect.left < window.innerWidth;
+      if(!onscreen && (frame & 3) !== 0) return;
+      draw(c, t);
+    });
+    asciiRAF = requestAnimationFrame(tick);
+  }
+  function start(){
+    if(running || window.__lowPowerMode) return;
+    resizeAll();
+    t0 = performance.now();
+    frame = 0;
+    running = true;
+    asciiRAF = requestAnimationFrame(tick);
+  }
+  function stop(){
+    running = false;
+    if(asciiRAF) cancelAnimationFrame(asciiRAF);
+    if(pending) cancelAnimationFrame(pending);
+    asciiRAF = 0;
+    pending = null;
+    canvases.forEach(c=>{
+      if(c.__ctx) c.__ctx.clearRect(0,0,c.__w || 0,c.__h || 0);
+    });
+  }
+  addEventListener('swiss-low-power-change', e=>{e.detail.on ? stop() : start();});
+  start();
+})();
+</script>
+</body>
+</html>
